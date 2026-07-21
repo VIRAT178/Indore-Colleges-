@@ -5,6 +5,7 @@ services:
     plan: free
     branch: main
     rootDir: .
+    installCommand: npm install
     buildCommand: npm run build
     startCommand: npm run start
     autoDeploy: true
