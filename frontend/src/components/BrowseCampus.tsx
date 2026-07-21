@@ -51,7 +51,7 @@ export default function BrowseCampus({ institutes, onOpenCounseling, setActiveTa
     { 
       name: 'Vijay Nagar', 
       count: institutes.filter(i => i.location === 'Vijay Nagar').length || 5, 
-      img: './public/pimr.jpg',
+      img: '/pimr.jpg',
       tag: 'Commercial & Tech Hub'
     },
     { 
@@ -63,7 +63,7 @@ export default function BrowseCampus({ institutes, onOpenCounseling, setActiveTa
     { 
       name: 'Palasia', 
       count: institutes.filter(i => i.location === 'Palasia').length || 4, 
-      img: './public/patel-college.jpg',
+      img: '/patel-college.jpg',
       tag: 'Elite Coaching Belt'
     },
     { 
@@ -177,7 +177,7 @@ export default function BrowseCampus({ institutes, onOpenCounseling, setActiveTa
             >
               <div className="w-full md:w-32 aspect-video md:aspect-square rounded-2xl overflow-hidden bg-gray-100 shrink-0">
                 <img 
-                  src="./public/bm-college.jpg" 
+                  src="/bm-college.jpg" 
                   alt="Residential Campus"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

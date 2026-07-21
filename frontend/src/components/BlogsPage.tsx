@@ -22,7 +22,7 @@ const COLLEGE_BLOGS = [
     category: 'Admission Guides',
     date: 'June 28, 2026',
     readTime: '5 min read',
-    image: './public/bm-college.jpg',
+    image: '/bm-college.jpg',
     excerpt: 'Everything Indore students need to know about college registration deadlines, entrance tests, and seat choices.',
     author: 'Prof. S.K. Sharma',
     role: 'Senior Academic Advisor',

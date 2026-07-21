@@ -220,7 +220,7 @@ export default function Home({
     { name: 'Chennai', img: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=300&q=80' },
     { name: 'Hyderabad', img: 'https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?auto=format&fit=crop&w=300&q=80' },
     { name: 'Indore', img: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&w=300&q=80', active: true },
-    { name: 'Pune', img: './public/iet-davv.jpg' },
+    { name: 'Pune', img: '/iet-davv.jpg' },
     { name: 'Kolkata', img: 'https://images.unsplash.com/photo-1558431382-27e303142255?auto=format&fit=crop&w=300&q=80' }
   ];
 
@@ -717,7 +717,7 @@ export default function Home({
             >
               <div className="h-48 overflow-hidden relative bg-gray-50">
                 <img 
-                  src='./public/ims-davv.jpg'
+                  src='/ims-davv.jpg'
                   alt="Engineering campus" 
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
@@ -743,7 +743,7 @@ export default function Home({
             >
               <div className="h-48 overflow-hidden relative bg-gray-50">
                 <img 
-                  src="./public/iim-indore.jpg" 
+                  src="/iim-indore.jpg" 
                   alt="Management class" 
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
@@ -769,7 +769,7 @@ export default function Home({
             >
               <div className="h-48 overflow-hidden relative bg-gray-50">
                 <img 
-                  src="./public/saims.jpg" 
+                  src="/saims.jpg" 
                   alt="Medical lab" 
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
@@ -795,7 +795,7 @@ export default function Home({
             >
               <div className="h-48 overflow-hidden relative bg-gray-50">
                 <img 
-                  src="./public/ips-ibmr.jpg" 
+                  src="/ips-ibmr.jpg" 
                   alt="Design studio" 
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
@@ -885,7 +885,7 @@ export default function Home({
                   ) : (
                     <>
                       <img 
-                        src="./public/malwa_institute_campus.jpg" 
+                        src="/malwa_institute_campus.jpg" 
                         alt="Counselor assisting student" 
                         referrerPolicy="no-referrer"
                         className="absolute inset-0 w-full h-full object-cover opacity-75"
