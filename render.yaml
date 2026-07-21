@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: indore-colleges
+    env: node
+    plan: free
+    branch: main
+    rootDir: .
+    buildCommand: npm run build
+    startCommand: npm run start
+    autoDeploy: true
