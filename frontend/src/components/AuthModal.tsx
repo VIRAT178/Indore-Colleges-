@@ -20,6 +20,17 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
   const [devOtp, setDevOtp] = useState<string | null>(null);
   const [countdown, setCountdown] = useState(0);
 
+  const fetchWithTimeout = async (input: RequestInfo, init: RequestInit = {}, timeoutMs = 15000) => {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetch(input, { ...init, signal: controller.signal });
+      return response;
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+  };
+
   useEffect(() => {
     if (!isOpen) {
       // Reset state when closed
@@ -54,12 +65,15 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
     setSuccessMsg('');
 
     try {
-      const res = await fetch('/api/auth/send-otp', {
+      const res = await fetchWithTimeout('/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, name }),
-      });
+      }, 20000);
 
+      if (!res) {
+        throw new Error('No response from server.');
+      }
       const data = await res.json();
       if (res.ok) {
         setStep('otp');
@@ -71,8 +85,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
       } else {
         setError(data.error || 'Failed to send verification code. Please try again.');
       }
-    } catch (err) {
-      setError('Connection failure. Could not contact verification server.');
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        setError('Request timed out. Please try again.');
+      } else {
+        setError('Connection failure. Could not contact verification server.');
+      }
       console.error(err);
     } finally {
       setLoading(false);
@@ -90,12 +108,15 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
     setError('');
 
     try {
-      const res = await fetch('/api/auth/verify-otp', {
+      const res = await fetchWithTimeout('/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, name }),
-      });
+      }, 20000);
 
+      if (!res) {
+        throw new Error('No response from server.');
+      }
       const data = await res.json();
       if (res.ok) {
         setSuccessMsg('Verification successful! Logging you in...');
@@ -106,8 +127,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
       } else {
         setError(data.error || 'Invalid or expired verification code.');
       }
-    } catch (err) {
-      setError('Verification connection error.');
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        setError('Request timed out. Please try again.');
+      } else {
+        setError('Verification connection error.');
+      }
       console.error(err);
     } finally {
       setLoading(false);
