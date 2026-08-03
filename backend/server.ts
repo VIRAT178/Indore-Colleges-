@@ -430,9 +430,11 @@ async function sendVerificationEmail(email: string, otp: string): Promise<{ succ
     return { success: true };
   } catch (err: any) {
     const isAuthError = err.message.includes('Invalid login') || err.message.includes('Username and Password not accepted') || err.code === 'EAUTH';
-    if (isAuthError) {
+    const isNetworkError = ['ETIMEDOUT', 'ECONNREFUSED', 'ENETUNREACH', 'EHOSTUNREACH', 'ECONNRESET', 'EAI_AGAIN'].includes(err.code) || /timeout|network.*unreachable|connect.*ENETUNREACH/i.test(err.message);
+
+    if (isAuthError || isNetworkError) {
       smtpAuthFailed = true;
-      console.warn(`\n===============================================\n[SMTP AUTHENTICATION FAILED]\nInvalid login credentials provided for SMTP. Please check your SMTP_USER and SMTP_PASS env variables.\nIf using Gmail, make sure to generate and use an App Password rather than your account password.\nFalling back to Sandbox Mode for this and future requests.\nOTP Code: ${otp}\n===============================================\n`);
+      console.warn(`\n===============================================\n[SMTP SEND FALLBACK]\nSMTP send failed for ${email}: ${err.message}\nFalling back to sandbox/dev OTP mode for this and future requests.\nOTP Code: ${otp}\n===============================================\n`);
       return { success: true, devOtp: otp, bypassed: true };
     }
 
