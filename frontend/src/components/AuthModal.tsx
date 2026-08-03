@@ -20,7 +20,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
   const [devOtp, setDevOtp] = useState<string | null>(null);
   const [countdown, setCountdown] = useState(0);
 
-  const fetchWithTimeout = async (input: RequestInfo, init: RequestInit = {}, timeoutMs = 15000) => {
+  const fetchWithTimeout = async (input: RequestInfo, init: RequestInit = {}, timeoutMs = 45000) => {
     const controller = new AbortController();
     const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
     try {
@@ -69,7 +69,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, name }),
-      }, 20000);
+      }, 45000);
 
       if (!res) {
         throw new Error('No response from server.');
@@ -112,7 +112,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, name }),
-      }, 20000);
+      }, 45000);
 
       if (!res) {
         throw new Error('No response from server.');

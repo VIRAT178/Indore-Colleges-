@@ -398,7 +398,10 @@ async function sendVerificationEmail(email: string, otp: string): Promise<{ succ
       host,
       port: Number(port) || 587,
       secure: Number(port) === 465,
-      auth: { user, pass }
+      auth: { user, pass },
+      connectionTimeout: 20000,
+      greetingTimeout: 20000,
+      socketTimeout: 20000
     });
 
     const mailOptions = {
