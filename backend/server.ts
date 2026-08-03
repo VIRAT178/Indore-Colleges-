@@ -381,7 +381,7 @@ async function getMongoDb(): Promise<any> {
 // Mail SMTP helper with Nodemailer
 let smtpAuthFailed = false;
 
-async function sendVerificationEmail(email: string, otp: string): Promise<{ success: boolean; error?: string; devOtp?: string }> {
+async function sendVerificationEmail(email: string, otp: string): Promise<{ success: boolean; error?: string; devOtp?: string; bypassed?: boolean }> {
   const host = process.env.SMTP_HOST;
   const port = process.env.SMTP_PORT;
   const user = process.env.SMTP_USER;
@@ -390,7 +390,7 @@ async function sendVerificationEmail(email: string, otp: string): Promise<{ succ
 
   if (smtpAuthFailed || !host || !user || !pass) {
     console.log(`\n===============================================\n[SMTP BYPASSED / NOT CONFIGURED]\nEmail: ${email}\nOTP Code: ${otp}\n===============================================\n`);
-    return { success: true, devOtp: otp };
+    return { success: true, devOtp: otp, bypassed: true };
   }
 
   try {
@@ -413,7 +413,7 @@ async function sendVerificationEmail(email: string, otp: string): Promise<{ succ
           <div style="background-color: #f3f4f6; border-radius: 8px; padding: 15px; margin: 24px 0; text-align: center;">
             <span style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #111827;">${otp}</span>
           </div>
-          <p style="font-size: 14px; color: #6b7280; line-height: 1.5; margin-top: 24px; text-align: center;">This OTP is valid for 2 minutes. Please do not share this OTP with anyone.</p>
+          <p style="font-size: 14px; color: #6b7280; line-height: 1.5; margin-top: 24px; text-align: center;">This OTP is valid for 5 minutes. Please do not share this OTP with anyone.</p>
           <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 30px 0;" />
           <p style="font-size: 12px; color: #9ca3af; text-align: center;">Thank you,<br>The Indore Colleges Admissions Team</p>
         </div>
@@ -428,10 +428,11 @@ async function sendVerificationEmail(email: string, otp: string): Promise<{ succ
     if (isAuthError) {
       smtpAuthFailed = true;
       console.warn(`\n===============================================\n[SMTP AUTHENTICATION FAILED]\nInvalid login credentials provided for SMTP. Please check your SMTP_USER and SMTP_PASS env variables.\nIf using Gmail, make sure to generate and use an App Password rather than your account password.\nFalling back to Sandbox Mode for this and future requests.\nOTP Code: ${otp}\n===============================================\n`);
-    } else {
-      console.warn(`[SMTP SEND ERROR] Failed to send email OTP to ${email}: ${err.message}`);
+      return { success: true, devOtp: otp, bypassed: true };
     }
-    return { success: false, error: err.message, devOtp: otp };
+
+    console.warn(`[SMTP SEND ERROR] Failed to send email OTP to ${email}: ${err.message}`);
+    return { success: false, error: err.message };
   }
 }
 
@@ -1029,9 +1030,12 @@ async function startServer() {
 
     const emailTrimmed = email.trim().toLowerCase();
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes expiration
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes expiration
 
     const mailResult = await sendVerificationEmail(emailTrimmed, otp);
+    if (!mailResult.success && !mailResult.bypassed) {
+      return res.status(502).json({ error: `Failed to send OTP email: ${mailResult.error || 'Email service unavailable.'}` });
+    }
 
     try {
       const db = await getMongoDb();

@@ -261,6 +261,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
                 </button>
               </div>
 
+              {countdown === 0 && (
+                <div className="mt-3 p-3 rounded-xl bg-yellow-50 border border-yellow-100 text-yellow-800 text-xs font-semibold">
+                  ⚠️ Your verification code has expired. Please resend a new code.
+                </div>
+              )}
+
               {devOtp && (
                 <div className="mt-4 p-3 rounded-xl bg-amber-50/60 border border-dashed border-amber-200 text-[11px] text-amber-900 leading-relaxed">
                   <p className="font-bold text-amber-950 mb-1">🔬 Sandbox Mode & Dev Preview</p>
