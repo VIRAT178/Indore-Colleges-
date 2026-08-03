@@ -10,6 +10,8 @@ import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 import fs from 'fs';
+import dns from 'dns';
+import net from 'net';
 import nodemailer from 'nodemailer';
 import { MongoClient, Db } from 'mongodb';
 import cors from 'cors';
@@ -596,7 +598,21 @@ async function sendCollegeAcceptanceEmail(email: string, collegeName: string): P
       host,
       port: Number(port) || 587,
       secure: Number(port) === 465,
-      auth: { user, pass }
+      auth: { user, pass },
+      connectionTimeout: 20000,
+      greetingTimeout: 20000,
+      socketTimeout: 20000,
+      tls: { servername: host },
+      getSocket(options, callback) {
+        const targetHost = options.host || host;
+        dns.lookup(targetHost, { family: 4 }, (err, address) => {
+          if (err) {
+            return callback(err, null);
+          }
+          const socket = net.connect(options.port, address);
+          callback(null, socket);
+        });
+      }
     });
 
     const mailOptions = {
