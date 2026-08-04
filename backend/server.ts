@@ -1,7 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
 
 import express from 'express';
 import path from 'path';
@@ -605,7 +601,7 @@ async function sendCollegeAcceptanceEmail(email: string, collegeName: string): P
       greetingTimeout: 20000,
       socketTimeout: 20000,
       tls: { servername: host },
-      getSocket(options, callback) {
+          getSocket(options: any, callback: (err: Error | null, socket: net.Socket | null) => void) {
         const targetHost = options.host || host;
         dns.lookup(targetHost, { family: 4 }, (err, address) => {
           if (err) {
@@ -671,7 +667,7 @@ if (process.env.GEMINI_API_KEY) {
   console.warn("Warning: GEMINI_API_KEY is not defined in the environment. Chat assistant will run in simulator mode.");
 }
 
-async function startServer() {
+export async function startServer() {
   const app = express();
   const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
@@ -1551,13 +1547,15 @@ Instructions:
   });
 
   // Vite development vs production asset delivery
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
     app.use(vite.middlewares);
-  } else {
+  }
+
+  if (!process.env.VERCEL && process.env.NODE_ENV === 'production') {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
@@ -1565,9 +1563,16 @@ Instructions:
     });
   }
 
+  return app;
+}
+
+const app = await startServer();
+
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`EduPath server is listening on port ${PORT}`);
   });
 }
 
-startServer();
+export default app;
