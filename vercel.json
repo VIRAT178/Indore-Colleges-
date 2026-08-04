@@ -13,7 +13,7 @@
     },
     {
       "src": "/api/(.*)",
-      "dest": "/api/index.ts"
+      "dest": "/api/index.ts?path=$1"
     },
     {
       "handle": "filesystem"
