@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Institute, Review } from '../types';
+import { apiFetch } from '../utils/api';
 import { Star, MapPin, Award, IndianRupee, Calendar, Check, Send, ChevronDown, ChevronUp, MessageSquare, PhoneCall, Heart, ShoppingCart, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -62,7 +63,7 @@ export default function InstituteCard({
   const fetchReviews = async () => {
     setLoadingReviews(true);
     try {
-      const res = await fetch(`/api/reviews/${institute.id}`);
+      const res = await apiFetch(`/api/reviews/${institute.id}`);
       if (res.ok) {
         const data = await res.json();
         setReviews(data);
@@ -80,7 +81,7 @@ export default function InstituteCard({
 
     setSubmittingReview(true);
     try {
-      const res = await fetch('/api/reviews', {
+      const res = await apiFetch('/api/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

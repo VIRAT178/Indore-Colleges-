@@ -28,6 +28,7 @@ import {
   X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { apiFetch } from '../utils/api';
 
 interface PartnerRequest {
   id: string;
@@ -86,10 +87,10 @@ export default function AdminPortal() {
     setLoading(true);
     try {
       const [resPartners, resCounseling, resCallbacks, resUsers] = await Promise.all([
-        fetch('/api/admin/all-registrations'),
-        fetch('/api/admin/counseling-leads'),
-        fetch('/api/admin/callback-leads'),
-        fetch('/api/admin/user-profiles')
+        apiFetch('/api/admin/all-registrations'),
+        apiFetch('/api/admin/counseling-leads'),
+        apiFetch('/api/admin/callback-leads'),
+        apiFetch('/api/admin/user-profiles')
       ]);
 
       const dataPartners = await resPartners.json();
@@ -115,7 +116,7 @@ export default function AdminPortal() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/admin/login', {
+      const res = await apiFetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: adminEmail, password: adminPassword })
@@ -146,7 +147,7 @@ export default function AdminPortal() {
     setErrorMsg('');
     setSuccessMsg('');
     try {
-      const res = await fetch(`/api/admin/registration-status/${id}`, {
+      const res = await apiFetch(`/api/admin/registration-status/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })

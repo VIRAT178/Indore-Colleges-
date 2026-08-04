@@ -42,6 +42,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { INDORE_INSTITUTES } from '../data/indoreData';
 import Logo from './Logo';
 import { UserProfile } from '../types';
+import { apiFetch } from '../utils/api';
 
 interface HeaderProps {
   activeTab: 'home' | 'explore' | 'register' | 'dashboard' | 'browse-campus' | 'blogs' | 'about' | 'careers' | 'contact' | 'college-portal' | 'admin-panel';
@@ -197,7 +198,7 @@ export default function Header({
     const queryStr = `Bulk Admissions Basket Inquiry. Selected institutes: ${instituteNames || 'None Selected'}`;
 
     try {
-      const res = await fetch('/api/callback', {
+      const res = await apiFetch('/api/callback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

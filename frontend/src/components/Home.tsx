@@ -187,7 +187,7 @@ export default function Home({
     if (!formName || !formPhone || !formEmail) return;
     setIsSubmitting(true);
     try {
-      const res = await fetch('/api/callback', {
+      const res = await apiFetch('/api/callback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

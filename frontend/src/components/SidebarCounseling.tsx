@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { Calendar, Clock, User, Phone, Mail, FileText, CheckCircle, X } from 'lucide-react';
+import { apiFetch } from '../utils/api';
 import { motion, AnimatePresence } from 'motion/react';
 import { Institute } from '../types';
 
@@ -41,7 +42,7 @@ export default function SidebarCounseling({
         ? `[Inquiry regarding ${selectedInstitute.name}] ${query}`.trim()
         : query;
 
-      const res = await fetch('/api/counseling', {
+      const res = await apiFetch('/api/counseling', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

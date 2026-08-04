@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, ShieldCheck, User, ArrowRight, Loader2, RefreshCw, X } from 'lucide-react';
 import { UserProfile } from '../types';
+import { apiFetchWithTimeout } from '../utils/api';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -65,7 +66,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
     setSuccessMsg('');
 
     try {
-      const res = await fetchWithTimeout('/api/auth/send-otp', {
+      const res = await apiFetchWithTimeout('/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, name }),
@@ -108,7 +109,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
     setError('');
 
     try {
-      const res = await fetchWithTimeout('/api/auth/verify-otp', {
+      const res = await apiFetchWithTimeout('/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, name }),

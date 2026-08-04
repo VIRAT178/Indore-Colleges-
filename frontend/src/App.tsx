@@ -28,6 +28,7 @@ import { Institute, SearchFilters, UserProfile } from './types';
 import { Search, MapPin, Award, IndianRupee, HelpCircle, PhoneCall, Check, X, Compass, ChevronRight, HelpCircle as HelpIcon, Cpu, Briefcase, Laptop, Scale, HeartPulse, Palette, TrendingUp, ChevronLeft, Sparkles, GraduationCap } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { INDORE_LOCATIONS, CATEGORIES, BOARDS } from './data/indoreData';
+import { apiFetch } from './utils/api';
 
 export function getInstituteZone(locationStr: string): string {
   const loc = (locationStr || '').toLowerCase();
@@ -142,7 +143,7 @@ export default function App() {
     const targetEmail = email || currentUser?.email;
     if (!targetEmail) return;
     try {
-      await fetch('/api/users/sync-history', {
+      await apiFetch('/api/users/sync-history', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -288,7 +289,7 @@ export default function App() {
   const fetchInstitutes = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/institutes');
+      const res = await apiFetch('/api/institutes');
       if (res.ok) {
         const data = await res.json();
         setInstitutes(data);
@@ -324,7 +325,7 @@ export default function App() {
 
     setCallbackSubmitting(true);
     try {
-      const res = await fetch('/api/callback', {
+      const res = await apiFetch('/api/callback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

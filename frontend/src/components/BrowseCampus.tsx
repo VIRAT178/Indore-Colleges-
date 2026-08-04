@@ -104,7 +104,7 @@ export default function BrowseCampus({ institutes, onOpenCounseling, setActiveTa
     setSubmitting(true);
     try {
       // Send a counseling request directly to Express API
-      const response = await fetch('/api/counseling', {
+      const response = await apiFetch('/api/counseling', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

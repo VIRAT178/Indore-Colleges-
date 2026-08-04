@@ -51,7 +51,7 @@ export default function OrbChatbot() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/orb-chat', {
+      const res = await apiFetch('/api/orb-chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: updatedMessages })

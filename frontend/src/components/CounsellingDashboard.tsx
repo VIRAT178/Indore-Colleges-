@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { CounselingRequest } from '../types';
 import { Calendar, Clock, User, Phone, Mail, CheckCircle, FileText, RefreshCw, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
+import { apiFetch } from '../utils/api';
 
 export default function CounsellingDashboard() {
   const [requests, setRequests] = useState<CounselingRequest[]>([]);
@@ -17,7 +18,7 @@ export default function CounsellingDashboard() {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/counseling');
+      const res = await apiFetch('/api/counseling');
       if (res.ok) {
         const data = await res.json();
         setRequests(data);

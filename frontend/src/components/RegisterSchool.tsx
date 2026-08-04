@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { School, ClipboardCheck, Mail, Phone, MapPin, IndianRupee, CheckCircle, GraduationCap } from 'lucide-react';
+import { apiFetch } from '../utils/api';
 import { motion, AnimatePresence } from 'motion/react';
 import { INDORE_LOCATIONS, CATEGORIES, BOARDS, INDORE_INSTITUTES } from '../data/indoreData';
 
@@ -52,7 +53,7 @@ export default function RegisterSchool() {
 
     setSubmitting(true);
     try {
-      const res = await fetch('/api/register-school', {
+      const res = await apiFetch('/api/register-school', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
