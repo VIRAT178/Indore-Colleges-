@@ -1,4 +1,4 @@
-import { startServer } from '../backend/server.ts';
+import { startServer } from '../server.ts';
 
 const appPromise = startServer();
 
