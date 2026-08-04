@@ -671,7 +671,12 @@ export async function startServer() {
   const app = express();
   const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
-  app.use(cors());
+  app.use(cors({
+    origin: ['https://indore-colleges.vercel.app', 'https://indore-colleges-e649.vercel.app', 'http://localhost:5173'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+  }));
   app.use(express.json());
 
   // API Route: Get all institutes
