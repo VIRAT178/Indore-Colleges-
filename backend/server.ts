@@ -674,7 +674,10 @@ export async function startServer() {
   const allowedOrigins = [
     'https://indore-colleges.vercel.app',
     'https://indore-colleges-e649.vercel.app',
-    'http://localhost:5173'
+    'http://localhost:5173',
+    // Custom production domains (Render frontend uses a custom domain)
+    'https://indorecolleges.in',
+    'https://www.indorecolleges.in'
   ];
 
   const corsOptions = {
