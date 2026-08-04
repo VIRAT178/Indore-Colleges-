@@ -671,12 +671,29 @@ export async function startServer() {
   const app = express();
   const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
-  app.use(cors({
-    origin: ['https://indore-colleges.vercel.app', 'https://indore-colleges-e649.vercel.app', 'http://localhost:5173'],
+  const allowedOrigins = [
+    'https://indore-colleges.vercel.app',
+    'https://indore-colleges-e649.vercel.app',
+    'http://localhost:5173'
+  ];
+
+  const corsOptions = {
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('CORS policy violation'));
+      }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
-  }));
+    credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+  };
+
+  app.use(cors(corsOptions));
+  app.options('*', cors(corsOptions));
   app.use(express.json());
 
   // API Route: Get all institutes
