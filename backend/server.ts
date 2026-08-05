@@ -90,6 +90,15 @@ let mongoClient: MongoClient | null = null;
 let mongoDb: Db | null = null;
 let isMongoConnecting = false;
 
+function getMongoUri() {
+  return process.env.MONGODB_URI
+    || process.env.MONGO_URL
+    || process.env.MONGODB_URL
+    || process.env.MONGO_URI
+    || process.env.DATABASE_URL
+    || '';
+}
+
 async function seedDatabase(db: Db) {
   try {
     const reviewsCol = db.collection('reviews');
@@ -338,9 +347,9 @@ class SmartDb {
 }
 
 async function getMongoDb(): Promise<any> {
-  const uri = process.env.MONGODB_URI;
+  const uri = getMongoUri();
   if (!uri) {
-    console.warn("[SmartDB] MONGODB_URI is not defined in environment variables. Running in 100% Local memory mode.");
+    console.warn("[SmartDB] No MongoDB connection string was found. Set MONGODB_URI, MONGO_URL, MONGODB_URL, MONGO_URI, or DATABASE_URL to enable MongoDB; running in 100% local memory mode.");
     return new SmartDb(null);
   }
 

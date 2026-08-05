@@ -1,4 +1,10 @@
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://indore-colleges.onrender.com';
+const DEFAULT_API_BASE_URL = typeof window !== 'undefined'
+  ? window.location.origin
+  : 'https://indore-colleges.onrender.com';
+
+const viteEnv = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env;
+
+export const API_BASE_URL = viteEnv?.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
 
 export function buildApiUrl(path: string) {
   const normalized = path.startsWith('/') ? path : `/${path}`;
