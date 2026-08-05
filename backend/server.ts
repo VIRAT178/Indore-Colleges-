@@ -9,7 +9,6 @@ import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 import fs from 'fs';
-import nodemailer from 'nodemailer';
 import { MongoClient, Db } from 'mongodb';
 import cors from 'cors';
 import { INDORE_INSTITUTES } from '../frontend/src/data/indoreData.js';
@@ -376,79 +375,102 @@ async function getMongoDb(): Promise<any> {
   }
 }
 
-// Mail SMTP helper with Nodemailer
-let smtpAuthFailed = false;
+type BrevoRecipient = {
+  email: string;
+  name?: string;
+};
 
-function isSmtpConfigured(): boolean {
-  const host = process.env.SMTP_HOST;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  
-  if (smtpAuthFailed || !host || !user || !pass) {
+const BREVO_EMAIL_API_URL = 'https://api.brevo.com/v3/smtp/email';
+
+function isBrevoConfigured(): boolean {
+  const apiKey = process.env.BREVO_API_KEY;
+  if (!apiKey) {
     return false;
   }
 
-  // Check for dummy or placeholder values
-  const dummyKeywords = ['my_smtp', 'your_', 'example', 'placeholder', 'dummy', 'xxxx', 'test_user'];
-  const userLower = user.toLowerCase();
-  const passLower = pass.toLowerCase();
-  const hostLower = host.toLowerCase();
+  const dummyKeywords = ['your_', 'example', 'placeholder', 'dummy', 'xxxx', 'test_key', 'my_brevo'];
+  const apiKeyLower = apiKey.toLowerCase();
+  return !dummyKeywords.some((kw) => apiKeyLower.includes(kw));
+}
 
-  for (const kw of dummyKeywords) {
-    if (userLower.includes(kw) || passLower.includes(kw) || hostLower.includes(kw)) {
-      return false;
-    }
+function getBrevoSender() {
+  return {
+    email: process.env.BREVO_SENDER_EMAIL || 'no-reply@indorecolleges.org',
+    name: process.env.BREVO_SENDER_NAME || 'Indore Colleges',
+  };
+}
+
+async function sendBrevoEmail(params: {
+  to: BrevoRecipient[];
+  subject: string;
+  html: string;
+  text?: string;
+  replyTo?: BrevoRecipient;
+}): Promise<{ success: boolean; error?: string }> {
+  if (!isBrevoConfigured()) {
+    return { success: false, error: 'Brevo is not configured.' };
   }
-  return true;
+
+  try {
+    const response = await fetch(BREVO_EMAIL_API_URL, {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        'api-key': process.env.BREVO_API_KEY || '',
+      },
+      body: JSON.stringify({
+        sender: getBrevoSender(),
+        to: params.to,
+        subject: params.subject,
+        htmlContent: params.html,
+        textContent: params.text,
+        ...(params.replyTo ? { replyTo: params.replyTo } : {}),
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Brevo API error (${response.status}): ${errorText}`);
+    }
+
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Brevo email delivery failed.' };
+  }
 }
 
 async function sendVerificationEmail(email: string, otp: string): Promise<{ success: boolean; error?: string; devOtp?: string }> {
-  const host = process.env.SMTP_HOST;
-  const port = process.env.SMTP_PORT;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  const sender = process.env.SMTP_SENDER || 'no-reply@indorecolleges.org';
-
-  if (!isSmtpConfigured()) {
+  if (!isBrevoConfigured()) {
     console.log(`[Email Sandbox] OTP Code for ${email}: ${otp}`);
     return { success: true, devOtp: otp };
   }
 
-  try {
-    const transporter = nodemailer.createTransport({
-      host,
-      port: Number(port) || 587,
-      secure: Number(port) === 465,
-      auth: { user, pass }
-    });
-
-    const mailOptions = {
-      from: `"Indore Colleges" <${sender}>`,
-      to: email,
-      subject: `[Indore Colleges] ${otp} is your verification code`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px; background-color: #ffffff;">
-          <h2 style="color: #2563eb; font-size: 24px; margin-bottom: 20px; font-weight: bold; text-align: center;">Indore Colleges</h2>
-          <p style="font-size: 16px; color: #374151; line-height: 1.5;">Hello,</p>
-          <p style="font-size: 16px; color: #374151; line-height: 1.5;">Please use the following One-Time Password (OTP) to complete your login or registration on Indore Colleges:</p>
-          <div style="background-color: #f3f4f6; border-radius: 8px; padding: 15px; margin: 24px 0; text-align: center;">
-            <span style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #111827;">${otp}</span>
-          </div>
-          <p style="font-size: 14px; color: #6b7280; line-height: 1.5; margin-top: 24px; text-align: center;">This OTP is valid for 2 minutes. Please do not share this OTP with anyone.</p>
-          <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 30px 0;" />
-          <p style="font-size: 12px; color: #9ca3af; text-align: center;">Thank you,<br>The Indore Colleges Admissions Team</p>
+  const mailResult = await sendBrevoEmail({
+    to: [{ email }],
+    subject: `[Indore Colleges] ${otp} is your verification code`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px; background-color: #ffffff;">
+        <h2 style="color: #2563eb; font-size: 24px; margin-bottom: 20px; font-weight: bold; text-align: center;">Indore Colleges</h2>
+        <p style="font-size: 16px; color: #374151; line-height: 1.5;">Hello,</p>
+        <p style="font-size: 16px; color: #374151; line-height: 1.5;">Please use the following One-Time Password (OTP) to complete your login or registration on Indore Colleges:</p>
+        <div style="background-color: #f3f4f6; border-radius: 8px; padding: 15px; margin: 24px 0; text-align: center;">
+          <span style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #111827;">${otp}</span>
         </div>
-      `
-    };
+        <p style="font-size: 14px; color: #6b7280; line-height: 1.5; margin-top: 24px; text-align: center;">This OTP is valid for 2 minutes. Please do not share this OTP with anyone.</p>
+        <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 30px 0;" />
+        <p style="font-size: 12px; color: #9ca3af; text-align: center;">Thank you,<br>The Indore Colleges Admissions Team</p>
+      </div>
+    `,
+  });
 
-    await transporter.sendMail(mailOptions);
-    console.log(`OTP Email sent successfully to ${email}`);
+  if (mailResult.success) {
+    console.log(`OTP Email sent successfully to ${email} via Brevo`);
     return { success: true };
-  } catch (err: any) {
-    smtpAuthFailed = true;
-    console.log(`[Email Sandbox Activated] Standard email delivery offline. Verification OTP for ${email}: ${otp}`);
-    return { success: true, devOtp: otp };
   }
+
+  console.log(`[Email Sandbox Activated] Brevo delivery unavailable. Verification OTP for ${email}: ${otp}`);
+  return { success: true, devOtp: otp };
 }
 
 // Mail Notification helper for filled forms (User gets confirmation, Admin gets lead alert)
@@ -458,12 +480,7 @@ async function sendFormNotifications(
   formType: string,
   formDataDetails: Record<string, any>
 ): Promise<{ success: boolean; error?: string }> {
-  const host = process.env.SMTP_HOST;
-  const port = process.env.SMTP_PORT;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  const sender = process.env.SMTP_SENDER || 'no-reply@indorecolleges.org';
-  const adminEmail = process.env.ADMIN_EMAIL || 'vishalsinghvicky95@gmail.com';
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@indorecolleges.org';
 
   const formatDetailsHtml = (details: Record<string, any>) => {
     return Object.entries(details)
@@ -547,29 +564,32 @@ async function sendFormNotifications(
     `
   };
 
-  if (!isSmtpConfigured()) {
+  if (!isBrevoConfigured()) {
     console.log(`[Email Sandbox] Form notification (${formType}) saved for ${userEmail}`);
     return { success: true };
   }
 
   try {
-    const transporter = nodemailer.createTransport({
-      host,
-      port: Number(port) || 587,
-      secure: Number(port) === 465,
-      auth: { user, pass }
-    });
-
-    // Send both emails in parallel
-    await Promise.all([
-      transporter.sendMail(userMailOptions),
-      transporter.sendMail(adminMailOptions)
+    const [userResult, adminResult] = await Promise.all([
+      sendBrevoEmail({
+        to: [{ email: userEmail }],
+        subject: userMailOptions.subject,
+        html: userMailOptions.html,
+      }),
+      sendBrevoEmail({
+        to: [{ email: adminEmail }],
+        subject: adminMailOptions.subject,
+        html: adminMailOptions.html,
+      }),
     ]);
 
-    console.log(`Form notifications sent successfully for ${userName} (${userEmail})`);
+    if (!userResult.success || !adminResult.success) {
+      throw new Error(userResult.error || adminResult.error || 'Brevo email delivery failed.');
+    }
+
+    console.log(`Form notifications sent successfully for ${userName} (${userEmail}) via Brevo`);
     return { success: true };
   } catch (err: any) {
-    smtpAuthFailed = true;
     console.log(`[Email Sandbox Activated] Form notification (${formType}) saved for ${userEmail}`);
     return { success: true };
   }
@@ -577,28 +597,14 @@ async function sendFormNotifications(
 
 // Mail Notification helper for accepted/approved college partners
 async function sendCollegeAcceptanceEmail(email: string, collegeName: string): Promise<{ success: boolean; error?: string }> {
-  const host = process.env.SMTP_HOST;
-  const port = process.env.SMTP_PORT;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  const sender = process.env.SMTP_SENDER || 'no-reply@indorecolleges.org';
-
-  if (!isSmtpConfigured()) {
+  if (!isBrevoConfigured()) {
     console.log(`[Email Sandbox] College approval email logged for ${collegeName} (${email})`);
     return { success: true };
   }
 
   try {
-    const transporter = nodemailer.createTransport({
-      host,
-      port: Number(port) || 587,
-      secure: Number(port) === 465,
-      auth: { user, pass }
-    });
-
-    const mailOptions = {
-      from: `"Indore Colleges Portal" <${sender}>`,
-      to: email,
+    const mailResult = await sendBrevoEmail({
+      to: [{ email }],
       subject: `🎉 Congratulations! Your College "${collegeName}" has been Approved!`,
       html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #e5e7eb; border-radius: 16px; background-color: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
@@ -617,14 +623,17 @@ async function sendCollegeAcceptanceEmail(email: string, collegeName: string): P
           <hr style="border: 0; border-top: 1px solid #f3f4f6; margin: 30px 0;" />
           <p style="font-size: 12px; color: #9ca3af; text-align: center; margin-bottom: 0;">Warm regards,<br>The Indore Colleges Admissions Board</p>
         </div>
-      `
-    };
+      `,
+    });
 
-    await transporter.sendMail(mailOptions);
-    console.log(`College approval email sent successfully to ${email}`);
+    if (mailResult.success) {
+      console.log(`College approval email sent successfully to ${email} via Brevo`);
+      return { success: true };
+    }
+
+    console.log(`[Email Sandbox Activated] College approval logged for ${collegeName} (${email})`);
     return { success: true };
   } catch (err: any) {
-    smtpAuthFailed = true;
     console.log(`[Email Sandbox Activated] College approval logged for ${collegeName} (${email})`);
     return { success: true };
   }
@@ -865,7 +874,7 @@ async function startServer() {
       await db.collection('callback_requests').insertOne(newCallback);
 
       // Determine recipient email or fallback to admin
-      const userNotificationEmail = newCallback.email || 'vishalsinghvicky95@gmail.com';
+      const userNotificationEmail = newCallback.email || process.env.ADMIN_EMAIL || 'admin@indorecolleges.org';
 
       // Trigger user confirmation and admin notification emails asynchronously
       sendFormNotifications(
@@ -1036,7 +1045,7 @@ async function startServer() {
   // AUTHENTICATION & PROFILE MANAGEMENT ENDPOINTS
   // ==========================================
 
-  // 1. Send OTP via SMTP
+  // 1. Send OTP via Brevo
   app.post('/api/auth/send-otp', async (req, res) => {
     const { email } = req.body;
     if (!email) {
