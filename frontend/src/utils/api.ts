@@ -81,4 +81,5 @@ export async function apiFetchWithTimeout(input: RequestInfo, init: RequestInit 
     return response;
   } finally {
     window.clearTimeout(timeoutId);
+  }
 }
