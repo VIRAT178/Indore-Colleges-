@@ -26,7 +26,7 @@ This repo can be deployed as a single Node service or as a split frontend/backen
 ### Single service deployment
 
 1. Set the production environment variables in your host: `GEMINI_API_KEY`, `MONGODB_URI`, `BREVO_API_KEY`, `BREVO_SENDER_EMAIL`, `BREVO_SENDER_NAME`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD`.
-2. Build and start the root app with `npm run build` and `npm start`.
+2. Start the root app with `npm start`; it will build `dist/server.cjs` before launching.
 3. The server will serve the built frontend and the API from the same domain.
 
 ### Split deployment
