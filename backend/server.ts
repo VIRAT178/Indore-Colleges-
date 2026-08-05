@@ -680,21 +680,52 @@ export async function startServer() {
   const app = express();
   const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
-  const allowedOrigins = [
+  const allowedOrigins = new Set([
     'https://indore-colleges.vercel.app',
     'https://indore-colleges-e649.vercel.app',
-    'http://localhost:5173',
-    // Custom production domains (Render frontend uses a custom domain)
     'https://indorecolleges.in',
-    'https://www.indorecolleges.in'
-  ];
+    'https://www.indorecolleges.in',
+    'http://localhost:5173'
+  ]);
+
+  function isAllowedOrigin(origin: string) {
+    if (allowedOrigins.has(origin)) {
+      return true;
+    }
+
+    try {
+      const parsed = new URL(origin);
+      const hostname = parsed.hostname.toLowerCase();
+
+      if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        return parsed.protocol === 'http:';
+      }
+
+      if (hostname === 'indorecolleges.in' || hostname.endsWith('.indorecolleges.in')) {
+        return parsed.protocol === 'https:';
+      }
+
+      if (hostname === 'indore-colleges.vercel.app' || hostname.endsWith('.vercel.app')) {
+        return parsed.protocol === 'https:';
+      }
+
+      if (hostname === 'indore-colleges.onrender.com') {
+        return parsed.protocol === 'https:';
+      }
+    } catch {
+      return false;
+    }
+
+    return false;
+  }
 
   const corsOptions = {
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || isAllowedOrigin(origin)) {
         callback(null, true);
       } else {
-        callback(new Error('CORS policy violation'));
+        console.warn(`[CORS] Blocked origin: ${origin}`);
+        callback(null, false);
       }
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
