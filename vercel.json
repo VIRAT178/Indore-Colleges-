@@ -2,18 +2,18 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/index.ts",
+      "src": "backend/api/index.ts",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api",
-      "dest": "/api/index.ts"
+      "dest": "/backend/api/index.ts"
     },
     {
       "src": "/api/(.*)",
-      "dest": "/api/index.ts?path=$1"
+      "dest": "/backend/api/index.ts?path=$1"
     },
     {
       "handle": "filesystem"
