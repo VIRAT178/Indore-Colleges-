@@ -63,7 +63,7 @@ export default function CollegeDetailPage({
   const fetchReviews = async () => {
     setLoadingReviews(true);
     try {
-      const res = await apiFetch(`/api/reviews/${institute.id}`);
+      const res = await fetch(`/api/reviews/${institute.id}`);
       if (res.ok) {
         const data = await res.json();
         setReviews(data);
@@ -81,7 +81,7 @@ export default function CollegeDetailPage({
 
     setSubmittingReview(true);
     try {
-      const res = await apiFetch('/api/reviews', {
+      const res = await fetch('/api/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

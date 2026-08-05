@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, ShieldCheck, User, ArrowRight, Loader2, RefreshCw, X } from 'lucide-react';
 import { UserProfile } from '../types';
-import { apiFetchWithTimeout } from '../utils/api';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -20,17 +19,6 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
   const [successMsg, setSuccessMsg] = useState('');
   const [devOtp, setDevOtp] = useState<string | null>(null);
   const [countdown, setCountdown] = useState(0);
-
-  const fetchWithTimeout = async (input: RequestInfo, init: RequestInit = {}, timeoutMs = 45000) => {
-    const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
-    try {
-      const response = await fetch(input, { ...init, signal: controller.signal });
-      return response;
-    } finally {
-      window.clearTimeout(timeoutId);
-    }
-  };
 
   useEffect(() => {
     if (!isOpen) {
@@ -66,15 +54,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
     setSuccessMsg('');
 
     try {
-      const res = await apiFetchWithTimeout('/api/auth/send-otp', {
+      const res = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, name }),
-      }, 45000);
+      });
 
-      if (!res) {
-        throw new Error('No response from server.');
-      }
       const data = await res.json();
       if (res.ok) {
         setStep('otp');
@@ -86,12 +71,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
       } else {
         setError(data.error || 'Failed to send verification code. Please try again.');
       }
-    } catch (err: any) {
-      if (err.name === 'AbortError') {
-        setError('Request timed out. Please try again.');
-      } else {
-        setError('Connection failure. Could not contact verification server.');
-      }
+    } catch (err) {
+      setError('Connection failure. Could not contact verification server.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -109,15 +90,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
     setError('');
 
     try {
-      const res = await apiFetchWithTimeout('/api/auth/verify-otp', {
+      const res = await fetch('/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, name }),
-      }, 45000);
+      });
 
-      if (!res) {
-        throw new Error('No response from server.');
-      }
       const data = await res.json();
       if (res.ok) {
         setSuccessMsg('Verification successful! Logging you in...');
@@ -128,12 +106,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
       } else {
         setError(data.error || 'Invalid or expired verification code.');
       }
-    } catch (err: any) {
-      if (err.name === 'AbortError') {
-        setError('Request timed out. Please try again.');
-      } else {
-        setError('Verification connection error.');
-      }
+    } catch (err) {
+      setError('Verification connection error.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -286,24 +260,6 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
                   <span>{countdown > 0 ? `Resend in ${countdown}s` : 'Resend Code'}</span>
                 </button>
               </div>
-
-              {countdown === 0 && (
-                <div className="mt-3 p-3 rounded-xl bg-yellow-50 border border-yellow-100 text-yellow-800 text-xs font-semibold">
-                  ⚠️ Your verification code has expired. Please resend a new code.
-                </div>
-              )}
-
-              {devOtp && (
-                <div className="mt-4 p-3 rounded-xl bg-amber-50/60 border border-dashed border-amber-200 text-[11px] text-amber-900 leading-relaxed">
-                  <p className="font-bold text-amber-950 mb-1">🔬 Sandbox Mode & Dev Preview</p>
-                  <p className="text-gray-600 mb-2">
-                    To make testing effortless without a real mail service, you can log in instantly with this bypass code:
-                  </p>
-                  <div className="flex items-center justify-center bg-white border border-amber-300 rounded-lg p-2 font-mono text-base font-black text-amber-950 select-all tracking-widest">
-                    {devOtp}
-                  </div>
-                </div>
-              )}
             </form>
           )}
 

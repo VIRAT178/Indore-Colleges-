@@ -3,9 +3,6 @@ services:
     name: indore-colleges
     env: node
     plan: free
-    branch: main
-    rootDir: .
-    installCommand: npm install
-    buildCommand: npm run build
-    startCommand: npm run start
+    buildCommand: npm install && npm run build
+    startCommand: npm start
     autoDeploy: true

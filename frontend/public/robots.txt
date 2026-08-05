@@ -1,5 +1,4 @@
 User-agent: *
-
 Allow: /
 
-Sitemap: https://indorecolleges.in/sitemap.xml
+Sitemap: https://indore-colleges.com/sitemap.xml

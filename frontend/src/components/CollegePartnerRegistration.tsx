@@ -25,7 +25,6 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { INDORE_LOCATIONS, CATEGORIES, BOARDS } from '../data/indoreData';
-import { apiFetch } from '../utils/api';
 
 export default function CollegePartnerRegistration() {
   const [activeTab, setActiveTab] = useState<'register' | 'login' | 'dashboard'>('register');
@@ -81,7 +80,7 @@ export default function CollegePartnerRegistration() {
     setLoading(true);
 
     try {
-      const res = await apiFetch('/api/college-partner/register', {
+      const res = await fetch('/api/college-partner/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -129,7 +128,7 @@ export default function CollegePartnerRegistration() {
     setLoading(true);
 
     try {
-      const res = await apiFetch('/api/college-partner/login', {
+      const res = await fetch('/api/college-partner/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: contactEmail, password })
@@ -156,7 +155,7 @@ export default function CollegePartnerRegistration() {
     setLoading(true);
 
     try {
-      const res = await apiFetch(`/api/college-partner/${loggedInCollege.id}`, {
+      const res = await fetch(`/api/college-partner/${loggedInCollege.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(loggedInCollege)
@@ -184,7 +183,7 @@ export default function CollegePartnerRegistration() {
     setLoading(true);
 
     try {
-      const res = await apiFetch(`/api/college-partner/${loggedInCollege.id}`, {
+      const res = await fetch(`/api/college-partner/${loggedInCollege.id}`, {
         method: 'DELETE'
       });
 

@@ -13,11 +13,12 @@ import {
   Linkedin, 
   Youtube, 
   MessageCircle, 
-  Globe 
+  Globe,
+  ExternalLink 
 } from 'lucide-react';
 
 interface FooterProps {
-  setActiveTab: (tab: 'home' | 'explore' | 'register' | 'dashboard' | 'browse-campus' | 'blogs' | 'about' | 'careers' | 'contact') => void;
+  setActiveTab: (tab: 'home' | 'explore' | 'register' | 'dashboard' | 'blogs' | 'about' | 'careers' | 'contact') => void;
   setInstituteTypeFilter: (type: 'all' | 'school' | 'college') => void;
   setSelectedCategory: (cat: string) => void;
   setSelectedBoard: (board: string) => void;
@@ -59,10 +60,10 @@ export default function Footer({
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         
         {/* TOP SECTION: Logo, description, and Higher Ed directories */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-red-600/20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8 pb-12 border-b border-red-600/20">
           
           {/* Column 1: Brand & Contacts */}
-          <div className="space-y-5">
+          <div className="space-y-5 xl:col-span-1">
             {/* Elegant Logo matching Header Brand style */}
             <div 
               onClick={() => {
@@ -74,7 +75,7 @@ export default function Footer({
               <Logo light />
             </div>
 
-            <p className="text-[12px] text-gray-300 leading-relaxed max-w-sm">
+            <p className="text-[12px] text-gray-300 leading-relaxed">
               Indore Colleges is Central India's leading comprehensive college, university, and professional higher education search directory for Indore.
             </p>
 
@@ -93,7 +94,53 @@ export default function Footer({
             </div>
           </div>
 
-          {/* Column 2: Engineering & Tech links */}
+          {/* Column 2: Useful University Portals */}
+          <div>
+            <h4 className="text-sm font-bold text-white mb-5 uppercase tracking-wider relative after:content-[''] after:absolute after:bottom-[-6px] after:left-0 after:w-8 after:h-[2px] after:bg-red-600 flex items-center gap-1.5">
+              <span>Useful Portals</span>
+              <span className="text-[10px] bg-red-600/30 text-red-400 px-1.5 py-0.5 rounded font-black">NEW</span>
+            </h4>
+            <ul className="space-y-3 text-[12px] text-gray-300">
+              <li>
+                <a href="https://www.dauniv.ac.in/" target="_blank" rel="noopener noreferrer" className="hover:text-red-400 hover:underline transition flex items-center justify-between group">
+                  <span>DAVV Indore Portal</span>
+                  <ExternalLink className="h-3 w-3 text-gray-500 group-hover:text-red-400 transition" />
+                </a>
+              </li>
+              <li>
+                <a href="https://www.rgpv.ac.in/" target="_blank" rel="noopener noreferrer" className="hover:text-red-400 hover:underline transition flex items-center justify-between group">
+                  <span>RGPV Tech University</span>
+                  <ExternalLink className="h-3 w-3 text-gray-500 group-hover:text-red-400 transition" />
+                </a>
+              </li>
+              <li>
+                <a href="http://brauss.in/" target="_blank" rel="noopener noreferrer" className="hover:text-red-400 hover:underline transition flex items-center justify-between group">
+                  <span>BRAUSS Social Sciences</span>
+                  <ExternalLink className="h-3 w-3 text-gray-500 group-hover:text-red-400 transition" />
+                </a>
+              </li>
+              <li>
+                <a href="https://www.iiti.ac.in/" target="_blank" rel="noopener noreferrer" className="hover:text-red-400 hover:underline transition flex items-center justify-between group">
+                  <span>IITI (IIT Indore)</span>
+                  <ExternalLink className="h-3 w-3 text-gray-500 group-hover:text-red-400 transition" />
+                </a>
+              </li>
+              <li>
+                <a href="https://www.iimidr.ac.in/" target="_blank" rel="noopener noreferrer" className="hover:text-red-400 hover:underline transition flex items-center justify-between group">
+                  <span>IIMI (IIM Indore)</span>
+                  <ExternalLink className="h-3 w-3 text-gray-500 group-hover:text-red-400 transition" />
+                </a>
+              </li>
+              <li>
+                <a href="https://epravesh.mponline.gov.in/" target="_blank" rel="noopener noreferrer" className="hover:text-red-400 hover:underline transition flex items-center justify-between group">
+                  <span>MP E-Pravesh Portal</span>
+                  <ExternalLink className="h-3 w-3 text-gray-500 group-hover:text-red-400 transition" />
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Engineering & Tech links */}
           <div>
             <h4 className="text-sm font-bold text-white mb-5 uppercase tracking-wider relative after:content-[''] after:absolute after:bottom-[-6px] after:left-0 after:w-8 after:h-[2px] after:bg-red-600">
               Engineering & Tech
@@ -127,7 +174,7 @@ export default function Footer({
             </ul>
           </div>
 
-          {/* Column 3: Management & Commerce links */}
+          {/* Column 4: Business & MBA links */}
           <div>
             <h4 className="text-sm font-bold text-white mb-5 uppercase tracking-wider relative after:content-[''] after:absolute after:bottom-[-6px] after:left-0 after:w-8 after:h-[2px] after:bg-red-600">
               Business & MBA
@@ -161,7 +208,7 @@ export default function Footer({
             </ul>
           </div>
 
-          {/* Column 4: Professional Streams links */}
+          {/* Column 5: Professional Streams links */}
           <div>
             <h4 className="text-sm font-bold text-white mb-5 uppercase tracking-wider relative after:content-[''] after:absolute after:bottom-[-6px] after:left-0 after:w-8 after:h-[2px] after:bg-red-600">
               Professional Degrees

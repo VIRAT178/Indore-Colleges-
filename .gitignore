@@ -1,8 +1,10 @@
 node_modules/
-build/
 dist/
-coverage/
-.DS_Store
-*.log
+frontend/node_modules/
+frontend/dist/
 .env*
 !.env.example
+frontend/.env*
+frontend/!.env.example
+*.log
+.DS_Store

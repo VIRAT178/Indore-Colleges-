@@ -32,7 +32,7 @@ export default function ContactUsPage() {
 
     setSubmitting(true);
     try {
-      const res = await apiFetch('/api/contact', {
+      const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

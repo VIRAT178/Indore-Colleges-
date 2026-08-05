@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { User, LogOut, Trash2, Save, Calendar, Phone, Mail, BookOpen, Heart, ShoppingBag, X, Loader2 } from 'lucide-react';
-import { apiFetch } from '../utils/api';
 import { UserProfile, CounselingRequest, CallbackRequest, Institute } from '../types';
 import { INDORE_INSTITUTES } from '../data/indoreData';
 
@@ -66,7 +65,7 @@ export default function ProfileModal({
   const fetchHistory = async () => {
     setHistoryLoading(true);
     try {
-      const res = await apiFetch(`/api/users/history/${encodeURIComponent(user.email)}`);
+      const res = await fetch(`/api/users/history/${encodeURIComponent(user.email)}`);
       if (res.ok) {
         const data = await res.json();
         setHistoryData(data);
@@ -97,7 +96,7 @@ export default function ProfileModal({
         pincode
       };
 
-      const res = await apiFetch(`/api/users/profile/${encodeURIComponent(user.email)}`, {
+      const res = await fetch(`/api/users/profile/${encodeURIComponent(user.email)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedProfile)
@@ -126,7 +125,7 @@ export default function ProfileModal({
     setDeleting(true);
     setStatusMessage('');
     try {
-      const res = await apiFetch(`/api/users/profile/${encodeURIComponent(user.email)}`, {
+      const res = await fetch(`/api/users/profile/${encodeURIComponent(user.email)}`, {
         method: 'DELETE'
       });
 

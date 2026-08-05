@@ -5,7 +5,6 @@
 
 import React, { useState } from 'react';
 import { Calendar, Clock, User, Phone, Mail, FileText, CheckCircle, X } from 'lucide-react';
-import { apiFetch } from '../utils/api';
 import { motion, AnimatePresence } from 'motion/react';
 import { Institute } from '../types';
 
@@ -34,7 +33,7 @@ export default function SidebarCounseling({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!parentName || !classOrDegree || !phone || !email || !date) return;
+    if (!parentName || !classOrDegree || !phone || !date) return;
 
     setSubmitting(true);
     try {
@@ -42,7 +41,7 @@ export default function SidebarCounseling({
         ? `[Inquiry regarding ${selectedInstitute.name}] ${query}`.trim()
         : query;
 
-      const res = await apiFetch('/api/counseling', {
+      const res = await fetch('/api/counseling', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -50,7 +49,7 @@ export default function SidebarCounseling({
           studentName,
           studentClassOrDegree: classOrDegree,
           phone,
-          email,
+          email: email || '',
           preferredSlot,
           date,
           query: fullQuery
@@ -196,22 +195,6 @@ export default function SidebarCounseling({
                       className="flex-1 px-3 py-2.5 text-xs text-gray-800 bg-white focus:outline-none"
                     />
                   </div>
-                </div>
-
-                {/* Email */}
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 flex items-center">
-                    <Mail className="h-3.5 w-3.5 mr-1 text-gray-400" />
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="student@example.com"
-                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-xs text-gray-800 bg-white focus:border-red-600 focus:outline-none focus:ring-1 focus:ring-red-600"
-                  />
                 </div>
 
                 {/* Date Selection */}

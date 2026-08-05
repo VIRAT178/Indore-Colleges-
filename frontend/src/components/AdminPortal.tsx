@@ -28,7 +28,6 @@ import {
   X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { apiFetch } from '../utils/api';
 
 interface PartnerRequest {
   id: string;
@@ -87,10 +86,10 @@ export default function AdminPortal() {
     setLoading(true);
     try {
       const [resPartners, resCounseling, resCallbacks, resUsers] = await Promise.all([
-        apiFetch('/api/admin/all-registrations'),
-        apiFetch('/api/admin/counseling-leads'),
-        apiFetch('/api/admin/callback-leads'),
-        apiFetch('/api/admin/user-profiles')
+        fetch('/api/admin/all-registrations'),
+        fetch('/api/admin/counseling-leads'),
+        fetch('/api/admin/callback-leads'),
+        fetch('/api/admin/user-profiles')
       ]);
 
       const dataPartners = await resPartners.json();
@@ -116,7 +115,7 @@ export default function AdminPortal() {
     setLoading(true);
 
     try {
-      const res = await apiFetch('/api/admin/login', {
+      const res = await fetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: adminEmail, password: adminPassword })
@@ -147,7 +146,7 @@ export default function AdminPortal() {
     setErrorMsg('');
     setSuccessMsg('');
     try {
-      const res = await apiFetch(`/api/admin/registration-status/${id}`, {
+      const res = await fetch(`/api/admin/registration-status/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
@@ -255,13 +254,6 @@ export default function AdminPortal() {
               {loading ? 'Authorizing Access...' : 'Authenticate & Unlock Dashboard'}
             </button>
           </form>
-
-          {/* Development Hints */}
-          <div className="mt-6 bg-slate-50 p-4 border border-slate-100 rounded-xl text-center">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Demo / Sandbox Admin Access Credentials</p>
-            <p className="text-xs text-slate-600 font-mono mt-1">Email: <span className="font-bold text-slate-900">admin@indorecolleges.org</span></p>
-            <p className="text-xs text-slate-600 font-mono">Password: <span className="font-bold text-slate-900">adminpassword</span></p>
-          </div>
         </div>
       ) : (
         // LOGGED IN ADMIN DASHBOARD

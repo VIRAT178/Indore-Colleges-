@@ -22,7 +22,6 @@ import {
   Activity
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { apiFetch } from '../utils/api';
 import { Institute } from '../types';
 
 interface VirtualAdvisorModalProps {
@@ -144,7 +143,7 @@ export default function VirtualAdvisorModal({
 
     try {
       // 1. Submit real lead ticket to persistent backend /api/counseling
-      const response = await apiFetch('/api/counseling', {
+      const response = await fetch('/api/counseling', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

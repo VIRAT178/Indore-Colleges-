@@ -42,11 +42,10 @@ import { motion, AnimatePresence } from 'motion/react';
 import { INDORE_INSTITUTES } from '../data/indoreData';
 import Logo from './Logo';
 import { UserProfile } from '../types';
-import { apiFetch } from '../utils/api';
 
 interface HeaderProps {
-  activeTab: 'home' | 'explore' | 'register' | 'dashboard' | 'browse-campus' | 'blogs' | 'about' | 'careers' | 'contact' | 'college-portal' | 'admin-panel';
-  setActiveTab: (tab: 'home' | 'explore' | 'register' | 'dashboard' | 'browse-campus' | 'blogs' | 'about' | 'careers' | 'contact' | 'college-portal' | 'admin-panel') => void;
+  activeTab: 'home' | 'explore' | 'register' | 'dashboard' | 'blogs' | 'about' | 'careers' | 'contact' | 'college-portal' | 'admin-panel';
+  setActiveTab: (tab: 'home' | 'explore' | 'register' | 'dashboard' | 'blogs' | 'about' | 'careers' | 'contact' | 'college-portal' | 'admin-panel') => void;
   instituteTypeFilter: 'all' | 'school' | 'college';
   setInstituteTypeFilter: (type: 'all' | 'school' | 'college') => void;
   
@@ -104,6 +103,42 @@ export default function Header({
   const [bulkPhone, setBulkPhone] = useState('');
   const [bulkSubmitting, setBulkSubmitting] = useState(false);
   const [bulkSuccess, setBulkSuccess] = useState(false);
+
+  // Scroll & Header Search & Announcement Ticker states
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [tickerIndex, setTickerIndex] = useState(0);
+  const [headerSearchInput, setHeaderSearchInput] = useState('');
+
+  const TICKER_ANNOUNCEMENTS = [
+    "🔥 MP E-Pravesh & DAVV CET 2026-27: Counselling & Direct Admissions Active!",
+    "🎓 100% Free 1-on-1 Expert College Counseling & Cutoff Analysis for Indore Students",
+    "⭐ Explore 50+ Verified Colleges: IIT Indore, IIM Indore, SGSITS, DAVV & SUAS",
+    "💼 Placement Reports & Scholarship Fee Waiver Breakdown Available Now"
+  ];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 15);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTickerIndex((prev) => (prev + 1) % TICKER_ANNOUNCEMENTS.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [TICKER_ANNOUNCEMENTS.length]);
+
+  const handleHeaderSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!headerSearchInput.trim()) return;
+    setActiveTab('explore');
+    setInstituteTypeFilter('college');
+    setSearchQuery(headerSearchInput.trim());
+    window.scrollTo({ top: 400, behavior: 'smooth' });
+  };
 
   // References for dropdown closing on click outside
   const headerRef = useRef<HTMLDivElement>(null);
@@ -198,7 +233,7 @@ export default function Header({
     const queryStr = `Bulk Admissions Basket Inquiry. Selected institutes: ${instituteNames || 'None Selected'}`;
 
     try {
-      const res = await apiFetch('/api/callback', {
+      const res = await fetch('/api/callback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -235,117 +270,104 @@ export default function Header({
   };
 
   return (
-    <div ref={headerRef} className="w-full z-40 sticky top-0 bg-white shadow-sm font-sans">
+    <div ref={headerRef} className="w-full z-40 sticky top-0 font-outfit select-none">
       
-      {/* 2. MAIN NAVBAR */}
-      <header className="border-b border-gray-100 bg-white">
-        <div className="mx-auto max-w-7xl h-20 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      {/* 2. MAIN GLASSMORPHIC NAVBAR */}
+      <header className={`transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-white/95 backdrop-blur-md shadow-md border-b border-slate-200/90 py-2.5' 
+          : 'bg-white border-b border-gray-100/90 py-3.5'
+      }`}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           
-          {/* A. Brand Logo with exact user requested scale/dimensions */}
-          <div 
+          {/* A. Brand Logo */}
+          <motion.div 
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => {
               setActiveTab('home');
               setActiveDropdown(null);
             }}
-            className="flex items-center cursor-pointer select-none group transform scale-90 sm:scale-95 origin-left"
+            className="flex items-center cursor-pointer select-none group transform scale-90 sm:scale-95 origin-left shrink-0"
           >
             <Logo />
-          </div>
+          </motion.div>
 
-          {/* B. Navigation Items (Desktop) */}
-          <nav className="hidden lg:flex items-center space-x-1.5">
+          {/* B. Navigation Items (Desktop) with Animated Active Pill */}
+          <nav className="hidden lg:flex items-center space-x-1 p-1 bg-slate-100/70 rounded-full border border-slate-200/60 shadow-inner">
             
-            {/* Home Link */}
-            <button
-              onClick={() => {
-                setActiveTab('home');
-                setActiveDropdown(null);
-              }}
-              className={`px-3 py-2 text-sm font-semibold rounded-lg transition ${
-                activeTab === 'home'
-                  ? 'text-red-600 bg-red-50' 
-                  : 'text-gray-800 hover:bg-gray-50'
-              }`}
-            >
-              Home
-            </button>
+            {[
+              { id: 'home', label: 'Home' },
+              { id: 'explore', label: 'Colleges & Universities', type: 'college' },
+              { id: 'register', label: 'Direct Apply', badge: 'HOT' },
+              { id: 'blogs', label: 'Reviews', badge: 'VERIFIED' },
+              { id: 'college-portal', label: 'College Portal' }
+            ].map((item) => {
+              const isActive = item.type 
+                ? (activeTab === 'explore' && instituteTypeFilter === 'college')
+                : (activeTab === item.id);
 
-            {/* Colleges & Universities (Direct Trigger) */}
-            <button
-              onClick={() => {
-                handleFilterClick('college');
-              }}
-              className={`px-3 py-2 text-sm font-semibold rounded-lg transition ${
-                activeTab === 'explore' && instituteTypeFilter === 'college'
-                  ? 'text-red-600 bg-red-50' 
-                  : 'text-gray-800 hover:bg-gray-50'
-              }`}
-            >
-              Colleges & Universities
-            </button>
-
-            {/* Direct Apply (Switches activeTab) */}
-            <button
-              onClick={() => {
-                setActiveTab('register');
-                setActiveDropdown(null);
-              }}
-              className={`px-3 py-2 text-sm font-semibold rounded-lg transition ${
-                activeTab === 'register' 
-                  ? 'text-red-600 bg-red-50' 
-                  : 'text-gray-800 hover:bg-gray-50'
-              }`}
-            >
-              Direct Apply
-            </button>
-
-            {/* Blogs Trigger */}
-            <button
-              onClick={() => {
-                setActiveTab('blogs');
-                setActiveDropdown(null);
-              }}
-              className={`px-3 py-2 text-sm font-semibold rounded-lg transition ${
-                activeTab === 'blogs' 
-                  ? 'text-red-600 bg-red-50' 
-                  : 'text-gray-800 hover:bg-gray-50'
-              }`}
-            >
-              Blogs
-            </button>
-
-            {/* College Partner Portal Trigger */}
-            <button
-              onClick={() => {
-                setActiveTab('college-portal');
-                setActiveDropdown(null);
-              }}
-              className={`px-3 py-2 text-sm font-semibold rounded-lg transition ${
-                activeTab === 'college-portal' 
-                  ? 'text-red-600 bg-red-50' 
-                  : 'text-gray-800 hover:bg-gray-50'
-              }`}
-            >
-              College Portal
-            </button>
-
-            {/* Browse Campus Live Pill Button */}
-            <button
-              onClick={() => {
-                setActiveTab('browse-campus');
-                setActiveDropdown(null);
-              }}
-              className={`px-3.5 py-1.5 rounded-full flex items-center space-x-2 transition text-xs font-bold ${
-                activeTab === 'browse-campus'
-                  ? 'bg-red-600 text-white shadow-sm'
-                  : 'bg-red-50 hover:bg-red-100 text-red-600 shadow-xs'
-              }`}
-            >
-              <span className={`h-2 w-2 rounded-full animate-pulse ${activeTab === 'browse-campus' ? 'bg-white' : 'bg-red-600'}`} />
-              <span>Browse Campus</span>
-            </button>
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    if (item.type) {
+                      handleFilterClick('college');
+                    } else {
+                      setActiveTab(item.id as any);
+                      setActiveDropdown(null);
+                    }
+                  }}
+                  className={`relative px-4 py-2 text-xs font-bold rounded-full transition-all duration-200 flex items-center gap-1.5 cursor-pointer ${
+                    isActive ? 'text-white' : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/50'
+                  }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="headerActivePill"
+                      className="absolute inset-0 bg-[#0F244C] rounded-full shadow-sm"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">{item.label}</span>
+                  {item.badge && (
+                    <span className={`relative z-10 text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase transition-colors ${
+                      isActive 
+                        ? 'bg-red-500 text-white' 
+                        : item.badge === 'VERIFIED'
+                          ? 'bg-amber-500 text-white shadow-xs font-black ring-2 ring-amber-300/40 animate-pulse'
+                          : 'bg-red-600 text-white animate-pulse'
+                    }`}>
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
 
           </nav>
+
+          {/* C. Quick Header Search Bar (Desktop) */}
+          <form 
+            onSubmit={handleHeaderSearchSubmit}
+            className="hidden xl:flex items-center relative max-w-[220px] w-full"
+          >
+            <input 
+              type="text" 
+              placeholder="Search colleges, MBA, B.Tech..." 
+              value={headerSearchInput}
+              onChange={(e) => setHeaderSearchInput(e.target.value)}
+              className="w-full bg-slate-100/90 hover:bg-slate-100 focus:bg-white text-slate-800 placeholder-slate-400 text-xs rounded-full pl-8 pr-8 py-2 border border-slate-200 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 outline-none transition-all shadow-inner"
+            />
+            <Search className="h-3.5 w-3.5 text-slate-400 absolute left-2.5 pointer-events-none" />
+            <button
+              type="submit"
+              className="absolute right-1.5 bg-[#0F244C] hover:bg-red-600 text-white p-1 rounded-full text-[10px] transition cursor-pointer"
+              title="Search Colleges"
+            >
+              <ArrowRight className="h-3 w-3" />
+            </button>
+          </form>
 
           {/* C. Right Action Icons & Mobile Hamburger */}
           <div className="flex items-center space-x-1 sm:space-x-3">
@@ -423,6 +445,8 @@ export default function Header({
 
 
 
+
+
             {/* Mobile Hamburger menu */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -447,63 +471,6 @@ export default function Header({
               className="absolute left-0 right-0 w-full bg-white border-b border-gray-200 shadow-xl z-50 overflow-hidden max-h-[85vh] overflow-y-auto"
             >
               <div className="mx-auto max-w-7xl px-4 sm:px-8 py-6 sm:py-8">
-                
-                {/* --- BROWSE CAMPUS DESKTOP PANEL --- */}
-                {activeDropdown === 'camps' && (
-                  <div>
-                    <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
-                      <div className="flex items-center space-x-2 text-red-600">
-                        <Sparkle className="h-5 w-5 fill-red-500 animate-spin" style={{ animationDuration: '4s' }} />
-                        <h3 className="text-base font-extrabold uppercase tracking-wide">Indore Colleges Premium Campuses</h3>
-                      </div>
-                      <span className="text-xs text-red-600 bg-red-50 px-2.5 py-0.5 rounded-full font-bold">Verified Infrastructure</span>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-6">
-                      <div className="border border-red-100 bg-red-50/30 p-4 rounded-xl flex flex-col justify-between">
-                        <div>
-                          <span className="text-[9px] bg-red-100 text-red-600 font-bold px-2 py-0.5 rounded uppercase font-mono">501-Acre Green Campus</span>
-                          <h4 className="font-extrabold text-sm text-gray-900 mt-2 mb-1">IIT Indore (Simrol Campus)</h4>
-                          <p className="text-[11px] text-gray-600 leading-relaxed font-normal mb-2">Sprawling state-of-the-art campus featuring world-class laboratories, specialized research cells, and green student residences.</p>
-                        </div>
-                        <span className="text-xs font-bold text-red-600 mt-2 block">Admission Mode: JEE Advanced</span>
-                      </div>
-                      
-                      <div className="border border-red-100 bg-red-50/30 p-4 rounded-xl flex flex-col justify-between">
-                        <div>
-                          <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded uppercase font-mono">193-Acre Scenic Hillock</span>
-                          <h4 className="font-extrabold text-sm text-gray-900 mt-2 mb-1">IIM Indore (Prabandh Shikhar)</h4>
-                          <p className="text-[11px] text-gray-600 leading-relaxed font-normal mb-2">Features outstanding sports centers, olympic swimming pools, high-tech lecture theatres, and premium student hostels.</p>
-                        </div>
-                        <span className="text-xs font-bold text-red-600 mt-2 block">Admission Mode: IPMAT / CAT</span>
-                      </div>
-
-                      <div className="border border-red-100 bg-red-50/30 p-4 rounded-xl flex flex-col justify-between">
-                        <div>
-                          <span className="text-[9px] bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded uppercase font-mono">35-Acre Central-City Hub</span>
-                          <h4 className="font-extrabold text-sm text-gray-900 mt-2 mb-1">SGSITS Indore Campus</h4>
-                          <p className="text-[11px] text-gray-600 leading-relaxed font-normal mb-2">Historic technological hub located in the heart of Indore. Renowned for rich labs, libraries, and direct Placement support.</p>
-                        </div>
-                        {campInterestRegistered ? (
-                          <div className="bg-emerald-50 border border-emerald-100 text-emerald-800 rounded-lg p-2 text-center text-xs font-bold mt-2">
-                            Campus Tour Requested! We will call you.
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => {
-                              setCampInterestRegistered(true);
-                              setTimeout(() => setCampInterestRegistered(false), 3000);
-                            }}
-                            className="w-full text-center py-2 bg-red-600 text-white hover:bg-red-500 rounded-lg text-xs font-bold transition mt-2"
-                          >
-                            Book Free Campus Tour
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
                 {/* --- BLOGS DROPDOWN PANEL --- */}
                 {activeDropdown === 'blogs' && (
                   <div>
@@ -753,6 +720,24 @@ export default function Header({
               {/* Mobile Links List */}
               <div className="flex-1 px-4 py-6 space-y-4 text-xs font-bold text-gray-800">
                 
+                {/* Mobile Search Box */}
+                <form onSubmit={(e) => {
+                  handleHeaderSearchSubmit(e);
+                  setIsMobileMenuOpen(false);
+                }} className="relative mb-2">
+                  <input 
+                    type="text" 
+                    placeholder="Search colleges, MBA, B.Tech..." 
+                    value={headerSearchInput}
+                    onChange={(e) => setHeaderSearchInput(e.target.value)}
+                    className="w-full bg-slate-100 text-slate-800 placeholder-slate-400 text-xs rounded-xl pl-8 pr-8 py-2.5 border border-slate-200 outline-none focus:border-red-500 font-outfit"
+                  />
+                  <Search className="h-4 w-4 text-slate-400 absolute left-2.5 top-3 pointer-events-none" />
+                  <button type="submit" className="absolute right-2 top-2 bg-[#0F244C] text-white p-1 rounded-lg text-xs">
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </button>
+                </form>
+                
                 {/* Home Link */}
                 <div className="border-b border-gray-100 pb-3">
                   <button
@@ -782,25 +767,6 @@ export default function Header({
                   </button>
                 </div>
 
-                {/* 2. Browse Campus (Direct View Transition) */}
-                <div className="border-b border-gray-100 pb-3">
-                  <button
-                    onClick={() => {
-                      setActiveTab('browse-campus');
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className={`flex justify-between items-center w-full text-left py-1 text-sm font-bold transition ${
-                      activeTab === 'browse-campus' ? 'text-red-600' : 'text-gray-900'
-                    }`}
-                  >
-                    <span className="flex items-center gap-1.5 font-extrabold text-red-600 animate-pulse">
-                      <span className="h-2 w-2 rounded-full bg-red-600" />
-                      Browse Campus
-                    </span>
-                    <ChevronRight className="h-4 w-4 text-gray-400" />
-                  </button>
-                </div>
-
                 {/* Direct Apply trigger */}
                 <button
                   onClick={() => {
@@ -812,17 +778,20 @@ export default function Header({
                   Direct Apply
                 </button>
 
-                {/* Blogs trigger */}
+                {/* Reviews trigger */}
                 <button
                   onClick={() => {
                     setActiveTab('blogs');
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`block text-left py-1 text-sm w-full border-b border-gray-100 pb-3 transition ${
-                    activeTab === 'blogs' ? 'text-red-600 font-extrabold' : 'text-gray-900'
+                  className={`flex items-center justify-between py-1 text-sm w-full border-b border-gray-100 pb-3 transition ${
+                    activeTab === 'blogs' ? 'text-red-600 font-extrabold' : 'text-gray-900 font-bold'
                   }`}
                 >
-                  Blogs
+                  <span>Reviews</span>
+                  <span className="text-[9px] bg-amber-500 text-white font-black px-1.5 py-0.5 rounded-full uppercase">
+                    VERIFIED
+                  </span>
                 </button>
 
                 {/* College Portal trigger */}

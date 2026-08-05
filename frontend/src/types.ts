@@ -12,6 +12,8 @@ export interface Institute {
   location: string; // e.g. "Residency Area", "Simrol", "Bypass Road", "Vijay Nagar", "Rau", "Sanwer Road", "Manik Bagh"
   feePerAnnum: number; // in INR
   rating: number;
+  googleRating?: number;
+  indoreRating?: number;
   totalReviews: number;
   image: string;
   description: string;
@@ -72,7 +74,7 @@ export interface CounselingRequest {
   studentName?: string;
   studentClassOrDegree: string; // e.g. "Class 9", "B.Tech", "MBA"
   phone: string;
-  email: string;
+  email?: string;
   preferredSlot: string; // "Morning (9 AM - 12 PM)" | "Afternoon (12 PM - 4 PM)" | "Evening (4 PM - 7 PM)"
   date: string;
   query?: string;

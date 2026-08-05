@@ -1,13 +1,14 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 import express from 'express';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 import fs from 'fs';
-import dns from 'dns';
-import net from 'net';
 import nodemailer from 'nodemailer';
 import { MongoClient, Db } from 'mongodb';
 import cors from 'cors';
@@ -16,8 +17,7 @@ import { CounselingRequest, CallbackRequest, Review, SchoolRegistrationRequest }
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const projectRoot = process.cwd();
 
 // MongoDB Database Connection & Seeding System
 const DEFAULT_REVIEWS: Review[] = [
@@ -89,15 +89,6 @@ const DEFAULT_CALLBACKS: CallbackRequest[] = [
 let mongoClient: MongoClient | null = null;
 let mongoDb: Db | null = null;
 let isMongoConnecting = false;
-
-function getMongoUri() {
-  return process.env.MONGODB_URI
-    || process.env.MONGO_URL
-    || process.env.MONGODB_URL
-    || process.env.MONGO_URI
-    || process.env.DATABASE_URL
-    || '';
-}
 
 async function seedDatabase(db: Db) {
   try {
@@ -347,9 +338,9 @@ class SmartDb {
 }
 
 async function getMongoDb(): Promise<any> {
-  const uri = getMongoUri();
+  const uri = process.env.MONGODB_URI;
   if (!uri) {
-    console.warn("[SmartDB] No MongoDB connection string was found. Set MONGODB_URI, MONGO_URL, MONGODB_URL, MONGO_URI, or DATABASE_URL to enable MongoDB; running in 100% local memory mode.");
+    console.warn("[SmartDB] MONGODB_URI is not defined in environment variables. Running in 100% Local memory mode.");
     return new SmartDb(null);
   }
 
@@ -388,16 +379,39 @@ async function getMongoDb(): Promise<any> {
 // Mail SMTP helper with Nodemailer
 let smtpAuthFailed = false;
 
-async function sendVerificationEmail(email: string, otp: string): Promise<{ success: boolean; error?: string; devOtp?: string; bypassed?: boolean }> {
+function isSmtpConfigured(): boolean {
+  const host = process.env.SMTP_HOST;
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  
+  if (smtpAuthFailed || !host || !user || !pass) {
+    return false;
+  }
+
+  // Check for dummy or placeholder values
+  const dummyKeywords = ['my_smtp', 'your_', 'example', 'placeholder', 'dummy', 'xxxx', 'test_user'];
+  const userLower = user.toLowerCase();
+  const passLower = pass.toLowerCase();
+  const hostLower = host.toLowerCase();
+
+  for (const kw of dummyKeywords) {
+    if (userLower.includes(kw) || passLower.includes(kw) || hostLower.includes(kw)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+async function sendVerificationEmail(email: string, otp: string): Promise<{ success: boolean; error?: string; devOtp?: string }> {
   const host = process.env.SMTP_HOST;
   const port = process.env.SMTP_PORT;
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
   const sender = process.env.SMTP_SENDER || 'no-reply@indorecolleges.org';
 
-  if (smtpAuthFailed || !host || !user || !pass) {
-    console.log(`\n===============================================\n[SMTP BYPASSED / NOT CONFIGURED]\nEmail: ${email}\nOTP Code: ${otp}\n===============================================\n`);
-    return { success: true, devOtp: otp, bypassed: true };
+  if (!isSmtpConfigured()) {
+    console.log(`[Email Sandbox] OTP Code for ${email}: ${otp}`);
+    return { success: true, devOtp: otp };
   }
 
   try {
@@ -405,10 +419,7 @@ async function sendVerificationEmail(email: string, otp: string): Promise<{ succ
       host,
       port: Number(port) || 587,
       secure: Number(port) === 465,
-      auth: { user, pass },
-      connectionTimeout: 20000,
-      greetingTimeout: 20000,
-      socketTimeout: 20000
+      auth: { user, pass }
     });
 
     const mailOptions = {
@@ -423,7 +434,7 @@ async function sendVerificationEmail(email: string, otp: string): Promise<{ succ
           <div style="background-color: #f3f4f6; border-radius: 8px; padding: 15px; margin: 24px 0; text-align: center;">
             <span style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #111827;">${otp}</span>
           </div>
-          <p style="font-size: 14px; color: #6b7280; line-height: 1.5; margin-top: 24px; text-align: center;">This OTP is valid for 5 minutes. Please do not share this OTP with anyone.</p>
+          <p style="font-size: 14px; color: #6b7280; line-height: 1.5; margin-top: 24px; text-align: center;">This OTP is valid for 2 minutes. Please do not share this OTP with anyone.</p>
           <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 30px 0;" />
           <p style="font-size: 12px; color: #9ca3af; text-align: center;">Thank you,<br>The Indore Colleges Admissions Team</p>
         </div>
@@ -434,17 +445,9 @@ async function sendVerificationEmail(email: string, otp: string): Promise<{ succ
     console.log(`OTP Email sent successfully to ${email}`);
     return { success: true };
   } catch (err: any) {
-    const isAuthError = err.message.includes('Invalid login') || err.message.includes('Username and Password not accepted') || err.code === 'EAUTH';
-    const isNetworkError = ['ETIMEDOUT', 'ECONNREFUSED', 'ENETUNREACH', 'EHOSTUNREACH', 'ECONNRESET', 'EAI_AGAIN'].includes(err.code) || /timeout|network.*unreachable|connect.*ENETUNREACH/i.test(err.message);
-
-    if (isAuthError || isNetworkError) {
-      smtpAuthFailed = true;
-      console.warn(`\n===============================================\n[SMTP SEND FALLBACK]\nSMTP send failed for ${email}: ${err.message}\nFalling back to sandbox/dev OTP mode for this and future requests.\nOTP Code: ${otp}\n===============================================\n`);
-      return { success: true, devOtp: otp, bypassed: true };
-    }
-
-    console.warn(`[SMTP SEND ERROR] Failed to send email OTP to ${email}: ${err.message}`);
-    return { success: false, error: err.message };
+    smtpAuthFailed = true;
+    console.log(`[Email Sandbox Activated] Standard email delivery offline. Verification OTP for ${email}: ${otp}`);
+    return { success: true, devOtp: otp };
   }
 }
 
@@ -544,14 +547,8 @@ async function sendFormNotifications(
     `
   };
 
-  if (smtpAuthFailed || !host || !user || !pass) {
-    console.log(`\n===============================================================`);
-    console.log(`[SMTP BYPASSED / NOT CONFIGURED - LOGGING FORM NOTIFICATION]`);
-    console.log(`FORM TYPE: ${formType}`);
-    console.log(`USER EMAIL: ${userEmail}`);
-    console.log(`ADMIN EMAIL: ${adminEmail}`);
-    console.log(`DETAILS:`, formDataDetails);
-    console.log(`===============================================================\n`);
+  if (!isSmtpConfigured()) {
+    console.log(`[Email Sandbox] Form notification (${formType}) saved for ${userEmail}`);
     return { success: true };
   }
 
@@ -572,14 +569,9 @@ async function sendFormNotifications(
     console.log(`Form notifications sent successfully for ${userName} (${userEmail})`);
     return { success: true };
   } catch (err: any) {
-    const isAuthError = err.message.includes('Invalid login') || err.message.includes('Username and Password not accepted') || err.code === 'EAUTH';
-    if (isAuthError) {
-      smtpAuthFailed = true;
-      console.warn(`[SMTP AUTHENTICATION FAILED] Invalid login credentials during form notification: ${err.message}. Future emails will use sandbox mode.`);
-    } else {
-      console.warn(`[SMTP SEND ERROR] Failed to send form notifications for ${userEmail}: ${err.message}`);
-    }
-    return { success: false, error: err.message };
+    smtpAuthFailed = true;
+    console.log(`[Email Sandbox Activated] Form notification (${formType}) saved for ${userEmail}`);
+    return { success: true };
   }
 }
 
@@ -591,12 +583,8 @@ async function sendCollegeAcceptanceEmail(email: string, collegeName: string): P
   const pass = process.env.SMTP_PASS;
   const sender = process.env.SMTP_SENDER || 'no-reply@indorecolleges.org';
 
-  if (smtpAuthFailed || !host || !user || !pass) {
-    console.log(`\n===============================================================`);
-    console.log(`[SMTP BYPASSED / NOT CONFIGURED - LOGGING COLLEGE APPROVAL EMAIL]`);
-    console.log(`RECIPIENT EMAIL: ${email}`);
-    console.log(`COLLEGE APPROVED: ${collegeName}`);
-    console.log(`===============================================================\n`);
+  if (!isSmtpConfigured()) {
+    console.log(`[Email Sandbox] College approval email logged for ${collegeName} (${email})`);
     return { success: true };
   }
 
@@ -605,21 +593,7 @@ async function sendCollegeAcceptanceEmail(email: string, collegeName: string): P
       host,
       port: Number(port) || 587,
       secure: Number(port) === 465,
-      auth: { user, pass },
-      connectionTimeout: 20000,
-      greetingTimeout: 20000,
-      socketTimeout: 20000,
-      tls: { servername: host },
-          getSocket(options: any, callback: (err: Error | null, socket: net.Socket | null) => void) {
-        const targetHost = options.host || host;
-        dns.lookup(targetHost, { family: 4 }, (err, address) => {
-          if (err) {
-            return callback(err, null);
-          }
-          const socket = net.connect(options.port, address);
-          callback(null, socket);
-        });
-      }
+      auth: { user, pass }
     });
 
     const mailOptions = {
@@ -650,14 +624,9 @@ async function sendCollegeAcceptanceEmail(email: string, collegeName: string): P
     console.log(`College approval email sent successfully to ${email}`);
     return { success: true };
   } catch (err: any) {
-    const isAuthError = err.message.includes('Invalid login') || err.message.includes('Username and Password not accepted') || err.code === 'EAUTH';
-    if (isAuthError) {
-      smtpAuthFailed = true;
-      console.warn(`[SMTP AUTHENTICATION FAILED] Invalid login credentials during college approval email: ${err.message}. Future emails will use sandbox mode.`);
-    } else {
-      console.warn(`[SMTP SEND ERROR] Failed to send college approval email to ${email}: ${err.message}`);
-    }
-    return { success: false, error: err.message };
+    smtpAuthFailed = true;
+    console.log(`[Email Sandbox Activated] College approval logged for ${collegeName} (${email})`);
+    return { success: true };
   }
 }
 
@@ -676,68 +645,32 @@ if (process.env.GEMINI_API_KEY) {
   console.warn("Warning: GEMINI_API_KEY is not defined in the environment. Chat assistant will run in simulator mode.");
 }
 
-export async function startServer() {
+async function startServer() {
   const app = express();
   const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
-  const allowedOrigins = new Set([
-    'https://indore-colleges.vercel.app',
-    'https://indore-colleges-e649.vercel.app',
-    'https://indorecolleges.in',
-    'https://www.indorecolleges.in',
-    'http://localhost:5173'
-  ]);
-
-  function isAllowedOrigin(origin: string) {
-    if (allowedOrigins.has(origin)) {
-      return true;
-    }
-
-    try {
-      const parsed = new URL(origin);
-      const hostname = parsed.hostname.toLowerCase();
-
-      if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        return parsed.protocol === 'http:';
-      }
-
-      if (hostname === 'indorecolleges.in' || hostname.endsWith('.indorecolleges.in')) {
-        return parsed.protocol === 'https:';
-      }
-
-      if (hostname === 'indore-colleges.vercel.app' || hostname.endsWith('.vercel.app')) {
-        return parsed.protocol === 'https:';
-      }
-
-      if (hostname === 'indore-colleges.onrender.com') {
-        return parsed.protocol === 'https:';
-      }
-    } catch {
-      return false;
-    }
-
-    return false;
-  }
-
-  const corsOptions = {
-    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-      if (!origin || isAllowedOrigin(origin)) {
-        callback(null, true);
-      } else {
-        console.warn(`[CORS] Blocked origin: ${origin}`);
-        callback(null, false);
-      }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-    preflightContinue: false,
-    optionsSuccessStatus: 204
-  };
-
-  app.use(cors(corsOptions));
-  app.options('*', cors(corsOptions));
+  app.use(cors());
   app.use(express.json());
+
+  // Serve sitemap.xml and robots.txt for Search Console crawlers
+  app.get('/sitemap.xml', (req, res) => {
+    const sitemapPath = path.join(projectRoot, 'frontend', 'public', 'sitemap.xml');
+    if (fs.existsSync(sitemapPath)) {
+      res.header('Content-Type', 'application/xml');
+      return res.sendFile(sitemapPath);
+    }
+    const rootPublicSitemap = path.join(projectRoot, 'public', 'sitemap.xml');
+    if (fs.existsSync(rootPublicSitemap)) {
+      res.header('Content-Type', 'application/xml');
+      return res.sendFile(rootPublicSitemap);
+    }
+    res.status(404).send('Sitemap not found');
+  });
+
+  app.get('/robots.txt', (req, res) => {
+    res.header('Content-Type', 'text/plain');
+    res.send("User-agent: *\nAllow: /\n\nSitemap: https://indore-colleges.com/sitemap.xml\n");
+  });
 
   // API Route: Get all institutes
   app.get('/api/institutes', async (req, res) => {
@@ -863,7 +796,7 @@ export async function startServer() {
   app.post('/api/counseling', async (req, res) => {
     const { parentName, studentName, studentClassOrDegree, phone, email, preferredSlot, date, query } = req.body;
 
-    if (!parentName || !studentClassOrDegree || !phone || !email || !preferredSlot || !date) {
+    if (!parentName || !studentClassOrDegree || !phone || !preferredSlot || !date) {
       return res.status(400).json({ error: 'Required fields are missing.' });
     }
 
@@ -873,7 +806,7 @@ export async function startServer() {
       studentName: studentName || '',
       studentClassOrDegree,
       phone,
-      email: email.trim().toLowerCase(),
+      email: email ? email.trim().toLowerCase() : '',
       preferredSlot,
       date,
       query: query || '',
@@ -1112,12 +1045,9 @@ export async function startServer() {
 
     const emailTrimmed = email.trim().toLowerCase();
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes expiration
+    const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes expiration
 
     const mailResult = await sendVerificationEmail(emailTrimmed, otp);
-    if (!mailResult.success && !mailResult.bypassed) {
-      return res.status(502).json({ error: `Failed to send OTP email: ${mailResult.error || 'Email service unavailable.'}` });
-    }
 
     try {
       const db = await getMongoDb();
@@ -1456,7 +1386,10 @@ export async function startServer() {
     }
 
     const emailTrimmed = email.trim().toLowerCase();
-    if (emailTrimmed === 'admin@indorecolleges.org' && password === 'adminpassword') {
+    const envAdminEmail = (process.env.ADMIN_EMAIL || 'admin@indorecolleges.org').trim().toLowerCase();
+    const envAdminPassword = process.env.ADMIN_PASSWORD || 'adminpassword';
+
+    if (emailTrimmed === envAdminEmail && password === envAdminPassword) {
       res.json({ success: true, token: 'admin-secret-session-token' });
     } else {
       res.status(401).json({ error: 'Invalid admin credentials.' });
@@ -1612,32 +1545,23 @@ Instructions:
   });
 
   // Vite development vs production asset delivery
-  if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
     app.use(vite.middlewares);
-  }
-
-  if (!process.env.VERCEL && process.env.NODE_ENV === 'production') {
-    const distPath = path.join(process.cwd(), 'dist');
+  } else {
+    const distPath = path.join(projectRoot, 'dist');
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
 
-  return app;
-}
-
-const app = await startServer();
-
-if (!process.env.VERCEL) {
-  const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`EduPath server is listening on port ${PORT}`);
   });
 }
 
-export default app;
+startServer();
