@@ -499,6 +499,7 @@ async function sendFormNotifications(
   };
 
   const detailsHtml = formatDetailsHtml(formDataDetails);
+  const sender = getBrevoSender().email;
 
   // 1. Email to User (Confirmation)
   const userMailOptions = {
