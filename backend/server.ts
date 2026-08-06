@@ -480,7 +480,7 @@ async function sendFormNotifications(
   formType: string,
   formDataDetails: Record<string, any>
 ): Promise<{ success: boolean; error?: string }> {
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@indorecolleges.org';
+  const adminEmail = process.env.ADMIN_EMAIL || 'mistnick0@gmail.com';
 
   const formatDetailsHtml = (details: Record<string, any>) => {
     return Object.entries(details)
