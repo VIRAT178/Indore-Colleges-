@@ -53,7 +53,7 @@ function ScrollToTopAndSEO() {
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    const siteUrl = 'https://indore-colleges.com';
+    const siteUrl = 'https://indorecolleges.in';
     let pageTitle = "Indore Colleges | Find & Apply to Top Colleges in Indore";
     let pageDescription = 'Discover the best colleges and universities in Indore. Compare courses, fees, placements, campus facilities, and admission guidance.';
     let canonicalPath = pathname;

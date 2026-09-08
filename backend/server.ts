@@ -440,7 +440,7 @@ export async function startServer() {
 
   app.get('/robots.txt', (req, res) => {
     res.header('Content-Type', 'text/plain');
-    res.send("User-agent: *\nAllow: /\n\nSitemap: https://indore-colleges.com/sitemap.xml\n");
+    res.send("User-agent: *\nAllow: /\n\nSitemap: https://indorecolleges.in/sitemap.xml\n");
   });
 
   // API Route: Get all institutes
