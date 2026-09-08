@@ -34,3 +34,14 @@ This repo can be deployed as a single Node service or as a split frontend/backen
 1. Deploy the backend Node service first and copy its public URL.
 2. Set `VITE_API_URL` in the frontend deployment to that backend URL.
 3. Deploy the frontend with its SPA rewrite fallback enabled.
+
+## Google Search Console and SEO
+
+1. Deploy the production site at `https://indore-colleges.com`.
+2. In Google Search Console, add the domain property `indore-colleges.com` and complete DNS verification. The HTML verification file is also available at `/google968443b88408792f.html` if URL-prefix verification is preferred.
+3. Submit `https://indore-colleges.com/sitemap.xml` under **Sitemaps**.
+4. Inspect and request indexing for the homepage, `/explore`, each stream page, and the public `/college/:id` pages.
+5. Confirm `https://indore-colleges.com/robots.txt` returns HTTP 200 and lists the sitemap.
+6. Keep private forms and dashboards out of the sitemap; the app marks them `noindex, nofollow`.
+
+The site publishes one XML sitemap containing all public routes and all institute detail pages. Route-aware canonical, description, Open Graph, Twitter, and robots metadata is updated by the SPA as users navigate.

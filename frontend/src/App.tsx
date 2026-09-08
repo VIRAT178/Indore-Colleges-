@@ -53,33 +53,66 @@ function ScrollToTopAndSEO() {
   useEffect(() => {
     window.scrollTo(0, 0);
 
+    const siteUrl = 'https://indore-colleges.com';
     let pageTitle = "Indore Colleges | Find & Apply to Top Colleges in Indore";
+    let pageDescription = 'Discover the best colleges and universities in Indore. Compare courses, fees, placements, campus facilities, and admission guidance.';
+    let canonicalPath = pathname;
+    let robotsContent = 'index, follow';
     if (pathname === '/explore') {
       pageTitle = "Explore Top Colleges & Universities in Indore | Indore Colleges";
+      pageDescription = 'Explore verified engineering, management, medical, law, design, and science colleges in Indore with fees, locations, courses, and admission details.';
     } else if (pathname.startsWith('/explore/')) {
       const streamName = pathname.replace('/explore/', '').toUpperCase();
       pageTitle = `Top ${streamName} Colleges in Indore 2026 - Admissions & Fees | Indore Colleges`;
+      pageDescription = `Compare the best ${streamName.toLowerCase()} colleges in Indore, including courses, fees, placements, locations, and admission guidance.`;
     } else if (pathname.startsWith('/college/')) {
       pageTitle = "College Details & Admissions | Indore Colleges";
+      pageDescription = 'View college courses, fees, placements, facilities, reviews, location, and admission guidance for this Indore institution.';
     } else if (pathname === '/register') {
       pageTitle = "Direct College & School Application | Indore Colleges";
+      robotsContent = 'noindex, nofollow';
     } else if (pathname === '/dashboard') {
       pageTitle = "Counselling Dashboard & Lead Status | Indore Colleges";
+      robotsContent = 'noindex, nofollow';
+    } else if (pathname === '/reviews') {
+      pageTitle = "Parent Reviews & Admission Guides | Indore Colleges";
+      canonicalPath = '/blogs';
     } else if (pathname === '/blogs') {
       pageTitle = "Admission Guides & Education Blogs | Indore Colleges";
+      pageDescription = 'Read practical admission guides, college comparisons, fee advice, and education updates for students and parents in Indore.';
     } else if (pathname === '/about') {
       pageTitle = "About Indore Colleges - MP's #1 Education Portal";
     } else if (pathname === '/careers') {
       pageTitle = "Join Our Team - Careers | Indore Colleges";
+      robotsContent = 'noindex, follow';
     } else if (pathname === '/contact') {
       pageTitle = "Contact Us & Helpline | Indore Colleges";
     } else if (pathname === '/college-portal') {
       pageTitle = "College Partner Registration Portal | Indore Colleges";
+      robotsContent = 'noindex, nofollow';
     } else if (pathname === '/admin-panel') {
       pageTitle = "Admin Control Portal | Indore Colleges";
+      robotsContent = 'noindex, nofollow';
     }
 
+    const canonicalUrl = `${siteUrl}${canonicalPath === '/' ? '/' : canonicalPath}`;
     document.title = pageTitle;
+
+    const setMetaContent = (selector: string, content: string) => {
+      const element = document.querySelector<HTMLMetaElement>(selector);
+      if (element) element.content = content;
+    };
+
+    const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (canonical) canonical.href = canonicalUrl;
+    setMetaContent('meta[name="description"]', pageDescription);
+    setMetaContent('meta[name="robots"]', robotsContent);
+    setMetaContent('meta[property="og:url"]', canonicalUrl);
+    setMetaContent('meta[property="og:title"]', pageTitle);
+    setMetaContent('meta[property="og:description"]', pageDescription);
+    setMetaContent('meta[name="twitter:url"]', canonicalUrl);
+    setMetaContent('meta[name="twitter:title"]', pageTitle);
+    setMetaContent('meta[name="twitter:description"]', pageDescription);
   }, [pathname]);
 
   return null;
