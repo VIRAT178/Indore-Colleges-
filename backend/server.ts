@@ -416,7 +416,7 @@ if (process.env.GEMINI_API_KEY) {
   console.warn("Warning: GEMINI_API_KEY is not defined in the environment. Chat assistant will run in simulator mode.");
 }
 
-async function startServer() {
+export async function startServer() {
   const app = express();
   const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
@@ -1335,6 +1335,8 @@ Instructions:
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`EduPath server is listening on port ${PORT}`);
   });
+
+  return app;
 }
 
 startServer();
