@@ -288,13 +288,13 @@ export default function Header({
               setActiveTab('home');
               setActiveDropdown(null);
             }}
-            className="flex items-center cursor-pointer select-none group transform scale-90 sm:scale-95 origin-left shrink-0"
+            className="flex items-center cursor-pointer select-none group shrink-0"
           >
             <Logo />
           </motion.div>
 
           {/* B. Navigation Items (Desktop) with Animated Active Pill */}
-          <nav className="hidden lg:flex items-center space-x-1 p-1 bg-slate-100/70 rounded-full border border-slate-200/60 shadow-inner">
+          <nav className="hidden lg:flex items-center space-x-0.5 p-1 bg-slate-100/70 rounded-full border border-slate-200/60 shadow-inner">
             
             {[
               { id: 'home', label: 'Home' },
@@ -318,7 +318,7 @@ export default function Header({
                       setActiveDropdown(null);
                     }
                   }}
-                  className={`relative px-4 py-2 text-xs font-bold rounded-full transition-all duration-200 flex items-center gap-1.5 cursor-pointer ${
+                  className={`relative px-3 py-2 text-xs font-bold rounded-full transition-all duration-200 flex items-center gap-1.5 cursor-pointer ${
                     isActive ? 'text-white' : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/50'
                   }`}
                 >
@@ -376,12 +376,12 @@ export default function Header({
             <div className="relative">
               <button
                 onClick={() => setActiveDropdown(activeDropdown === 'favorites' ? null : 'favorites')}
-                className={`p-1.5 sm:p-2 rounded-full hover:bg-gray-50 text-gray-700 transition relative ${
+                className={`p-2 sm:p-2.5 rounded-full hover:bg-gray-50 text-gray-700 transition relative ${
                   activeDropdown === 'favorites' ? 'bg-gray-50 text-rose-600' : ''
                 }`}
                 title="Shortlisted Favorites"
               >
-                <Heart className={`h-4.5 w-4.5 sm:h-5 sm:w-5 ${shortlistedIds.length > 0 ? 'fill-rose-500 text-rose-500' : ''}`} />
+                <Heart className={`h-5.5 w-5.5 sm:h-6 sm:w-6 ${shortlistedIds.length > 0 ? 'fill-rose-500 text-rose-500' : ''}`} />
                 {shortlistedIds.length > 0 && (
                   <span className="absolute -top-1 -right-1 bg-rose-600 text-white rounded-full text-[8px] sm:text-[9px] w-4 sm:h-4.5 sm:w-4.5 h-4 flex items-center justify-center font-bold animate-bounce shadow-sm">
                     {shortlistedIds.length}
@@ -394,12 +394,12 @@ export default function Header({
             <div className="relative">
               <button
                 onClick={() => setActiveDropdown(activeDropdown === 'cart' ? null : 'cart')}
-                className={`p-1.5 sm:p-2 rounded-full hover:bg-gray-50 text-gray-700 transition relative ${
+                className={`p-2 sm:p-2.5 rounded-full hover:bg-gray-50 text-gray-700 transition relative ${
                   activeDropdown === 'cart' ? 'bg-gray-50 text-red-600' : ''
                 }`}
                 title="Admissions Basket"
               >
-                <ShoppingCart className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
+                <ShoppingCart className="h-5.5 w-5.5 sm:h-6 sm:w-6" />
                 {cartIds.length > 0 && (
                   <span className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full text-[8px] sm:text-[9px] w-4 sm:h-4.5 sm:w-4.5 h-4 flex items-center justify-center font-bold shadow-sm">
                     {cartIds.length}
@@ -434,12 +434,12 @@ export default function Header({
 
               <button
                 onClick={() => setActiveDropdown(activeDropdown === 'profile' ? null : 'profile')}
-                className={`p-1.5 sm:p-2 rounded-full hover:bg-gray-50 text-gray-700 transition hidden sm:flex items-center justify-center ${
+                  className={`p-2 sm:p-2.5 rounded-full hover:bg-gray-50 text-gray-700 transition hidden sm:flex items-center justify-center ${
                   activeDropdown === 'profile' ? 'bg-gray-50 text-red-600' : ''
                 }`}
                 title="Menu & Support"
               >
-                <HelpCircle className="h-5 w-5" />
+                <HelpCircle className="h-5.5 w-5.5 sm:h-6 sm:w-6" />
               </button>
             </div>
 
@@ -450,10 +450,10 @@ export default function Header({
             {/* Mobile Hamburger menu */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-1.5 text-gray-800 hover:bg-gray-100 rounded-lg lg:hidden"
+              className="p-2 text-gray-800 hover:bg-gray-100 rounded-lg lg:hidden"
               aria-label="Toggle mobile menu"
             >
-              <Menu className="h-5.5 w-5.5 sm:h-6 sm:w-6" />
+              <Menu className="h-6 w-6 sm:h-7 sm:w-7" />
             </button>
 
           </div>

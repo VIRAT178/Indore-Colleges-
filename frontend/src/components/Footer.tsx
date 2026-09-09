@@ -14,7 +14,8 @@ import {
   Youtube, 
   MessageCircle, 
   Globe,
-  ExternalLink 
+  ExternalLink,
+  Mail
 } from 'lucide-react';
 
 interface FooterProps {
@@ -248,7 +249,7 @@ export default function Footer({
               Social Media
             </h4>
             <div className="flex flex-wrap gap-2">
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="p-2 border border-red-600/30 rounded-lg hover:bg-red-600 hover:border-red-600 text-white transition duration-200" title="Instagram">
+              <a href="https://www.instagram.com/indorecolleges?stkn=bHhwNHpzYjg0Ym4z" target="_blank" rel="noopener noreferrer" className="p-2 border border-red-600/30 rounded-lg hover:bg-red-600 hover:border-red-600 text-white transition duration-200" title="Instagram">
                 <Instagram className="h-4.5 w-4.5" />
               </a>
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="p-2 border border-red-600/30 rounded-lg hover:bg-red-600 hover:border-red-600 text-white transition duration-200" title="Facebook">
@@ -266,8 +267,11 @@ export default function Footer({
               <a href="#" className="p-2 border border-red-600/30 rounded-lg hover:bg-red-600 hover:border-red-600 text-white transition duration-200" title="Blog">
                 <Globe className="h-4.5 w-4.5" />
               </a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="p-2 border border-red-600/30 rounded-lg hover:bg-red-600 hover:border-red-600 text-white transition duration-200" title="YouTube">
+              <a href="https://www.youtube.com/@Indorecolleges" target="_blank" rel="noopener noreferrer" className="p-2 border border-red-600/30 rounded-lg hover:bg-red-600 hover:border-red-600 text-white transition duration-200" title="YouTube">
                 <Youtube className="h-4.5 w-4.5" />
+              </a>
+              <a href="mailto:Indorecollegeshub@gmail.com" className="p-2 border border-red-600/30 rounded-lg hover:bg-red-600 hover:border-red-600 text-white transition duration-200" title="Email Indore Colleges">
+                <Mail className="h-4.5 w-4.5" />
               </a>
             </div>
           </div>
