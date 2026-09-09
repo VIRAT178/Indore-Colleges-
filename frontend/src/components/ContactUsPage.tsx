@@ -212,7 +212,7 @@ export default function ContactUsPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="bg-[#EF4444] hover:bg-red-600 text-white font-bold text-xs px-6 py-3 rounded-xl transition flex items-center justify-center space-x-1.5 disabled:opacity-50 cursor-pointer shadow-xs"
+                className="bg-[rgba(253,118,0,1)] hover:bg-red-600 text-white font-bold text-xs px-6 py-3 rounded-xl transition flex items-center justify-center space-x-1.5 disabled:opacity-50 cursor-pointer shadow-xs"
               >
                 <Send className="h-4 w-4" />
                 <span>{submitting ? 'Sending Request...' : 'Send Message'}</span>

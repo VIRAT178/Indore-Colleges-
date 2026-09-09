@@ -318,7 +318,7 @@ export default function CollegeDetailPage({
               <div className="pt-4 space-y-2.5">
                 <button
                   onClick={() => onScheduleCounseling(institute)}
-                  className="w-full bg-[#EF4444] hover:bg-red-600 text-white font-bold text-xs py-3 rounded-xl transition flex items-center justify-center space-x-1.5 shadow-xs"
+                  className="w-full bg-[rgba(253,118,0,1)] hover:bg-red-600 text-white font-bold text-xs py-3 rounded-xl transition flex items-center justify-center space-x-1.5 shadow-xs"
                 >
                   <Calendar className="h-4 w-4" />
                   <span>Open Counseling Form</span>
@@ -369,16 +369,16 @@ export default function CollegeDetailPage({
         <div className="space-y-8 mt-12">
           {/* Key Updates & Announcements (Optional) */}
           {institute.updates && institute.updates.length > 0 && (
-            <div className="bg-[#EF4444]/5 border border-red-100 rounded-2xl p-6 sm:p-8 shadow-3xs relative overflow-hidden">
-              <div className="absolute top-0 right-0 h-24 w-24 bg-[#EF4444]/5 rounded-full filter blur-xl translate-x-4 -translate-y-4" />
-              <h3 className="text-sm font-black text-[#EF4444] mb-3.5 flex items-center space-x-2">
-                <span className="inline-flex h-2 w-2 rounded-full bg-[#EF4444] animate-pulse" />
+            <div className="bg-[rgba(253,118,0,1)]/5 border border-red-100 rounded-2xl p-6 sm:p-8 shadow-3xs relative overflow-hidden">
+              <div className="absolute top-0 right-0 h-24 w-24 bg-[rgba(253,118,0,1)]/5 rounded-full filter blur-xl translate-x-4 -translate-y-4" />
+              <h3 className="text-sm font-black text-[rgba(253,118,0,1)] mb-3.5 flex items-center space-x-2">
+                <span className="inline-flex h-2 w-2 rounded-full bg-[rgba(253,118,0,1)] animate-pulse" />
                 <span>Key Updates & Latest Announcements</span>
               </h3>
               <ul className="space-y-2.5 text-xs sm:text-sm text-gray-700 font-medium">
                 {institute.updates.map((upd, idx) => (
                   <li key={idx} className="flex items-start space-x-2.5">
-                    <span className="text-[#EF4444] font-bold mt-0.5">•</span>
+                    <span className="text-[rgba(253,118,0,1)] font-bold mt-0.5">•</span>
                     <span className="leading-relaxed">{upd}</span>
                   </li>
                 ))}
@@ -447,7 +447,7 @@ export default function CollegeDetailPage({
                     {institute.cutoffs.map((co, idx) => (
                       <tr key={idx} className="hover:bg-gray-50/50 transition duration-150">
                         <td className="p-4 font-bold text-gray-800">{co.course}</td>
-                        <td className="p-4 text-right font-black text-[#EF4444] bg-red-50/10">{co.rank}</td>
+                        <td className="p-4 text-right font-black text-[rgba(253,118,0,1)] bg-red-50/10">{co.rank}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -659,7 +659,7 @@ export default function CollegeDetailPage({
                 <button
                   type="submit"
                   disabled={submittingReview}
-                  className="bg-[#EF4444] hover:bg-red-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-xs flex items-center space-x-1.5 disabled:opacity-50"
+                  className="bg-[rgba(253,118,0,1)] hover:bg-red-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-xs flex items-center space-x-1.5 disabled:opacity-50"
                 >
                   <span>Submit Review</span>
                   <Send className="h-3 w-3" />

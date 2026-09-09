@@ -191,7 +191,7 @@ export default function InteractiveMap({
                   activeZoneId === 'central' || hoveredZone === 'central' ? 'scale-170 bg-red-500/40' : ''
                 }`}
               >
-                <div className="w-1.5 h-1.5 rounded-full bg-red-400 shadow-[0_0_8px_#ef4444]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-red-400 shadow-[0_0_8px_rgba(253,118,0,1)]" />
               </div>
 
               {/* North (Sanwer) */}

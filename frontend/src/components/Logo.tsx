@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import logoUrl from '../../../src/assets/images/logo.svg';
 
 interface LogoProps {
   className?: string;
@@ -12,16 +13,16 @@ interface LogoProps {
 }
 
 export function LogoIcon({ className = "h-10 w-10" }: { className?: string }) {
-  return <img src="/logo.png" alt="Indore Colleges" className={className} />;
+  return <img src={logoUrl} alt="Indore Colleges" className={`${className} max-w-[calc(100vw-2rem)]`} />;
 }
 
 export default function Logo({ className = "", iconOnly = false, light = false }: LogoProps) {
   return (
     <div className={`flex items-center select-none ${className}`}>
       {iconOnly ? (
-        <LogoIcon className="h-14 w-14 object-contain transition-transform duration-300 group-hover:scale-105" />
+        <LogoIcon className="h-12 w-auto object-contain" />
       ) : (
-        <LogoIcon className="h-16 w-16 sm:h-20 sm:w-20 object-contain transition-transform duration-300 group-hover:scale-[1.02]" />
+        <LogoIcon className="h-14 w-auto sm:h-20 object-contain" />
       )}
     </div>
   );

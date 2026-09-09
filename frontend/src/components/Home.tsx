@@ -416,7 +416,7 @@ export default function Home({
                       tab === 'MEDICAL' ? 'hidden sm:block' : ''
                     } ${
                       isActive 
-                        ? 'border-[#EF4444] text-gray-900 font-extrabold' 
+                        ? 'border-[rgba(253,118,0,1)] text-gray-900 font-extrabold' 
                         : 'border-transparent text-gray-400 hover:text-gray-600'
                     }`}
                   >
@@ -725,7 +725,7 @@ export default function Home({
                         )}
                       </div>
                     ) : (
-                      <div className="absolute top-2.5 right-2.5 bg-[#EF4444] text-white py-1 px-2 rounded-lg text-[11px] font-black flex items-center gap-1 shadow-xs">
+                      <div className="absolute top-2.5 right-2.5 bg-[rgba(253,118,0,1)] text-white py-1 px-2 rounded-lg text-[11px] font-black flex items-center gap-1 shadow-xs">
                         <Star className="h-3 w-3 text-amber-300 fill-amber-300 shrink-0" />
                         <span>{displayRating}</span>
                       </div>
@@ -737,7 +737,7 @@ export default function Home({
                     <div>
                       <h3 
                         onClick={() => onViewCollegeDetail && onViewCollegeDetail(college)}
-                        className="text-xs sm:text-sm font-bold text-gray-900 group-hover:text-[#EF4444] transition-colors line-clamp-2 cursor-pointer font-outfit min-h-[2.25rem]"
+                        className="text-xs sm:text-sm font-bold text-gray-900 group-hover:text-[rgba(253,118,0,1)] transition-colors line-clamp-2 cursor-pointer font-outfit min-h-[2.25rem]"
                       >
                         {college.name}
                       </h3>
@@ -768,7 +768,7 @@ export default function Home({
                       <button
                         type="button"
                         onClick={onOpenCounseling}
-                        className="w-full border border-[#EF4444] hover:bg-[#EF4444] hover:text-white text-[#EF4444] font-extrabold py-1.5 px-3 rounded-xl text-[11px] tracking-wider uppercase transition-all duration-200 active:scale-95 text-center cursor-pointer"
+                        className="w-full border border-[rgba(253,118,0,1)] hover:bg-[rgba(253,118,0,1)] hover:text-white text-[rgba(253,118,0,1)] font-extrabold py-1.5 px-3 rounded-xl text-[11px] tracking-wider uppercase transition-all duration-200 active:scale-95 text-center cursor-pointer"
                       >
                         Apply Now
                       </button>
@@ -837,7 +837,7 @@ export default function Home({
                     {/* Header Banner */}
                     <div className="bg-white border border-gray-200/90 rounded-2xl p-4 sm:p-5 mb-6 shadow-xs text-center flex flex-col items-center justify-center">
                       <div className="flex items-center justify-center gap-2 mb-1.5">
-                        <div className="h-7 w-7 bg-red-50 text-[#EF4444] font-black text-xs rounded-lg flex items-center justify-center shrink-0 border border-red-100 font-outfit">
+                        <div className="h-7 w-7 bg-red-50 text-[rgba(253,118,0,1)] font-black text-xs rounded-lg flex items-center justify-center shrink-0 border border-red-100 font-outfit">
                           IC
                         </div>
                         <span className="inline-block px-2.5 py-0.5 bg-red-50 text-red-700 border border-red-200 text-[10px] font-black rounded-md uppercase tracking-wider">
@@ -870,7 +870,7 @@ export default function Home({
                       }
                       setActiveTab('explore');
                     }}
-                    className="inline-flex items-center justify-center gap-2 bg-[#0F244C] hover:bg-[#EF4444] text-white text-sm sm:text-base font-extrabold py-3.5 px-8 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 active:scale-95 cursor-pointer font-outfit group"
+                    className="inline-flex items-center justify-center gap-2 bg-[#0F244C] hover:bg-[rgba(253,118,0,1)] text-white text-sm sm:text-base font-extrabold py-3.5 px-8 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 active:scale-95 cursor-pointer font-outfit group"
                   >
                     <span>View Many More {activeSearchedTab} Colleges</span>
                     <ArrowUpRight className="h-5 w-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -888,7 +888,7 @@ export default function Home({
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
             <div>
-              <div className="inline-flex items-center space-x-2 text-xs font-bold text-[#EF4444] uppercase tracking-wider mb-2">
+              <div className="inline-flex items-center space-x-2 text-xs font-bold text-[rgba(253,118,0,1)] uppercase tracking-wider mb-2">
                 <BookOpen className="h-4 w-4" />
                 <span>Explore Specializations</span>
               </div>
@@ -901,7 +901,7 @@ export default function Home({
             </div>
             <button 
               onClick={() => handleCategoryClick('Engineering', 'college')}
-              className="mt-6 md:mt-0 text-xs font-bold text-[#EF4444] hover:text-[#DC2626] inline-flex items-center gap-1.5 hover:underline transition self-start"
+              className="mt-6 md:mt-0 text-xs font-bold text-[rgba(253,118,0,1)] hover:text-[rgba(253,118,0,1)] inline-flex items-center gap-1.5 hover:underline transition self-start"
             >
               <span>View All Directories</span>
               <ArrowUpRight className="h-4 w-4" />
@@ -923,13 +923,13 @@ export default function Home({
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                 />
-                <span className="absolute top-3 right-3 bg-white/95 p-2 rounded-xl shadow-md text-gray-800 transition group-hover:bg-[#EF4444] group-hover:text-white">
+                <span className="absolute top-3 right-3 bg-white/95 p-2 rounded-xl shadow-md text-gray-800 transition group-hover:bg-[rgba(253,118,0,1)] group-hover:text-white">
                   <ArrowUpRight className="h-4 w-4" />
                 </span>
               </div>
               <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-[#0F244C] group-hover:text-[#EF4444] transition font-outfit">Engineering & Science</h3>
+                  <h3 className="text-base font-bold text-[#0F244C] group-hover:text-[rgba(253,118,0,1)] transition font-outfit">Engineering & Science</h3>
                 </div>
               </div>
             </div>
@@ -946,13 +946,13 @@ export default function Home({
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                 />
-                <span className="absolute top-3 right-3 bg-white/95 p-2 rounded-xl shadow-md text-gray-800 transition group-hover:bg-[#EF4444] group-hover:text-white">
+                <span className="absolute top-3 right-3 bg-white/95 p-2 rounded-xl shadow-md text-gray-800 transition group-hover:bg-[rgba(253,118,0,1)] group-hover:text-white">
                   <ArrowUpRight className="h-4 w-4" />
                 </span>
               </div>
               <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-[#0F244C] group-hover:text-[#EF4444] transition font-outfit">Management & MBA</h3>
+                  <h3 className="text-base font-bold text-[#0F244C] group-hover:text-[rgba(253,118,0,1)] transition font-outfit">Management & MBA</h3>
                 </div>
               </div>
             </div>
@@ -969,13 +969,13 @@ export default function Home({
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                 />
-                <span className="absolute top-3 right-3 bg-white/95 p-2 rounded-xl shadow-md text-gray-800 transition group-hover:bg-[#EF4444] group-hover:text-white">
+                <span className="absolute top-3 right-3 bg-white/95 p-2 rounded-xl shadow-md text-gray-800 transition group-hover:bg-[rgba(253,118,0,1)] group-hover:text-white">
                   <ArrowUpRight className="h-4 w-4" />
                 </span>
               </div>
               <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-[#0F244C] group-hover:text-[#EF4444] transition font-outfit">Medical & Dental</h3>
+                  <h3 className="text-base font-bold text-[#0F244C] group-hover:text-[rgba(253,118,0,1)] transition font-outfit">Medical & Dental</h3>
                 </div>
               </div>
             </div>
@@ -992,13 +992,13 @@ export default function Home({
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                 />
-                <span className="absolute top-3 right-3 bg-white/95 p-2 rounded-xl shadow-md text-gray-800 transition group-hover:bg-[#EF4444] group-hover:text-white">
+                <span className="absolute top-3 right-3 bg-white/95 p-2 rounded-xl shadow-md text-gray-800 transition group-hover:bg-[rgba(253,118,0,1)] group-hover:text-white">
                   <ArrowUpRight className="h-4 w-4" />
                 </span>
               </div>
               <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-[#0F244C] group-hover:text-[#EF4444] transition font-outfit">Design & Arts</h3>
+                  <h3 className="text-base font-bold text-[#0F244C] group-hover:text-[rgba(253,118,0,1)] transition font-outfit">Design & Arts</h3>
                 </div>
               </div>
             </div>
@@ -1015,7 +1015,7 @@ export default function Home({
             {/* Left Col: Explanatory Header and Carousel of reviews */}
             <div className="lg:col-span-7 space-y-8">
               <div>
-                <div className="inline-flex items-center space-x-2 text-xs font-bold text-[#EF4444] uppercase tracking-wider mb-2">
+                <div className="inline-flex items-center space-x-2 text-xs font-bold text-[rgba(253,118,0,1)] uppercase tracking-wider mb-2">
                   <Users className="h-4 w-4" />
                   <span>Student & Parent Reviews</span>
                 </div>
@@ -1063,7 +1063,7 @@ export default function Home({
             <div className="lg:col-span-5">
               <div className="space-y-5">
                 <div>
-                  <div className="inline-flex items-center gap-2 text-xs font-bold text-[#EF4444] uppercase tracking-wider mb-2">
+                  <div className="inline-flex items-center gap-2 text-xs font-bold text-[rgba(253,118,0,1)] uppercase tracking-wider mb-2">
                     <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                     <span>More 5-Star Parent Reviews</span>
                   </div>
@@ -1109,8 +1109,8 @@ export default function Home({
           <div className="grid lg:grid-cols-12 gap-8 sm:gap-12 items-center bg-[#0F244C] text-white rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-10 relative overflow-hidden shadow-2xl border border-white/5">
             
             {/* Visual ambient circle */}
-            <div className="absolute bottom-[-10%] right-[-10%] h-96 w-96 bg-[#EF4444]/15 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute top-[-5%] left-[-5%] h-64 w-64 bg-[#EF4444]/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute bottom-[-10%] right-[-10%] h-96 w-96 bg-[rgba(253,118,0,1)]/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-[-5%] left-[-5%] h-64 w-64 bg-[rgba(253,118,0,1)]/10 rounded-full blur-2xl pointer-events-none" />
 
             {/* Left Column: Process Information */}
             <div className="lg:col-span-6 space-y-8 relative z-10">
@@ -1123,7 +1123,7 @@ export default function Home({
               
               <div className="space-y-4 text-sm font-light text-gray-300">
                 <div className="flex items-center space-x-4">
-                  <span className="h-6 w-6 rounded-lg bg-[#EF4444]/20 text-rose-300 font-bold text-xs flex items-center justify-center shrink-0 border border-[#EF4444]/30">
+                  <span className="h-6 w-6 rounded-lg bg-[rgba(253,118,0,1)]/20 text-rose-300 font-bold text-xs flex items-center justify-center shrink-0 border border-[rgba(253,118,0,1)]/30">
                     1
                   </span>
                   <div>
@@ -1132,7 +1132,7 @@ export default function Home({
                 </div>
 
                 <div className="flex items-center space-x-4">
-                  <span className="h-6 w-6 rounded-lg bg-[#EF4444]/20 text-rose-300 font-bold text-xs flex items-center justify-center shrink-0 border border-[#EF4444]/30">
+                  <span className="h-6 w-6 rounded-lg bg-[rgba(253,118,0,1)]/20 text-rose-300 font-bold text-xs flex items-center justify-center shrink-0 border border-[rgba(253,118,0,1)]/30">
                     2
                   </span>
                   <div>
@@ -1141,7 +1141,7 @@ export default function Home({
                 </div>
 
                 <div className="flex items-center space-x-4">
-                  <span className="h-6 w-6 rounded-lg bg-[#EF4444]/20 text-rose-300 font-bold text-xs flex items-center justify-center shrink-0 border border-[#EF4444]/30">
+                  <span className="h-6 w-6 rounded-lg bg-[rgba(253,118,0,1)]/20 text-rose-300 font-bold text-xs flex items-center justify-center shrink-0 border border-[rgba(253,118,0,1)]/30">
                     3
                   </span>
                   <div>
@@ -1155,7 +1155,7 @@ export default function Home({
             <div className="lg:col-span-6 relative z-10 w-full">
               <div className="bg-white rounded-2xl sm:rounded-[2rem] p-4 sm:p-10 text-gray-950 shadow-2xl border border-gray-100">
                 <h3 className="text-lg font-bold tracking-tight mb-6 flex items-center gap-2.5 text-[#0F244C] font-outfit">
-                  <Calendar className="h-5.5 w-5.5 text-[#EF4444]" />
+                  <Calendar className="h-5.5 w-5.5 text-[rgba(253,118,0,1)]" />
                   <span>Choose Callback Time Slot</span>
                 </h3>
 
@@ -1183,7 +1183,7 @@ export default function Home({
                         value={formName}
                         onChange={(e) => setFormName(e.target.value)}
                         placeholder="e.g. Rajesh Kumar"
-                        className="w-full rounded-xl border border-gray-200 px-4 py-3 bg-white text-gray-800 text-xs focus:outline-none focus:ring-1 focus:ring-[#EF4444] focus:border-[#EF4444] transition-all"
+                        className="w-full rounded-xl border border-gray-200 px-4 py-3 bg-white text-gray-800 text-xs focus:outline-none focus:ring-1 focus:ring-[rgba(253,118,0,1)] focus:border-[rgba(253,118,0,1)] transition-all"
                       />
                     </div>
 
@@ -1192,7 +1192,7 @@ export default function Home({
                       <label className="block font-bold text-gray-500 uppercase tracking-wider mb-2">
                         Mobile Number
                       </label>
-                      <div className="flex rounded-xl overflow-hidden border border-gray-200 focus-within:ring-1 focus-within:ring-[#EF4444] focus-within:border-[#EF4444] transition-all">
+                      <div className="flex rounded-xl overflow-hidden border border-gray-200 focus-within:ring-1 focus-within:ring-[rgba(253,118,0,1)] focus-within:border-[rgba(253,118,0,1)] transition-all">
                         <span className="bg-slate-50 border-r border-slate-100 text-gray-500 px-4 flex items-center font-bold text-xs select-none">
                           +91
                         </span>
@@ -1218,7 +1218,7 @@ export default function Home({
                         onChange={(e) => setFormQuery(e.target.value)}
                         placeholder="e.g. Looking for MBA / B.Tech courses near Vijay Nagar"
                         rows={2}
-                        className="w-full rounded-xl border border-gray-200 px-4 py-3 bg-white text-gray-800 text-xs focus:outline-none focus:ring-1 focus:ring-[#EF4444] focus:border-[#EF4444] resize-none transition-all"
+                        className="w-full rounded-xl border border-gray-200 px-4 py-3 bg-white text-gray-800 text-xs focus:outline-none focus:ring-1 focus:ring-[rgba(253,118,0,1)] focus:border-[rgba(253,118,0,1)] resize-none transition-all"
                       />
                     </div>
 
@@ -1226,7 +1226,7 @@ export default function Home({
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full bg-[#EF4444] hover:bg-[#DC2626] active:scale-98 text-white rounded-xl py-4 text-xs font-bold transition shadow-lg disabled:opacity-50 flex items-center justify-center space-x-2 cursor-pointer"
+                      className="w-full bg-[rgba(253,118,0,1)] hover:bg-[rgba(253,118,0,1)] active:scale-98 text-white rounded-xl py-4 text-xs font-bold transition shadow-lg disabled:opacity-50 flex items-center justify-center space-x-2 cursor-pointer"
                     >
                       <Send className="h-4 w-4" />
                       <span>{isSubmitting ? 'Scheduling now...' : 'Get Free Counsel Call'}</span>
@@ -1255,7 +1255,7 @@ export default function Home({
                     onClick={() => city.name === 'Indore' ? handleLocalityClick('All') : {}}
                     className={`group relative rounded-3xl overflow-hidden aspect-square shadow-sm border ${
                       city.active 
-                        ? 'border-[#EF4444] cursor-pointer shadow-md' 
+                        ? 'border-[rgba(253,118,0,1)] cursor-pointer shadow-md' 
                         : 'border-gray-200 cursor-default opacity-85 hover:opacity-100'
                     } transition duration-300 bg-white`}
                   >
@@ -1270,7 +1270,7 @@ export default function Home({
                     <div className="absolute bottom-4 left-4 text-white">
                       <p className="text-xs font-extrabold tracking-tight font-outfit">{city.name}</p>
                       {city.active && (
-                        <span className="inline-block text-[8px] bg-[#EF4444] text-white font-black uppercase tracking-widest px-2 py-0.5 rounded-md mt-1.5 font-sans">
+                        <span className="inline-block text-[8px] bg-[rgba(253,118,0,1)] text-white font-black uppercase tracking-widest px-2 py-0.5 rounded-md mt-1.5 font-sans">
                           Active Center
                         </span>
                       )}
@@ -1282,7 +1282,7 @@ export default function Home({
 
             {/* Right Col: Prominent text headline */}
             <div className="lg:col-span-5 space-y-5">
-              <div className="inline-flex items-center space-x-2 text-xs font-bold text-[#EF4444] uppercase tracking-wider">
+              <div className="inline-flex items-center space-x-2 text-xs font-bold text-[rgba(253,118,0,1)] uppercase tracking-wider">
                 <Compass className="h-4 w-4" />
                 <span>Nationwide Presence</span>
               </div>
@@ -1316,7 +1316,7 @@ export default function Home({
       <section className="py-10 sm:py-12 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
-            <div className="inline-flex items-center space-x-2 text-xs font-bold text-[#EF4444] uppercase tracking-wider mb-2">
+            <div className="inline-flex items-center space-x-2 text-xs font-bold text-[rgba(253,118,0,1)] uppercase tracking-wider mb-2">
               <MapPin className="h-4 w-4" />
               <span>Campus Map Hubs</span>
             </div>
@@ -1332,18 +1332,18 @@ export default function Home({
                 key={idx}
                 whileHover={{ scale: 1.02, y: -2 }}
                 onClick={() => handleLocalityClick(loc.name)}
-                className="group cursor-pointer bg-white border border-gray-100 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-lg hover:border-[#EF4444]/30 hover:bg-[#EF4444]/5 transition-all flex items-center justify-between"
+                className="group cursor-pointer bg-white border border-gray-100 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-lg hover:border-[rgba(253,118,0,1)]/30 hover:bg-[rgba(253,118,0,1)]/5 transition-all flex items-center justify-between"
               >
                 <div className="flex items-center space-x-3 sm:space-x-3.5 min-w-0">
-                  <div className="h-9 w-9 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-[#EF4444] group-hover:bg-[#EF4444] group-hover:text-white transition-all flex-shrink-0">
+                  <div className="h-9 w-9 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-[rgba(253,118,0,1)] group-hover:bg-[rgba(253,118,0,1)] group-hover:text-white transition-all flex-shrink-0">
                     <MapPin className="h-4 w-4" />
                   </div>
                   <div className="truncate">
-                    <h4 className="text-xs sm:text-sm font-bold text-[#0F244C] group-hover:text-[#EF4444] transition font-outfit truncate">{loc.name}</h4>
+                    <h4 className="text-xs sm:text-sm font-bold text-[#0F244C] group-hover:text-[rgba(253,118,0,1)] transition font-outfit truncate">{loc.name}</h4>
                     <p className="text-[10px] text-gray-400 font-medium mt-0.5">Indore Zone</p>
                   </div>
                 </div>
-                <span className="text-[10px] font-bold text-gray-400 bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-1 group-hover:bg-[#EF4444]/10 group-hover:text-[#EF4444] transition-all flex-shrink-0">
+                <span className="text-[10px] font-bold text-gray-400 bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-1 group-hover:bg-[rgba(253,118,0,1)]/10 group-hover:text-[rgba(253,118,0,1)] transition-all flex-shrink-0">
                   {loc.dist}
                 </span>
               </motion.div>
