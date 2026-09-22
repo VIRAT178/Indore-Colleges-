@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: indore-colleges-backend
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm install && npm run build:backend
+    startCommand: npm run start:backend
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_SENDER
+        sync: false
+      - key: ADMIN_EMAIL
+        value: admin@indorecolleges.org
+      - key: ADMIN_PASSWORD
+        sync: false

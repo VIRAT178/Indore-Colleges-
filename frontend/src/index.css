@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-outfit: "Outfit", sans-serif;
+  --font-nav: "Plus Jakarta Sans", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-red-50: rgba(246, 103, 16, 0.08);
+  --color-red-100: rgba(246, 103, 16, 0.15);
+  --color-red-200: rgba(246, 103, 16, 0.25);
+  --color-red-300: rgba(246, 103, 16, 0.45);
+  --color-red-400: rgba(246, 103, 16, 0.70);
+  --color-red-500: rgba(246, 103, 16, 0.90);
+  --color-red-600: rgba(246, 103, 16, 1);
+  --color-red-700: rgba(220, 88, 12, 1);
+  --color-red-800: rgba(185, 70, 8, 1);
+  --color-red-900: rgba(154, 52, 18, 1);
+  --color-red-950: rgba(124, 45, 18, 1);
+
+  --color-rose-50: rgba(246, 103, 16, 0.08);
+  --color-rose-100: rgba(246, 103, 16, 0.15);
+  --color-rose-200: rgba(246, 103, 16, 0.25);
+  --color-rose-300: rgba(246, 103, 16, 0.45);
+  --color-rose-400: rgba(246, 103, 16, 0.70);
+  --color-rose-500: rgba(246, 103, 16, 0.90);
+  --color-rose-600: rgba(246, 103, 16, 1);
+  --color-rose-700: rgba(220, 88, 12, 1);
+  --color-rose-800: rgba(185, 70, 8, 1);
+  --color-rose-900: rgba(154, 52, 18, 1);
+  --color-rose-950: rgba(124, 45, 18, 1);
+}
