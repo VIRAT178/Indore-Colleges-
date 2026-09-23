@@ -489,14 +489,13 @@ async function getMongoDb(): Promise<any> {
 }
 
 // Mail SMTP helper with Nodemailer
-let smtpAuthFailed = false;
 
 function isSmtpConfigured(): boolean {
   const host = process.env.SMTP_HOST;
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
   
-  if (smtpAuthFailed || !host || !user || !pass) {
+  if (!host || !user || !pass) {
     return false;
   }
 
@@ -514,7 +513,7 @@ function isSmtpConfigured(): boolean {
   return true;
 }
 
-async function sendVerificationEmail(email: string, otp: string): Promise<{ success: boolean; error?: string; devOtp?: string }> {
+async function sendVerificationEmail(email: string, otp: string): Promise<{ success: boolean; error?: string }> {
   const host = process.env.SMTP_HOST;
   const port = process.env.SMTP_PORT;
   const user = process.env.SMTP_USER;
@@ -522,8 +521,9 @@ async function sendVerificationEmail(email: string, otp: string): Promise<{ succ
   const sender = process.env.SMTP_SENDER || 'no-reply@indorecolleges.org';
 
   if (!isSmtpConfigured()) {
-    console.log(`[Email Sandbox] OTP Code for ${email}: ${otp}`);
-    return { success: true, devOtp: otp };
+    const message = 'SMTP_HOST, SMTP_USER, and SMTP_PASS must be configured for email delivery.';
+    console.error(`[Email] Delivery unavailable for ${email}: ${message}`);
+    return { success: false, error: 'Unable to send the verification email. Please try again later.' };
   }
 
   try {
@@ -557,9 +557,9 @@ async function sendVerificationEmail(email: string, otp: string): Promise<{ succ
     console.log(`OTP Email sent successfully to ${email}`);
     return { success: true };
   } catch (err: any) {
-    smtpAuthFailed = true;
-    console.log(`[Email Sandbox Activated] Standard email delivery offline. Verification OTP for ${email}: ${otp}`);
-    return { success: true, devOtp: otp };
+    const message = err?.message || String(err);
+    console.error(`[Email] Failed to send OTP to ${email}: ${message}`);
+    return { success: false, error: 'Unable to send the verification email. Please try again later.' };
   }
 }
 
@@ -660,8 +660,9 @@ async function sendFormNotifications(
   };
 
   if (!isSmtpConfigured()) {
-    console.log(`[Email Sandbox] Form notification (${formType}) saved for ${userEmail}`);
-    return { success: true };
+    const message = 'SMTP_HOST, SMTP_USER, and SMTP_PASS must be configured for email delivery.';
+    console.error(`[Email] Form notification unavailable for ${userEmail}: ${message}`);
+    return { success: false, error: message };
   }
 
   try {
@@ -681,9 +682,9 @@ async function sendFormNotifications(
     console.log(`Form notifications sent successfully for ${userName} (${userEmail})`);
     return { success: true };
   } catch (err: any) {
-    smtpAuthFailed = true;
-    console.log(`[Email Sandbox Activated] Form notification (${formType}) saved for ${userEmail}`);
-    return { success: true };
+    const message = err?.message || String(err);
+    console.error(`[Email] Form notification failed for ${userEmail}: ${message}`);
+    return { success: false, error: message };
   }
 }
 
@@ -696,8 +697,9 @@ async function sendCollegeAcceptanceEmail(email: string, collegeName: string): P
   const sender = process.env.SMTP_SENDER || 'no-reply@indorecolleges.org';
 
   if (!isSmtpConfigured()) {
-    console.log(`[Email Sandbox] College approval email logged for ${collegeName} (${email})`);
-    return { success: true };
+    const message = 'SMTP_HOST, SMTP_USER, and SMTP_PASS must be configured for email delivery.';
+    console.error(`[Email] College approval unavailable for ${email}: ${message}`);
+    return { success: false, error: message };
   }
 
   try {
@@ -736,9 +738,9 @@ async function sendCollegeAcceptanceEmail(email: string, collegeName: string): P
     console.log(`College approval email sent successfully to ${email}`);
     return { success: true };
   } catch (err: any) {
-    smtpAuthFailed = true;
-    console.log(`[Email Sandbox Activated] College approval logged for ${collegeName} (${email})`);
-    return { success: true };
+    const message = err?.message || String(err);
+    console.error(`[Email] College approval failed for ${email}: ${message}`);
+    return { success: false, error: message };
   }
 }
 
@@ -751,8 +753,9 @@ async function sendCollegeUpdateApprovedEmail(email: string, collegeName: string
   const sender = process.env.SMTP_SENDER || 'no-reply@indorecolleges.org';
 
   if (!isSmtpConfigured()) {
-    console.log(`[Email Sandbox] College update approval email logged for ${collegeName} (${email})`);
-    return { success: true };
+    const message = 'SMTP_HOST, SMTP_USER, and SMTP_PASS must be configured for email delivery.';
+    console.error(`[Email] College update unavailable for ${email}: ${message}`);
+    return { success: false, error: message };
   }
 
   try {
@@ -790,9 +793,9 @@ async function sendCollegeUpdateApprovedEmail(email: string, collegeName: string
     console.log(`College update approval email sent successfully to ${email}`);
     return { success: true };
   } catch (err: any) {
-    smtpAuthFailed = true;
-    console.log(`[Email Sandbox Activated] College update approval logged for ${collegeName} (${email})`);
-    return { success: true };
+    const message = err?.message || String(err);
+    console.error(`[Email] College update failed for ${email}: ${message}`);
+    return { success: false, error: message };
   }
 }
 
@@ -1280,6 +1283,9 @@ async function startServer() {
     const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes expiration
 
     const mailResult = await sendVerificationEmail(emailTrimmed, otp);
+    if (!mailResult.success) {
+      return res.status(502).json({ error: mailResult.error || 'Unable to send verification email.' });
+    }
 
     try {
       const db = await getMongoDb();
@@ -1290,8 +1296,7 @@ async function startServer() {
       );
       res.json({
         success: true,
-        message: 'OTP verification code sent.',
-        devOtp: mailResult.devOtp
+        message: 'OTP verification code sent.'
       });
     } catch (err: any) {
       console.error("MongoDB OTP update error:", err);

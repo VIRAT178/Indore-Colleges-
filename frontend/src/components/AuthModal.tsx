@@ -18,7 +18,6 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
-  const [devOtp, setDevOtp] = useState<string | null>(null);
   const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
@@ -30,7 +29,6 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
       setStep('details');
       setError('');
       setSuccessMsg('');
-      setDevOtp(null);
     }
   }, [isOpen]);
 
@@ -66,9 +64,6 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
         setStep('otp');
         setCountdown(120); // 2 minutes resend countdown
         setSuccessMsg('A 6-digit verification code has been sent to your email.');
-        if (data.devOtp) {
-          setDevOtp(data.devOtp);
-        }
       } else {
         setError(data.error || 'Failed to send verification code. Please try again.');
       }
@@ -264,8 +259,6 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
               </div>
             </form>
           )}
-
-          {/* Fallback helper tip */}
         </div>
       </div>
     </div>
