@@ -514,46 +514,45 @@ function isSmtpConfigured(): boolean {
 }
 
 async function sendVerificationEmail(email: string, otp: string): Promise<{ success: boolean; error?: string }> {
-  const host = process.env.SMTP_HOST;
-  const port = process.env.SMTP_PORT;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  const sender = process.env.SMTP_SENDER || 'no-reply@indorecolleges.org';
+  const apiKey = process.env.BREVO_API_KEY;
+  const senderEmail = process.env.BREVO_SENDER_EMAIL;
+  const senderName = process.env.BREVO_SENDER_NAME || 'Indore Colleges';
 
-  if (!isSmtpConfigured()) {
-    const message = 'SMTP_HOST, SMTP_USER, and SMTP_PASS must be configured for email delivery.';
+  if (!apiKey || !senderEmail) {
+    const message = 'BREVO_API_KEY and BREVO_SENDER_EMAIL must be configured for email delivery.';
     console.error(`[Email] Delivery unavailable for ${email}: ${message}`);
     return { success: false, error: 'Unable to send the verification email. Please try again later.' };
   }
 
   try {
-    const transporter = nodemailer.createTransport({
-      host,
-      port: Number(port) || 587,
-      secure: Number(port) === 465,
-      auth: { user, pass }
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        'api-key': apiKey,
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        sender: { email: senderEmail, name: senderName },
+        to: [{ email }],
+        subject: `[Indore Colleges] ${otp} is your verification code`,
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px; background-color: #ffffff;">
+            <h2 style="color: #2563eb; font-size: 24px; margin-bottom: 20px; font-weight: bold; text-align: center;">Indore Colleges</h2>
+            <p style="font-size: 16px; color: #374151; line-height: 1.5;">Hello,</p>
+            <p style="font-size: 16px; color: #374151; line-height: 1.5;">Please use the following One-Time Password (OTP) to complete your login or registration on Indore Colleges:</p>
+            <div style="background-color: #f3f4f6; border-radius: 8px; padding: 15px; margin: 24px 0; text-align: center;"><span style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #111827;">${otp}</span></div>
+            <p style="font-size: 14px; color: #6b7280; line-height: 1.5; margin-top: 24px; text-align: center;">This OTP is valid for 2 minutes. Please do not share this OTP with anyone.</p>
+          </div>
+        `
+      })
     });
 
-    const mailOptions = {
-      from: `"Indore Colleges" <${sender}>`,
-      to: email,
-      subject: `[Indore Colleges] ${otp} is your verification code`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px; background-color: #ffffff;">
-          <h2 style="color: #2563eb; font-size: 24px; margin-bottom: 20px; font-weight: bold; text-align: center;">Indore Colleges</h2>
-          <p style="font-size: 16px; color: #374151; line-height: 1.5;">Hello,</p>
-          <p style="font-size: 16px; color: #374151; line-height: 1.5;">Please use the following One-Time Password (OTP) to complete your login or registration on Indore Colleges:</p>
-          <div style="background-color: #f3f4f6; border-radius: 8px; padding: 15px; margin: 24px 0; text-align: center;">
-            <span style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #111827;">${otp}</span>
-          </div>
-          <p style="font-size: 14px; color: #6b7280; line-height: 1.5; margin-top: 24px; text-align: center;">This OTP is valid for 2 minutes. Please do not share this OTP with anyone.</p>
-          <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 30px 0;" />
-          <p style="font-size: 12px; color: #9ca3af; text-align: center;">Thank you,<br>The Indore Colleges Admissions Team</p>
-        </div>
-      `
-    };
+    if (!response.ok) {
+      const providerError = await response.text();
+      throw new Error(`Brevo API ${response.status}: ${providerError}`);
+    }
 
-    await transporter.sendMail(mailOptions);
     console.log(`OTP Email sent successfully to ${email}`);
     return { success: true };
   } catch (err: any) {

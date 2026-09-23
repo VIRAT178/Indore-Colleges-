@@ -26,6 +26,12 @@ services:
         sync: false
       - key: SMTP_SENDER
         sync: false
+      - key: BREVO_API_KEY
+        sync: false
+      - key: BREVO_SENDER_EMAIL
+        sync: false
+      - key: BREVO_SENDER_NAME
+        sync: false
       - key: ADMIN_EMAIL
         value: admin@indorecolleges.org
       - key: ADMIN_PASSWORD
