@@ -47,39 +47,127 @@ export function getInstituteZone(locationStr: string): string {
   return 'central';
 }
 
+type CategorySeo = {
+  title: string;
+  description: string;
+};
+
+const CATEGORY_SEO: Record<string, CategorySeo> = {
+  engineering: {
+    title: 'Engineering Colleges in Indore | BTech Colleges & Admission',
+    description: 'Explore engineering colleges in Indore, including BTech and BE options. Compare courses, fees, admissions and college information.'
+  },
+  bba: {
+    title: 'BBA Colleges in Indore | Courses, Fees & Admission',
+    description: 'Explore BBA colleges in Indore and compare courses, fees, admission details and college information to find suitable BBA options.'
+  },
+  bca: {
+    title: 'BCA Colleges in Indore | Courses, Fees & Admission',
+    description: 'Explore BCA colleges in Indore with course, fee and admission information. Compare BCA options and find colleges matching your goals.'
+  },
+  mba: {
+    title: 'MBA Colleges in Indore | Courses, Fees & Admission',
+    description: 'Explore MBA colleges in Indore with courses, fees and admission information. Compare management institutes and MBA study options.'
+  },
+  law: {
+    title: 'Law Colleges in Indore | LLB & BA LLB Colleges',
+    description: 'Explore law colleges in Indore, including LLB and BA LLB options. Find course, admission and college information.'
+  },
+  medical: {
+    title: 'Medical Colleges in Indore | MBBS & Admission',
+    description: 'Explore medical colleges in Indore, including MBBS options. Find admission, course and college information for medical education.'
+  },
+  design: {
+    title: 'Design Colleges in Indore | Courses & Admission',
+    description: 'Explore design colleges in Indore and find information about design courses, B.Des options, admissions and institutes.'
+  }
+};
+
+const HOMEPAGE_SEO = {
+  title: 'Indore Colleges | Find & Apply to Top Colleges in Indore',
+  description: 'Discover the best engineering, management (MBA), computer applications (BCA), law, and medical colleges in Indore. Get expert admission guidance, check fee structures, and apply now to premier institutes like IIT Indore, IIM Indore, SGSITS, and SAIMS.',
+  canonical: 'https://indorecolleges.in/',
+  socialUrl: 'https://indorecolleges.in',
+  ogDescription: 'Explore top-tier educational institutions in Indore. Compare premium campus locations, view detailed course fee structures, and secure your direct admission with top counseling advisors.'
+};
+
+function updateMetaTag(attribute: 'name' | 'property', value: string, content: string) {
+  let tag = document.head.querySelector<HTMLMetaElement>(`meta[${attribute}="${value}"]`);
+  if (!tag) {
+    tag = document.createElement('meta');
+    tag.setAttribute(attribute, value);
+    document.head.appendChild(tag);
+  }
+  tag.setAttribute('content', content);
+}
+
+function updateCanonicalUrl(url: string) {
+  let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+  if (!canonical) {
+    canonical = document.createElement('link');
+    canonical.setAttribute('rel', 'canonical');
+    document.head.appendChild(canonical);
+  }
+  canonical.setAttribute('href', url);
+}
+
 function ScrollToTopAndSEO() {
   const { pathname } = useLocation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    let pageTitle = "Indore Colleges | Find & Apply to Top Colleges in Indore";
-    if (pathname === '/explore') {
-      pageTitle = "Explore Top Colleges & Universities in Indore | Indore Colleges";
-    } else if (pathname.startsWith('/explore/')) {
-      const streamName = pathname.replace('/explore/', '').toUpperCase();
-      pageTitle = `Top ${streamName} Colleges in Indore 2026 - Admissions & Fees | Indore Colleges`;
-    } else if (pathname.startsWith('/college/')) {
-      pageTitle = "College Details & Admissions | Indore Colleges";
-    } else if (pathname === '/register') {
-      pageTitle = "Direct College & School Application | Indore Colleges";
-    } else if (pathname === '/dashboard') {
-      pageTitle = "Counselling Dashboard & Lead Status | Indore Colleges";
-    } else if (pathname === '/blogs') {
-      pageTitle = "Admission Guides & Education Blogs | Indore Colleges";
-    } else if (pathname === '/about') {
-      pageTitle = "About Indore Colleges - MP's #1 Education Portal";
-    } else if (pathname === '/careers') {
-      pageTitle = "Join Our Team - Careers | Indore Colleges";
-    } else if (pathname === '/contact') {
-      pageTitle = "Contact Us & Support | Indore Colleges";
-    } else if (pathname === '/college-portal') {
-      pageTitle = "College Partner Registration Portal | Indore Colleges";
-    } else if (pathname === '/admin-panel') {
-      pageTitle = "Admin Control Portal | Indore Colleges";
-    }
+    const streamParam = pathname.startsWith('/explore/')
+      ? pathname.slice('/explore/'.length)
+      : '';
+    const categorySeo = streamParam ? CATEGORY_SEO[streamParam] : undefined;
+    const pageTitle = categorySeo?.title || (() => {
+      let title = HOMEPAGE_SEO.title;
+      if (pathname === '/explore') {
+        title = "Explore Top Colleges & Universities in Indore | Indore Colleges";
+      } else if (pathname.startsWith('/explore/')) {
+        title = `Top ${streamParam.toUpperCase()} Colleges in Indore 2026 - Admissions & Fees | Indore Colleges`;
+      } else if (pathname.startsWith('/college/')) {
+        title = "College Details & Admissions | Indore Colleges";
+      } else if (pathname === '/register') {
+        title = "Direct College & School Application | Indore Colleges";
+      } else if (pathname === '/dashboard') {
+        title = "Counselling Dashboard & Lead Status | Indore Colleges";
+      } else if (pathname === '/blogs') {
+        title = "Admission Guides & Education Blogs | Indore Colleges";
+      } else if (pathname === '/about') {
+        title = "About Indore Colleges - MP's #1 Education Portal";
+      } else if (pathname === '/careers') {
+        title = "Join Our Team - Careers | Indore Colleges";
+      } else if (pathname === '/contact') {
+        title = "Contact Us & Support | Indore Colleges";
+      } else if (pathname === '/college-portal') {
+        title = "College Partner Registration Portal | Indore Colleges";
+      } else if (pathname === '/admin-panel') {
+        title = "Admin Control Portal | Indore Colleges";
+      }
+      return title;
+    })();
+
+    const isCategoryPage = Boolean(categorySeo);
+    const canonical = isCategoryPage
+      ? `https://indorecolleges.in/explore/${streamParam}`
+      : HOMEPAGE_SEO.canonical;
+    const socialUrl = isCategoryPage ? canonical : HOMEPAGE_SEO.socialUrl;
+    const description = categorySeo?.description || HOMEPAGE_SEO.description;
+    const ogDescription = categorySeo?.description || HOMEPAGE_SEO.ogDescription;
 
     document.title = pageTitle;
+    updateMetaTag('name', 'description', description);
+    updateCanonicalUrl(canonical);
+    updateMetaTag('property', 'og:title', pageTitle);
+    updateMetaTag('property', 'og:description', ogDescription);
+    updateMetaTag('property', 'og:url', socialUrl);
+    updateMetaTag('property', 'og:type', 'website');
+    updateMetaTag('name', 'twitter:card', 'summary_large_image');
+    updateMetaTag('name', 'twitter:title', pageTitle);
+    updateMetaTag('name', 'twitter:description', ogDescription);
+    updateMetaTag('name', 'twitter:url', socialUrl);
   }, [pathname]);
 
   return null;
