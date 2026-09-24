@@ -88,30 +88,140 @@ const HOMEPAGE_SEO = {
   description: 'Discover the best engineering, management (MBA), computer applications (BCA), law, and medical colleges in Indore. Get expert admission guidance, check fee structures, and apply now to premier institutes like IIT Indore, IIM Indore, SGSITS, and SAIMS.',
   canonical: 'https://indorecolleges.in/',
   socialUrl: 'https://indorecolleges.in',
-  ogDescription: 'Explore top-tier educational institutions in Indore. Compare premium campus locations, view detailed course fee structures, and secure your direct admission with top counseling advisors.'
+  ogDescription: 'Explore top-tier educational institutions in Indore. Compare premium campus locations, view detailed course fee structures, and secure your direct admission with top counseling advisors.',
+  image: 'https://indorecolleges.in/logo.svg'
 };
 
+const SEO_ORIGIN = 'https://indorecolleges.in';
+const COLLEGE_JSON_LD_ID = 'college-profile-seo-jsonld';
+
+function normalizeSeoText(value?: string) {
+  return (value || '').replace(/\s+/g, ' ').trim();
+}
+
+function truncateSeoText(value: string, maxLength: number) {
+  if (value.length <= maxLength) return value;
+
+  const shortened = value.slice(0, maxLength - 3).trim();
+  const lastSpace = shortened.lastIndexOf(' ');
+  return `${(lastSpace > 0 ? shortened.slice(0, lastSpace) : shortened)}...`;
+}
+
+function getCollegeSeoTitle(college: Institute) {
+  const titleName = /\bindore\b/i.test(college.name) ? college.name : `${college.name} Indore`;
+  const fullTitle = `${titleName} - Courses, Fees, Cutoff & Admission | Indore Colleges`;
+  return fullTitle.length <= 120
+    ? fullTitle
+    : `${college.name} | Indore Colleges`;
+}
+
+function getCollegeSeoDescription(college: Institute) {
+  const name = normalizeSeoText(college.name);
+  const location = normalizeSeoText(college.location);
+  const category = normalizeSeoText(college.category);
+  const courses = (college.coursesList || [])
+    .map(course => normalizeSeoText(course.name))
+    .filter(Boolean)
+    .slice(0, 2)
+    .join(', ');
+  const locationText = location ? ` in ${location}` : '';
+  const categoryText = category ? `${category} courses` : 'college courses';
+  const completeDescription = `${name}${locationText}: explore ${categoryText}, fees, admission details and campus information on Indore Colleges.`;
+  const courseDescription = courses
+    ? `${name}${locationText}: explore ${categoryText} such as ${courses}, plus fees and admission details on Indore Colleges.`
+    : completeDescription;
+
+  return truncateSeoText(courseDescription.length <= 160 ? courseDescription : completeDescription, 160);
+}
+
+function getAbsoluteSeoImage(image?: string) {
+  const normalizedImage = normalizeSeoText(image);
+  if (!normalizedImage) return HOMEPAGE_SEO.image;
+
+  try {
+    return new URL(normalizedImage, SEO_ORIGIN).href;
+  } catch {
+    return HOMEPAGE_SEO.image;
+  }
+}
+
 function updateMetaTag(attribute: 'name' | 'property', value: string, content: string) {
-  let tag = document.head.querySelector<HTMLMetaElement>(`meta[${attribute}="${value}"]`);
+  const tags = Array.from(document.head.querySelectorAll<HTMLMetaElement>(`meta[${attribute}="${value}"]`));
+  let tag = tags[0];
   if (!tag) {
     tag = document.createElement('meta');
     tag.setAttribute(attribute, value);
     document.head.appendChild(tag);
   }
+  tags.slice(1).forEach(duplicate => duplicate.remove());
   tag.setAttribute('content', content);
 }
 
 function updateCanonicalUrl(url: string) {
-  let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+  const canonicals = Array.from(document.head.querySelectorAll<HTMLLinkElement>('link[rel="canonical"]'));
+  let canonical = canonicals[0];
   if (!canonical) {
     canonical = document.createElement('link');
     canonical.setAttribute('rel', 'canonical');
     document.head.appendChild(canonical);
   }
+  canonicals.slice(1).forEach(duplicate => duplicate.remove());
   canonical.setAttribute('href', url);
 }
 
-function ScrollToTopAndSEO() {
+function updateCollegeJsonLd(college: Institute, canonical: string, description: string, image: string) {
+  const existingScripts = Array.from(document.head.querySelectorAll<HTMLScriptElement>(`script#${COLLEGE_JSON_LD_ID}`));
+  let script = existingScripts[0];
+  if (!script) {
+    script = document.createElement('script');
+    script.id = COLLEGE_JSON_LD_ID;
+    script.type = 'application/ld+json';
+    document.head.appendChild(script);
+  }
+  existingScripts.slice(1).forEach(duplicate => duplicate.remove());
+
+  const collegeSchema: Record<string, unknown> = {
+    '@type': 'CollegeOrUniversity',
+    '@id': `${canonical}#college`,
+    name: college.name,
+    url: canonical,
+    image,
+    description
+  };
+
+  if (college.address) {
+    collegeSchema.address = {
+      '@type': 'PostalAddress',
+      streetAddress: college.address,
+      ...(college.location ? { addressLocality: college.location } : {})
+    };
+  }
+  if (college.contactPhone) collegeSchema.telephone = college.contactPhone;
+  if (college.contactEmail) collegeSchema.email = college.contactEmail;
+  if (college.website) collegeSchema.sameAs = [college.website];
+
+  script.textContent = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [
+      collegeSchema,
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${canonical}#breadcrumb`,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SEO_ORIGIN}/` },
+          { '@type': 'ListItem', position: 2, name: 'Explore', item: `${SEO_ORIGIN}/explore` },
+          { '@type': 'ListItem', position: 3, name: college.name, item: canonical }
+        ]
+      }
+    ]
+  });
+}
+
+function removeCollegeJsonLd() {
+  document.head.querySelectorAll(`script#${COLLEGE_JSON_LD_ID}`).forEach(script => script.remove());
+}
+
+function ScrollToTopAndSEO({ institutes }: { institutes: Institute[] }) {
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -121,14 +231,25 @@ function ScrollToTopAndSEO() {
       ? pathname.slice('/explore/'.length)
       : '';
     const categorySeo = streamParam ? CATEGORY_SEO[streamParam] : undefined;
-    const pageTitle = categorySeo?.title || (() => {
+    const collegeId = pathname.startsWith('/college/')
+      ? pathname.slice('/college/'.length)
+      : '';
+    const college = collegeId ? institutes.find(institute => institute.id === collegeId) : undefined;
+    const isCollegePath = pathname.startsWith('/college/');
+
+    if (isCollegePath && !college) {
+      removeCollegeJsonLd();
+      return;
+    }
+
+    const pageTitle = college
+      ? getCollegeSeoTitle(college)
+      : categorySeo?.title || (() => {
       let title = HOMEPAGE_SEO.title;
       if (pathname === '/explore') {
         title = "Explore Top Colleges & Universities in Indore | Indore Colleges";
       } else if (pathname.startsWith('/explore/')) {
         title = `Top ${streamParam.toUpperCase()} Colleges in Indore 2026 - Admissions & Fees | Indore Colleges`;
-      } else if (pathname.startsWith('/college/')) {
-        title = "College Details & Admissions | Indore Colleges";
       } else if (pathname === '/register') {
         title = "Direct College & School Application | Indore Colleges";
       } else if (pathname === '/dashboard') {
@@ -150,12 +271,19 @@ function ScrollToTopAndSEO() {
     })();
 
     const isCategoryPage = Boolean(categorySeo);
-    const canonical = isCategoryPage
+    const canonical = college
+      ? `${SEO_ORIGIN}/college/${encodeURIComponent(college.id)}`
+      : isCategoryPage
       ? `https://indorecolleges.in/explore/${streamParam}`
       : HOMEPAGE_SEO.canonical;
-    const socialUrl = isCategoryPage ? canonical : HOMEPAGE_SEO.socialUrl;
-    const description = categorySeo?.description || HOMEPAGE_SEO.description;
-    const ogDescription = categorySeo?.description || HOMEPAGE_SEO.ogDescription;
+    const socialUrl = college || isCategoryPage ? canonical : HOMEPAGE_SEO.socialUrl;
+    const description = college
+      ? getCollegeSeoDescription(college)
+      : categorySeo?.description || HOMEPAGE_SEO.description;
+    const ogDescription = college
+      ? description
+      : categorySeo?.description || HOMEPAGE_SEO.ogDescription;
+    const image = college ? getAbsoluteSeoImage(college.image) : HOMEPAGE_SEO.image;
 
     document.title = pageTitle;
     updateMetaTag('name', 'description', description);
@@ -164,11 +292,19 @@ function ScrollToTopAndSEO() {
     updateMetaTag('property', 'og:description', ogDescription);
     updateMetaTag('property', 'og:url', socialUrl);
     updateMetaTag('property', 'og:type', 'website');
+    updateMetaTag('property', 'og:image', image);
     updateMetaTag('name', 'twitter:card', 'summary_large_image');
     updateMetaTag('name', 'twitter:title', pageTitle);
     updateMetaTag('name', 'twitter:description', ogDescription);
     updateMetaTag('name', 'twitter:url', socialUrl);
-  }, [pathname]);
+    updateMetaTag('name', 'twitter:image', image);
+
+    if (college) {
+      updateCollegeJsonLd(college, canonical, description, image);
+    } else {
+      removeCollegeJsonLd();
+    }
+  }, [institutes, pathname]);
 
   return null;
 }
@@ -191,12 +327,6 @@ function CollegeDetailRoute({
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const college = institutes.find(i => i.id === id);
-
-  useEffect(() => {
-    if (college) {
-      document.title = `${college.name} Indore - Courses, Fees, Cutoff & Admission | Indore Colleges`;
-    }
-  }, [college]);
 
   if (!college && institutes.length > 0) {
     return <Navigate to="/explore" replace />;
@@ -1058,7 +1188,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-50/50 flex flex-col font-sans text-gray-900 selection:bg-red-600 selection:text-white">
-      <ScrollToTopAndSEO />
+      <ScrollToTopAndSEO institutes={institutes} />
 
       {/* Navigation Header */}
       <Header

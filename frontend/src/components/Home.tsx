@@ -1134,7 +1134,7 @@ export default function Home({
             >
               <div className="h-36 sm:h-40 overflow-hidden relative bg-gray-50">
                 <img 
-                  src='./public/ims-davv.jpg'
+                  src='/ims-davv.jpg'
                   alt="Engineering campus" 
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
@@ -1157,7 +1157,7 @@ export default function Home({
             >
               <div className="h-36 sm:h-40 overflow-hidden relative bg-gray-50">
                 <img 
-                  src="./public/iim-indore.jpg" 
+                  src="/iim-indore.jpg" 
                   alt="Management class" 
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
@@ -1180,7 +1180,7 @@ export default function Home({
             >
               <div className="h-36 sm:h-40 overflow-hidden relative bg-gray-50">
                 <img 
-                  src="./public/saims.jpg" 
+                  src="/saims.jpg" 
                   alt="Medical lab" 
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
@@ -1203,7 +1203,7 @@ export default function Home({
             >
               <div className="h-36 sm:h-40 overflow-hidden relative bg-gray-50">
                 <img 
-                  src="./public/ips-ibmr.jpg" 
+                  src="/ips-ibmr.jpg" 
                   alt="Design studio" 
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
