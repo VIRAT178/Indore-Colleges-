@@ -1,4 +1,4 @@
-import {build} from 'esbuild';
+import {createRequire} from 'node:module';
 import {readFile, rm, mkdir, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
@@ -7,6 +7,7 @@ const workingDirectory = process.cwd();
 const frontendDirectory = path.basename(workingDirectory) === 'frontend'
   ? workingDirectory
   : path.join(workingDirectory, 'frontend');
+const {build} = createRequire(path.join(frontendDirectory, 'package.json'))('esbuild');
 const outputDirectory = path.join(workingDirectory, 'dist');
 const serverBundleDirectory = path.join(outputDirectory, '.prerender');
 const serverBundlePath = path.join(serverBundleDirectory, 'entry-server.mjs');
