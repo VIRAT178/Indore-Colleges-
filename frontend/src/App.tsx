@@ -95,6 +95,15 @@ const HOMEPAGE_SEO = {
 const SEO_ORIGIN = 'https://indorecolleges.in';
 const COLLEGE_JSON_LD_ID = 'college-profile-seo-jsonld';
 
+export type PageSeo = {
+  title: string;
+  description: string;
+  canonical: string;
+  socialUrl: string;
+  ogDescription: string;
+  image: string;
+};
+
 function normalizeSeoText(value?: string) {
   return (value || '').replace(/\s+/g, ' ').trim();
 }
@@ -221,86 +230,96 @@ function removeCollegeJsonLd() {
   document.head.querySelectorAll(`script#${COLLEGE_JSON_LD_ID}`).forEach(script => script.remove());
 }
 
+export function getPageSeo(pathname: string, institutes: Institute[]): PageSeo | null {
+  const streamParam = pathname.startsWith('/explore/')
+    ? pathname.slice('/explore/'.length)
+    : '';
+  const categorySeo = streamParam ? CATEGORY_SEO[streamParam] : undefined;
+  const collegeId = pathname.startsWith('/college/')
+    ? pathname.slice('/college/'.length)
+    : '';
+  const college = collegeId ? institutes.find(institute => institute.id === collegeId) : undefined;
+  const isCollegePath = pathname.startsWith('/college/');
+
+  if (isCollegePath && !college) return null;
+
+  const pageTitle = college
+    ? getCollegeSeoTitle(college)
+    : categorySeo?.title || (() => {
+    let title = HOMEPAGE_SEO.title;
+    if (pathname === '/explore') {
+      title = "Explore Top Colleges & Universities in Indore | Indore Colleges";
+    } else if (pathname.startsWith('/explore/')) {
+      title = `Top ${streamParam.toUpperCase()} Colleges in Indore 2026 - Admissions & Fees | Indore Colleges`;
+    } else if (pathname === '/register') {
+      title = "Direct College & School Application | Indore Colleges";
+    } else if (pathname === '/dashboard') {
+      title = "Counselling Dashboard & Lead Status | Indore Colleges";
+    } else if (pathname === '/blogs') {
+      title = "Admission Guides & Education Blogs | Indore Colleges";
+    } else if (pathname === '/about') {
+      title = "About Indore Colleges - MP's #1 Education Portal";
+    } else if (pathname === '/careers') {
+      title = "Join Our Team - Careers | Indore Colleges";
+    } else if (pathname === '/contact') {
+      title = "Contact Us & Support | Indore Colleges";
+    } else if (pathname === '/college-portal') {
+      title = "College Partner Registration Portal | Indore Colleges";
+    } else if (pathname === '/admin-panel') {
+      title = "Admin Control Portal | Indore Colleges";
+    }
+    return title;
+  })();
+
+  const isCategoryPage = Boolean(categorySeo);
+  const canonical = college
+    ? `${SEO_ORIGIN}/college/${encodeURIComponent(college.id)}`
+    : isCategoryPage
+    ? `${SEO_ORIGIN}/explore/${streamParam}`
+    : HOMEPAGE_SEO.canonical;
+  const socialUrl = college || isCategoryPage ? canonical : HOMEPAGE_SEO.socialUrl;
+  const description = college
+    ? getCollegeSeoDescription(college)
+    : categorySeo?.description || HOMEPAGE_SEO.description;
+  const ogDescription = college
+    ? description
+    : categorySeo?.description || HOMEPAGE_SEO.ogDescription;
+  const image = college ? getAbsoluteSeoImage(college.image) : HOMEPAGE_SEO.image;
+
+  return { title: pageTitle, description, canonical, socialUrl, ogDescription, image };
+}
+
 function ScrollToTopAndSEO({ institutes }: { institutes: Institute[] }) {
   const { pathname } = useLocation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    const streamParam = pathname.startsWith('/explore/')
-      ? pathname.slice('/explore/'.length)
-      : '';
-    const categorySeo = streamParam ? CATEGORY_SEO[streamParam] : undefined;
-    const collegeId = pathname.startsWith('/college/')
-      ? pathname.slice('/college/'.length)
-      : '';
-    const college = collegeId ? institutes.find(institute => institute.id === collegeId) : undefined;
-    const isCollegePath = pathname.startsWith('/college/');
-
-    if (isCollegePath && !college) {
+    const seo = getPageSeo(pathname, institutes);
+    if (!seo) {
       removeCollegeJsonLd();
       return;
     }
+    const college = pathname.startsWith('/college/')
+      ? institutes.find(institute => institute.id === pathname.slice('/college/'.length))
+      : undefined;
 
-    const pageTitle = college
-      ? getCollegeSeoTitle(college)
-      : categorySeo?.title || (() => {
-      let title = HOMEPAGE_SEO.title;
-      if (pathname === '/explore') {
-        title = "Explore Top Colleges & Universities in Indore | Indore Colleges";
-      } else if (pathname.startsWith('/explore/')) {
-        title = `Top ${streamParam.toUpperCase()} Colleges in Indore 2026 - Admissions & Fees | Indore Colleges`;
-      } else if (pathname === '/register') {
-        title = "Direct College & School Application | Indore Colleges";
-      } else if (pathname === '/dashboard') {
-        title = "Counselling Dashboard & Lead Status | Indore Colleges";
-      } else if (pathname === '/blogs') {
-        title = "Admission Guides & Education Blogs | Indore Colleges";
-      } else if (pathname === '/about') {
-        title = "About Indore Colleges - MP's #1 Education Portal";
-      } else if (pathname === '/careers') {
-        title = "Join Our Team - Careers | Indore Colleges";
-      } else if (pathname === '/contact') {
-        title = "Contact Us & Support | Indore Colleges";
-      } else if (pathname === '/college-portal') {
-        title = "College Partner Registration Portal | Indore Colleges";
-      } else if (pathname === '/admin-panel') {
-        title = "Admin Control Portal | Indore Colleges";
-      }
-      return title;
-    })();
-
-    const isCategoryPage = Boolean(categorySeo);
-    const canonical = college
-      ? `${SEO_ORIGIN}/college/${encodeURIComponent(college.id)}`
-      : isCategoryPage
-      ? `https://indorecolleges.in/explore/${streamParam}`
-      : HOMEPAGE_SEO.canonical;
-    const socialUrl = college || isCategoryPage ? canonical : HOMEPAGE_SEO.socialUrl;
-    const description = college
-      ? getCollegeSeoDescription(college)
-      : categorySeo?.description || HOMEPAGE_SEO.description;
-    const ogDescription = college
-      ? description
-      : categorySeo?.description || HOMEPAGE_SEO.ogDescription;
-    const image = college ? getAbsoluteSeoImage(college.image) : HOMEPAGE_SEO.image;
-
-    document.title = pageTitle;
-    updateMetaTag('name', 'description', description);
-    updateCanonicalUrl(canonical);
-    updateMetaTag('property', 'og:title', pageTitle);
-    updateMetaTag('property', 'og:description', ogDescription);
-    updateMetaTag('property', 'og:url', socialUrl);
+    document.title = seo.title;
+    updateMetaTag('name', 'description', seo.description);
+    updateCanonicalUrl(seo.canonical);
+    updateMetaTag('property', 'og:title', seo.title);
+    updateMetaTag('property', 'og:description', seo.ogDescription);
+    updateMetaTag('property', 'og:url', seo.socialUrl);
     updateMetaTag('property', 'og:type', 'website');
-    updateMetaTag('property', 'og:image', image);
+    updateMetaTag('property', 'og:image', seo.image);
     updateMetaTag('name', 'twitter:card', 'summary_large_image');
-    updateMetaTag('name', 'twitter:title', pageTitle);
-    updateMetaTag('name', 'twitter:description', ogDescription);
-    updateMetaTag('name', 'twitter:url', socialUrl);
-    updateMetaTag('name', 'twitter:image', image);
+    updateMetaTag('name', 'twitter:title', seo.title);
+    updateMetaTag('name', 'twitter:description', seo.ogDescription);
+    updateMetaTag('name', 'twitter:url', seo.socialUrl);
+    updateMetaTag('name', 'twitter:image', seo.image);
 
     if (college) {
-      updateCollegeJsonLd(college, canonical, description, image);
+      updateCollegeJsonLd(college, seo.canonical, seo.description, seo.image);
     } else {
       removeCollegeJsonLd();
     }
@@ -810,12 +829,12 @@ function ExploreRoute({
   );
 }
 
-export default function App() {
+export default function App({ initialInstitutes = [] }: { initialInstitutes?: Institute[] } = {}) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [institutes, setInstitutes] = useState<Institute[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [institutes, setInstitutes] = useState<Institute[]>(initialInstitutes);
+  const [loading, setLoading] = useState(initialInstitutes.length === 0);
 
   // Derive activeTab from current route path
   const getActiveTabFromPath = (path: string): 'home' | 'explore' | 'register' | 'dashboard' | 'blogs' | 'about' | 'careers' | 'contact' | 'college-portal' | 'admin-panel' => {
@@ -850,14 +869,7 @@ export default function App() {
   };
 
   // User Session & Authentication States
-  const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
-    try {
-      const saved = localStorage.getItem('indore_user_profile');
-      return saved ? JSON.parse(saved) : null;
-    } catch (e) {
-      return null;
-    }
-  });
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
 
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -892,32 +904,37 @@ export default function App() {
   const [callbackSuccess, setCallbackSuccess] = useState(false);
 
   // Favorites / Shortlist State
-  const [shortlistedIds, setShortlistedIds] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('edupath_shortlisted_ids');
-      return saved ? JSON.parse(saved) : [];
-    } catch (e) {
-      return [];
-    }
-  });
+  const [shortlistedIds, setShortlistedIds] = useState<string[]>([]);
 
   // Admissions Basket / Cart State
-  const [cartIds, setCartIds] = useState<string[]>(() => {
+  const [cartIds, setCartIds] = useState<string[]>([]);
+
+  const [hasLoadedLocalState, setHasLoadedLocalState] = useState(false);
+
+  useEffect(() => {
     try {
-      const saved = localStorage.getItem('edupath_cart_ids');
-      return saved ? JSON.parse(saved) : [];
+      const savedUser = localStorage.getItem('indore_user_profile');
+      const savedShortlist = localStorage.getItem('edupath_shortlisted_ids');
+      const savedCart = localStorage.getItem('edupath_cart_ids');
+      if (savedUser) setCurrentUser(JSON.parse(savedUser));
+      if (savedShortlist) setShortlistedIds(JSON.parse(savedShortlist));
+      if (savedCart) setCartIds(JSON.parse(savedCart));
     } catch (e) {
-      return [];
+      // Ignore malformed browser-only session state.
+    } finally {
+      setHasLoadedLocalState(true);
     }
-  });
+  }, []);
 
   useEffect(() => {
+    if (!hasLoadedLocalState) return;
     localStorage.setItem('edupath_shortlisted_ids', JSON.stringify(shortlistedIds));
-  }, [shortlistedIds]);
+  }, [hasLoadedLocalState, shortlistedIds]);
 
   useEffect(() => {
+    if (!hasLoadedLocalState) return;
     localStorage.setItem('edupath_cart_ids', JSON.stringify(cartIds));
-  }, [cartIds]);
+  }, [hasLoadedLocalState, cartIds]);
 
   // Auto-open Virtual Advisor after 10 seconds of loading the website
   useEffect(() => {
@@ -1070,7 +1087,7 @@ export default function App() {
   };
 
   const fetchInstitutes = async () => {
-    setLoading(true);
+    setLoading(initialInstitutes.length === 0);
     try {
       const res = await fetch('/api/institutes');
       if (res.ok) {

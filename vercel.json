@@ -13,6 +13,38 @@
       "destination": "/robots.txt"
     },
     {
+      "source": "/explore",
+      "destination": "/explore/index.html"
+    },
+    {
+      "source": "/explore/engineering",
+      "destination": "/explore/engineering/index.html"
+    },
+    {
+      "source": "/explore/bba",
+      "destination": "/explore/bba/index.html"
+    },
+    {
+      "source": "/explore/bca",
+      "destination": "/explore/bca/index.html"
+    },
+    {
+      "source": "/explore/mba",
+      "destination": "/explore/mba/index.html"
+    },
+    {
+      "source": "/explore/law",
+      "destination": "/explore/law/index.html"
+    },
+    {
+      "source": "/explore/medical",
+      "destination": "/explore/medical/index.html"
+    },
+    {
+      "source": "/explore/design",
+      "destination": "/explore/design/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

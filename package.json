@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "tsx backend/server.ts",
-    "build": "vite build && esbuild backend/server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
-    "build:frontend": "vite build",
+    "build": "vite build && node scripts/prerender.mjs && esbuild backend/server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "build:frontend": "vite build && node scripts/prerender.mjs",
+    "build:prerender": "node scripts/prerender.mjs",
     "build:backend": "esbuild backend/server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "start": "node dist/server.cjs",
     "start:backend": "node dist/server.cjs",
