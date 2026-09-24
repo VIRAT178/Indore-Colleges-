@@ -250,48 +250,7 @@ export default function AboutUsPage() {
           </div>
         </div>
 
-        {/* Our Team Section */}
-        <div className="mb-16">
-          <div className="text-center max-w-xl mx-auto mb-12">
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Meet Our Core Advisors</h2>
-            <p className="text-xs text-gray-400 mt-1">Experienced counselors guiding students to Vijay Nagar, Palasia, and Simrol corridors</p>
-          </div>
 
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {[
-              {
-                name: 'Dr. Ramesh K. Verma',
-                role: 'Chief Academic Counselor',
-                bio: 'Former DAVV Professor with over 20+ years of institutional counseling experience in Central India.',
-                img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300&q=80'
-              },
-              {
-                name: 'Neha Sharma',
-                role: 'Director of Career Services',
-                bio: 'Tech recruiter and career guidance expert. Specializes in Engineering & Management stream placements.',
-                img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80'
-              },
-              {
-                name: 'Ankit Agrawal',
-                role: 'Lead Field Audit Officer',
-                bio: 'Directs the Indore-wide college campus review process. Ensures infrastructure lists are 100% verified.',
-                img: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=300&q=80'
-              }
-            ].map((member, idx) => (
-              <div key={idx} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-2xs flex flex-col items-center text-center">
-                <img 
-                  src={member.img} 
-                  alt={member.name}
-                  className="h-16 w-16 rounded-full object-cover border-2 border-red-500/10 mb-4"
-                  referrerPolicy="no-referrer"
-                />
-                <h4 className="font-bold text-gray-900 text-sm">{member.name}</h4>
-                <span className="text-[10px] text-red-600 font-extrabold uppercase tracking-wide mt-0.5">{member.role}</span>
-                <p className="text-xs text-gray-500 mt-3 leading-relaxed">{member.bio}</p>
-              </div>
-            ))}
-          </div>
-        </div>
 
         {/* Our Values Section */}
         <div className="bg-white rounded-3xl border border-gray-100 p-8 sm:p-12 shadow-xs grid md:grid-cols-3 gap-8">

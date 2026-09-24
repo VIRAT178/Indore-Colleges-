@@ -13,7 +13,7 @@ const serverBundleDirectory = path.join(outputDirectory, '.prerender');
 const serverBundlePath = path.join(serverBundleDirectory, 'entry-server.mjs');
 const templatePath = path.join(outputDirectory, 'index.html');
 
-const routes = [
+const baseRoutes = [
   '/',
   '/explore',
   '/explore/engineering',
@@ -61,6 +61,13 @@ function applySeo(template, seo) {
   return html;
 }
 
+function applyJsonLd(template, jsonLd) {
+  if (!jsonLd) return template;
+
+  const script = `<script id="college-profile-seo-jsonld" type="application/ld+json">${jsonLd}</script>`;
+  return template.replace('</head>', `${script}</head>`);
+}
+
 function routeOutputPath(route) {
   return route === '/' ? path.join(outputDirectory, 'index.html') : path.join(outputDirectory, route.slice(1), 'index.html');
 }
@@ -77,15 +84,17 @@ await build({
 
 const template = await readFile(templatePath, 'utf8');
 const renderer = await import(`${pathToFileURL(serverBundlePath).href}?build=${Date.now()}`);
+const routes = [...baseRoutes, ...renderer.getStaticCollegeRoutes()];
 
 for (const route of routes) {
-  const {appHtml, seo} = renderer.renderPage(route);
+  const {appHtml, seo, jsonLd} = renderer.renderPage(route);
   const hydrationHtml = appHtml.replace(/<link rel="preload"[^>]*\/>/gi, '');
-  const html = applySeo(template.replace('<div id="root"></div>', `<div id="root">${hydrationHtml}</div>`), seo);
+  const htmlWithApp = template.replace('<div id="root"></div>', `<div id="root">${hydrationHtml}</div>`);
+  const html = applyJsonLd(applySeo(htmlWithApp, seo), jsonLd);
   const outputPath = routeOutputPath(route);
   await mkdir(path.dirname(outputPath), {recursive: true});
   await writeFile(outputPath, html, 'utf8');
 }
 
 await rm(serverBundleDirectory, {recursive: true, force: true});
-console.log(`Prerendered ${routes.length} routes to ${outputDirectory}`);
+console.log(`Prerendered ${routes.length} routes (${routes.length - baseRoutes.length} colleges) to ${outputDirectory}`);

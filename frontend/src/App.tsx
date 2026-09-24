@@ -178,17 +178,7 @@ function updateCanonicalUrl(url: string) {
   canonical.setAttribute('href', url);
 }
 
-function updateCollegeJsonLd(college: Institute, canonical: string, description: string, image: string) {
-  const existingScripts = Array.from(document.head.querySelectorAll<HTMLScriptElement>(`script#${COLLEGE_JSON_LD_ID}`));
-  let script = existingScripts[0];
-  if (!script) {
-    script = document.createElement('script');
-    script.id = COLLEGE_JSON_LD_ID;
-    script.type = 'application/ld+json';
-    document.head.appendChild(script);
-  }
-  existingScripts.slice(1).forEach(duplicate => duplicate.remove());
-
+export function getCollegeJsonLd(college: Institute, canonical: string, description: string, image: string) {
   const collegeSchema: Record<string, unknown> = {
     '@type': 'CollegeOrUniversity',
     '@id': `${canonical}#college`,
@@ -209,7 +199,7 @@ function updateCollegeJsonLd(college: Institute, canonical: string, description:
   if (college.contactEmail) collegeSchema.email = college.contactEmail;
   if (college.website) collegeSchema.sameAs = [college.website];
 
-  script.textContent = JSON.stringify({
+  return {
     '@context': 'https://schema.org',
     '@graph': [
       collegeSchema,
@@ -223,7 +213,20 @@ function updateCollegeJsonLd(college: Institute, canonical: string, description:
         ]
       }
     ]
-  });
+  };
+}
+
+function updateCollegeJsonLd(college: Institute, canonical: string, description: string, image: string) {
+  const existingScripts = Array.from(document.head.querySelectorAll<HTMLScriptElement>(`script#${COLLEGE_JSON_LD_ID}`));
+  let script = existingScripts[0];
+  if (!script) {
+    script = document.createElement('script');
+    script.id = COLLEGE_JSON_LD_ID;
+    script.type = 'application/ld+json';
+    document.head.appendChild(script);
+  }
+  existingScripts.slice(1).forEach(duplicate => duplicate.remove());
+  script.textContent = JSON.stringify(getCollegeJsonLd(college, canonical, description, image));
 }
 
 function removeCollegeJsonLd() {

@@ -325,7 +325,7 @@ export default function Header({
                   }`}
                 >
                   {isActive && (
-                    <motion.div
+                    <motion.span
                       layoutId="headerActivePill"
                       className="absolute inset-0 bg-[#0F244C] rounded-full shadow-sm"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}

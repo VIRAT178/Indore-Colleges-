@@ -49,10 +49,11 @@ try {
 }
 
 const rootElement = document.getElementById('root')!;
+const initialInstitutes = (window as Window & { __INITIAL_INSTITUTES__?: typeof INDORE_INSTITUTES }).__INITIAL_INSTITUTES__ || INDORE_INSTITUTES;
 const app = (
   <StrictMode>
     <BrowserRouter>
-      <App initialInstitutes={INDORE_INSTITUTES} />
+      <App initialInstitutes={initialInstitutes} />
     </BrowserRouter>
   </StrictMode>
 );
