@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Logo from './Logo';
 import { 
   MapPin, 
@@ -148,29 +149,29 @@ export default function Footer({
             </h4>
             <ul className="space-y-3 text-[12px] text-gray-300">
               <li>
-                <button onClick={() => handleLinkClick('Engineering')} className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
+                <Link to="/explore/engineering" className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
                   IIT Indore Direct Info
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleLinkClick('Engineering')} className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
+                <Link to="/explore/engineering" className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
                   SGSITS College Profile
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleLinkClick('Engineering')} className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
+                <Link to="/explore/engineering" className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
                   B.Tech Programs in Indore
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleLinkClick('Engineering')} className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
+                <Link to="/explore/bca" className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
                   Computer Science Majors
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleLinkClick('Engineering')} className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
+                <Link to="/explore/engineering" className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
                   Information Technology Labs
-                </button>
+                </Link>
               </li>
             </ul>
           </div>
@@ -182,29 +183,29 @@ export default function Footer({
             </h4>
             <ul className="space-y-3 text-[12px] text-gray-300">
               <li>
-                <button onClick={() => handleLinkClick('Management')} className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
+                <Link to="/explore/mba" className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
                   IIM Indore IPM Programs
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleLinkClick('Management')} className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
+                <Link to="/explore/mba" className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
                   MBA Streams in Indore
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleLinkClick('Management')} className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
+                <Link to="/explore/bba" className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
                   BBA Colleges in Indore
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleLinkClick('Management')} className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
+                <Link to="/explore/bba" className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
                   Commerce Institutes
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleLinkClick('Management')} className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
+                <Link to="/explore/mba" className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
                   Business Administration
-                </button>
+                </Link>
               </li>
             </ul>
           </div>
@@ -216,19 +217,19 @@ export default function Footer({
             </h4>
             <ul className="space-y-3 text-[12px] text-gray-300">
               <li>
-                <button onClick={() => handleLinkClick('Medical')} className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
+                <Link to="/explore/medical" className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
                   Medical Colleges in Indore
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleLinkClick('Law')} className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
+                <Link to="/explore/law" className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
                   Law (LL.B / B.A. LL.B)
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleLinkClick('Design')} className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
+                <Link to="/explore/design" className="hover:text-red-400 hover:underline transition text-left cursor-pointer">
                   Design & Fine Arts
-                </button>
+                </Link>
               </li>
               <li>
                 <button onClick={() => handleLinkClick('Digital Marketing')} className="hover:text-red-400 hover:underline transition text-left cursor-pointer">

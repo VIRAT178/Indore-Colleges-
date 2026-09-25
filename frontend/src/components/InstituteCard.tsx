@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Institute, Review } from '../types';
 import { Star, MapPin, Award, IndianRupee, Calendar, Check, Send, ChevronDown, ChevronUp, MessageSquare, PhoneCall, Heart, ShoppingCart, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -261,16 +262,16 @@ export default function InstituteCard({
         {/* Buttons section */}
         <div className="mt-auto">
           <div className="flex space-x-2 mb-3">
-            <button
+            <Link
+              to={`/college/${institute.id}`}
               onClick={(e) => {
                 e.stopPropagation();
-                onViewDetail(institute);
               }}
               className="flex-1 rounded-xl border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 px-3 py-2.5 text-xs font-bold flex items-center justify-center space-x-1.5 transition shadow-3xs cursor-pointer"
             >
               <Info className="h-3.5 w-3.5 text-red-600" />
               <span>College Info</span>
-            </button>
+            </Link>
             <button
               onClick={(e) => {
                 e.stopPropagation();

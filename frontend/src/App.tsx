@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
+import { Routes, Route, Link, useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Home from './components/Home';
 import Footer from './components/Footer';
@@ -587,12 +587,12 @@ function ExploreRoute({
                                   
                                   <div className="space-y-1">
                                     <div>
-                                      <button
-                                        onClick={() => matchingInst && navigate(`/college/${matchingInst.id}`)}
+                                      <Link
+                                        to={matchingInst ? `/college/${matchingInst.id}` : '#'}
                                         className="text-left font-extrabold text-base text-gray-900 hover:text-red-600 hover:underline transition cursor-pointer decoration-2 decoration-red-500/30"
                                       >
                                         {item.displayName || item.name}
-                                      </button>
+                                      </Link>
                                     </div>
                                     
                                     {matchingInst && (
@@ -613,12 +613,12 @@ function ExploreRoute({
                                 
                                 {matchingInst && (
                                   <div className="flex items-center space-x-2 shrink-0 self-end sm:self-auto">
-                                    <button
-                                      onClick={() => navigate(`/college/${matchingInst.id}`)}
+                                    <Link
+                                      to={`/college/${matchingInst.id}`}
                                       className="text-xs font-bold bg-gray-50 text-gray-700 hover:bg-red-50 hover:text-red-600 border border-gray-200 hover:border-red-200 px-3.5 py-2 rounded-xl transition cursor-pointer"
                                     >
                                       View Details
-                                    </button>
+                                    </Link>
                                     <button
                                       onClick={() => handleOpenCounseling(matchingInst)}
                                       className="text-xs font-bold bg-red-600 hover:bg-red-500 text-white px-3.5 py-2 rounded-xl transition cursor-pointer"
@@ -694,12 +694,12 @@ function ExploreRoute({
                                   
                                   <div className="space-y-1">
                                     <div>
-                                      <button
-                                        onClick={() => navigate(`/college/${inst.id}`)}
+                                      <Link
+                                        to={`/college/${inst.id}`}
                                         className="text-left font-extrabold text-base text-gray-900 hover:text-red-600 hover:underline transition cursor-pointer decoration-2 decoration-red-500/30"
                                       >
                                         {inst.name}
-                                      </button>
+                                      </Link>
                                     </div>
                                     <div className="flex items-center space-x-3 text-xs text-gray-400 font-bold">
                                       <span>📍 {inst.location}</span>
@@ -716,12 +716,12 @@ function ExploreRoute({
                                 </div>
                                 
                                 <div className="flex items-center space-x-2 shrink-0 self-end sm:self-auto">
-                                  <button
-                                    onClick={() => navigate(`/college/${inst.id}`)}
+                                  <Link
+                                    to={`/college/${inst.id}`}
                                     className="text-xs font-bold bg-gray-50 text-gray-700 hover:bg-red-50 hover:text-red-600 border border-gray-200 hover:border-red-200 px-3.5 py-2 rounded-xl transition cursor-pointer"
                                   >
                                     View Details
-                                  </button>
+                                  </Link>
                                   <button
                                     onClick={() => handleOpenCounseling(inst)}
                                     className="text-xs font-bold bg-red-600 hover:bg-red-500 text-white px-3.5 py-2 rounded-xl transition cursor-pointer"

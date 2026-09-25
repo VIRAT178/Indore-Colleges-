@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Institute, Review } from '../types';
 import { 
   ArrowLeft, 
@@ -149,9 +150,28 @@ export default function CollegeDetailPage({
         <div className="absolute bottom-0 inset-x-0 py-8 sm:py-12">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex flex-wrap gap-2 mb-3">
-              <span className="rounded bg-red-600 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white">
-                {institute.category} Stream
-              </span>
+              {(() => {
+                const categorySlugs: Record<string, string> = {
+                  engineering: 'engineering',
+                  management: 'mba',
+                  bba: 'bba',
+                  bca: 'bca',
+                  mba: 'mba',
+                  law: 'law',
+                  medical: 'medical',
+                  design: 'design'
+                };
+                const categorySlug = categorySlugs[institute.category.toLowerCase()];
+                return categorySlug ? (
+                  <Link to={`/explore/${categorySlug}`} className="rounded bg-red-600 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white">
+                    {institute.category} Stream
+                  </Link>
+                ) : (
+                  <span className="rounded bg-red-600 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white">
+                    {institute.category} Stream
+                  </span>
+                );
+              })()}
               <span className="rounded bg-slate-800/80 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-amber-300 border border-slate-700">
                 Affiliation: {institute.boardOrAffiliation}
               </span>

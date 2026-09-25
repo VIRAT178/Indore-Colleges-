@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Compass, 
   GraduationCap, 
@@ -308,22 +309,12 @@ export default function Header({
               const isActive = item.type 
                 ? (activeTab === 'explore' && instituteTypeFilter === 'college')
                 : (activeTab === item.id);
-
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    if (item.type) {
-                      handleFilterClick('college');
-                    } else {
-                      setActiveTab(item.id as any);
-                      setActiveDropdown(null);
-                    }
-                  }}
-                  className={`relative px-3.5 xl:px-4 py-1.5 text-[14.5px] xl:text-[15.5px] font-bold rounded-full transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
-                    isActive ? 'text-white' : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
-                  }`}
-                >
+              const itemPath = item.id === 'home' ? '/' : item.type ? '/explore' : item.id === 'blogs' ? '/blogs' : null;
+              const navClassName = `relative px-3.5 xl:px-4 py-1.5 text-[14.5px] xl:text-[15.5px] font-bold rounded-full transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                isActive ? 'text-white' : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
+              }`;
+              const navContent = (
+                <>
                   {isActive && (
                     <motion.span
                       layoutId="headerActivePill"
@@ -343,7 +334,37 @@ export default function Header({
                       {item.badge}
                     </span>
                   )}
-                </button>
+                </>
+              );
+
+              return (
+                itemPath ? (
+                  <Link
+                    key={item.id}
+                    to={itemPath}
+                    onClick={() => {
+                      if (item.type) handleFilterClick('college');
+                      else {
+                        setActiveTab(item.id as any);
+                        setActiveDropdown(null);
+                      }
+                    }}
+                    className={navClassName}
+                  >
+                    {navContent}
+                  </Link>
+                ) : (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveTab(item.id as any);
+                      setActiveDropdown(null);
+                    }}
+                    className={navClassName}
+                  >
+                    {navContent}
+                  </button>
+                )
               );
             })}
 
@@ -702,7 +723,8 @@ export default function Header({
                 
                 {/* Home Link */}
                 <div className="border-b border-gray-100 pb-3">
-                  <button
+                  <Link
+                    to="/"
                     onClick={() => {
                       setActiveTab('home');
                       setIsMobileMenuOpen(false);
@@ -713,12 +735,13 @@ export default function Header({
                   >
                     <span>Home</span>
                     <ChevronRight className="h-4 w-4 text-gray-400" />
-                  </button>
+                  </Link>
                 </div>
 
                 {/* 1. Colleges Link */}
                 <div className="border-b border-gray-100 pb-3">
-                  <button
+                  <Link
+                    to="/explore"
                     onClick={() => handleFilterClick('college')}
                     className={`flex justify-between items-center w-full text-left py-1 text-sm font-bold transition ${
                       activeTab === 'explore' && instituteTypeFilter === 'college' ? 'text-red-600' : 'text-gray-900'
@@ -726,7 +749,7 @@ export default function Header({
                   >
                     <span>Colleges & Universities</span>
                     <ChevronRight className="h-4 w-4 text-gray-400" />
-                  </button>
+                  </Link>
                 </div>
 
                 {/* Direct Apply trigger */}
@@ -741,7 +764,8 @@ export default function Header({
                 </button>
 
                 {/* Reviews trigger */}
-                <button
+                <Link
+                  to="/blogs"
                   onClick={() => {
                     setActiveTab('blogs');
                     setIsMobileMenuOpen(false);
@@ -754,7 +778,7 @@ export default function Header({
                   <span className="text-[9px] bg-amber-500 text-white font-black px-1.5 py-0.5 rounded-full uppercase">
                     VERIFIED
                   </span>
-                </button>
+                </Link>
 
                 {/* College Portal trigger */}
                 <button
@@ -770,7 +794,8 @@ export default function Header({
                 </button>
 
                 {/* About Us trigger */}
-                <button
+                <Link
+                  to="/about"
                   onClick={() => {
                     setActiveTab('about');
                     setIsMobileMenuOpen(false);
@@ -780,10 +805,11 @@ export default function Header({
                   }`}
                 >
                   About Us
-                </button>
+                </Link>
 
                 {/* Careers trigger */}
-                <button
+                <Link
+                  to="/careers"
                   onClick={() => {
                     setActiveTab('careers');
                     setIsMobileMenuOpen(false);
@@ -793,10 +819,11 @@ export default function Header({
                   }`}
                 >
                   Careers
-                </button>
+                </Link>
 
                 {/* Contact Us trigger */}
-                <button
+                <Link
+                  to="/contact"
                   onClick={() => {
                     setActiveTab('contact');
                     setIsMobileMenuOpen(false);
@@ -806,7 +833,7 @@ export default function Header({
                   }`}
                 >
                   Contact Us
-                </button>
+                </Link>
 
 
 
