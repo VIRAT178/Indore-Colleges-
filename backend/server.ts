@@ -14,6 +14,7 @@ import { MongoClient, Db } from 'mongodb';
 import cors from 'cors';
 import { INDORE_INSTITUTES } from '../frontend/src/data/indoreData.js';
 import { CounselingRequest, CallbackRequest, Review, SchoolRegistrationRequest, CollegeUpdateRequest } from '../frontend/src/types.js';
+import { createSitemapXml } from '../frontend/src/utils/sitemap.js';
 
 dotenv.config();
 
@@ -836,29 +837,28 @@ async function startServer() {
     });
   });
 
-  // Serve sitemap.xml and robots.txt for Search Console crawlers
-  app.get('/sitemap.xml', (req, res) => {
-    const sitemapPath = path.join(process.cwd(), 'frontend', 'public', 'sitemap.xml');
-    if (fs.existsSync(sitemapPath)) {
-      res.header('Content-Type', 'application/xml');
-      return res.sendFile(sitemapPath);
+  // Serve a sitemap from the same approved partner records used by the directory.
+  app.get('/sitemap.xml', async (req, res) => {
+    try {
+      const db = await getMongoDb();
+      const approvedPartners = await db.collection('college_registrations').find({ status: 'approved' }).toArray();
+      const partnerIds = approvedPartners
+        .filter(partner => typeof partner.id === 'string' && typeof partner.name === 'string')
+        .map(partner => partner.id);
+
+      res.header('Content-Type', 'application/xml; charset=utf-8');
+      res.header('Cache-Control', 'public, max-age=300, stale-while-revalidate=60');
+      return res.send(createSitemapXml(partnerIds));
+    } catch (error) {
+      console.error('Sitemap generation error:', error);
+      res.header('Content-Type', 'application/xml; charset=utf-8');
+      return res.send(createSitemapXml());
     }
-    const rootPublicSitemap = path.join(process.cwd(), 'public', 'sitemap.xml');
-    if (fs.existsSync(rootPublicSitemap)) {
-      res.header('Content-Type', 'application/xml');
-      return res.sendFile(rootPublicSitemap);
-    }
-    const distSitemap = path.join(process.cwd(), 'dist', 'sitemap.xml');
-    if (fs.existsSync(distSitemap)) {
-      res.header('Content-Type', 'application/xml');
-      return res.sendFile(distSitemap);
-    }
-    res.status(404).send('Sitemap not found');
   });
 
   app.get('/robots.txt', (req, res) => {
     res.header('Content-Type', 'text/plain');
-    res.send("User-agent: *\nAllow: /\n\nSitemap: https://indore-colleges.in/sitemap.xml\n");
+    res.send("User-agent: *\nAllow: /\n\nSitemap: https://indorecolleges.in/sitemap.xml\n");
   });
 
   // API Route: Get all institutes

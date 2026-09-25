@@ -275,12 +275,15 @@ export function getPageSeo(pathname: string, institutes: Institute[]): PageSeo |
   })();
 
   const isCategoryPage = Boolean(categorySeo);
+  const publicPagePaths = new Set(['/explore', '/blogs', '/about', '/careers', '/contact']);
   const canonical = college
     ? `${SEO_ORIGIN}/college/${encodeURIComponent(college.id)}`
     : isCategoryPage
     ? `${SEO_ORIGIN}/explore/${streamParam}`
+    : publicPagePaths.has(pathname)
+    ? `${SEO_ORIGIN}${pathname}`
     : HOMEPAGE_SEO.canonical;
-  const socialUrl = college || isCategoryPage ? canonical : HOMEPAGE_SEO.socialUrl;
+  const socialUrl = college || isCategoryPage || publicPagePaths.has(pathname) ? canonical : HOMEPAGE_SEO.socialUrl;
   const description = college
     ? getCollegeSeoDescription(college)
     : categorySeo?.description || HOMEPAGE_SEO.description;
