@@ -1,4 +1,4 @@
-import {createSitemapXml, getStaticCollegeIds} from '../src/utils/sitemap';
+import {createSitemapXml, getStaticCollegeIds} from '../src/utils/sitemap.js';
 
 interface VercelResponse {
   status(code: number): VercelResponse;

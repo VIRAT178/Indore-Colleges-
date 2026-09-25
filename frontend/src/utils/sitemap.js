@@ -1,7 +1,55 @@
-import {INDORE_INSTITUTES} from '../data/indoreData';
+const STATIC_COLLEGE_IDS = [
+  'malwa-institute',
+  'iit-indore',
+  'iim-indore',
+  'sgsits',
+  'davv',
+  'acropolis',
+  'symbiosis-university',
+  'svvv-indore',
+  'sage-university',
+  'nmims-indore',
+  'apj-kalam-univ',
+  'oriental-university',
+  'medi-caps-university',
+  'prestige-university',
+  'renaissance-college',
+  'pimr',
+  'nmims-stme',
+  'bm-college',
+  'chameli-devi',
+  'iist-indore',
+  'iet-davv',
+  'ips-engineering',
+  'lncts-indore',
+  'lnct-bhopal-indore',
+  'patel-college',
+  'piemr-indore',
+  'vaishnav-polytechnic',
+  'ips-ibmr',
+  'ims-davv',
+  'jaipuria-indore',
+  'nmims-law',
+  'index-medical',
+  'mgm-medical',
+  'shubhdeep-ayurved',
+  'saims',
+  'cindrebay-design',
+  'madrid-software',
+  'govt-music-college',
+  'mit-indore',
+  'softvision-college',
+  'alexia-college',
+  'gacc-indore',
+  'radiant-institute',
+  'pioneer-institute',
+  'christian-eminent',
+  'holkar-science',
+  'gujarati-professional',
+  'iil-indore',
+];
 
-export const SEO_ORIGIN = 'https://indorecolleges.in';
-
+const SEO_ORIGIN = 'https://indorecolleges.in';
 const PUBLIC_PAGE_PATHS = [
   '/',
   '/explore',
@@ -17,16 +65,13 @@ const PUBLIC_PAGE_PATHS = [
   '/careers',
   '/contact',
 ];
-
 const PUBLIC_PARTNER_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export function getStaticCollegeIds() {
-  return INDORE_INSTITUTES
-    .filter(institute => institute.type === 'college')
-    .map(institute => institute.id);
+  return [...STATIC_COLLEGE_IDS];
 }
 
-export function getSitemapPaths(partnerIds: string[] = []) {
+export function getSitemapPaths(partnerIds = []) {
   const staticCollegeIds = getStaticCollegeIds();
   const includedPaths = new Set(PUBLIC_PAGE_PATHS);
 
@@ -38,7 +83,7 @@ export function getSitemapPaths(partnerIds: string[] = []) {
   return [...includedPaths];
 }
 
-function escapeXml(value: string) {
+function escapeXml(value) {
   return value
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
@@ -47,7 +92,7 @@ function escapeXml(value: string) {
     .replaceAll("'", '&apos;');
 }
 
-export function createSitemapXml(partnerIds: string[] = []) {
+export function createSitemapXml(partnerIds = []) {
   const urls = getSitemapPaths(partnerIds)
     .map(path => `${SEO_ORIGIN}${path}`)
     .map(url => `  <url><loc>${escapeXml(url)}</loc></url>`)
