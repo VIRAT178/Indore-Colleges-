@@ -2,7 +2,7 @@ import {createSitemapXml, getStaticCollegeIds} from '../src/utils/sitemap';
 
 interface VercelResponse {
   status(code: number): VercelResponse;
-  setHeader(name: string, value: string): VercelResponse;
+  setHeader(name: string, value: string): void;
   send(body: string): VercelResponse;
 }
 
@@ -43,22 +43,22 @@ async function getPartnerIds() {
 
 export default async function handler(request: {method?: string}, response: VercelResponse) {
   if (request.method && request.method !== 'GET') {
-    return response.status(405).setHeader('Allow', 'GET').send('Method Not Allowed');
+    response.status(405);
+    response.setHeader('Allow', 'GET');
+    return response.send('Method Not Allowed');
   }
 
   try {
     const partnerIds = await getPartnerIds();
-    return response
-      .status(200)
-      .setHeader('Content-Type', 'application/xml; charset=utf-8')
-      .setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=60')
-      .send(createSitemapXml(partnerIds));
+    response.status(200);
+    response.setHeader('Content-Type', 'application/xml; charset=utf-8');
+    response.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=60');
+    return response.send(createSitemapXml(partnerIds));
   } catch (error) {
     console.error('Sitemap partner API error:', error);
-    return response
-      .status(200)
-      .setHeader('Content-Type', 'application/xml; charset=utf-8')
-      .setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=60')
-      .send(createSitemapXml());
+    response.status(200);
+    response.setHeader('Content-Type', 'application/xml; charset=utf-8');
+    response.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=60');
+    return response.send(createSitemapXml());
   }
 }
