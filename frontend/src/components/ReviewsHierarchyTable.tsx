@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { INDORE_INSTITUTES } from '../data/indoreData';
+import { Institute } from '../types';
 import { 
   GraduationCap, 
   Building2, 
@@ -27,6 +30,58 @@ import {
   Info
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+
+// Helper to detect and normalize video source URLs
+function parseVideoSource(url?: string): {
+  type: 'youtube' | 'vimeo' | 'html5' | 'none';
+  src: string;
+  videoId?: string;
+} {
+  if (!url || typeof url !== 'string' || !url.trim()) {
+    return { type: 'none', src: '' };
+  }
+  const clean = url.trim();
+
+  const ytMatch = clean.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
+  if (ytMatch && ytMatch[1]) {
+    return {
+      type: 'youtube',
+      videoId: ytMatch[1],
+      src: `https://www.youtube-nocookie.com/embed/${ytMatch[1]}`
+    };
+  }
+
+  const vimeoMatch = clean.match(/vimeo\.com\/(?:video\/)?([0-9]+)/);
+  if (vimeoMatch && vimeoMatch[1]) {
+    return {
+      type: 'vimeo',
+      videoId: vimeoMatch[1],
+      src: `https://player.vimeo.com/video/${vimeoMatch[1]}`
+    };
+  }
+
+  return {
+    type: 'html5',
+    src: clean
+  };
+}
+
+// Match college names to institutes in indoreData
+function findMatchingInstitute(name: string): Institute | undefined {
+  const norm = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+  return INDORE_INSTITUTES.find((inst) => {
+    const instNorm = inst.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const instId = inst.id.toLowerCase();
+    if (norm.includes('sgsits') && (instId.includes('sgsits') || instNorm.includes('sgsits'))) return true;
+    if (norm.includes('ietdavv') && (instId.includes('iet') || instNorm.includes('iet'))) return true;
+    if (norm.includes('acropolis') && (instId.includes('acropolis') || instNorm.includes('acropolis'))) return true;
+    if (norm.includes('medicaps') && (instId.includes('medicaps') || instNorm.includes('medicaps'))) return true;
+    if (norm.includes('chamelidevi') && (instId.includes('chameli') || instNorm.includes('chameli'))) return true;
+    if (norm.includes('svvv') && (instId.includes('svvv') || instNorm.includes('vaishnav'))) return true;
+    if (norm.includes('iil') && (instId.includes('iil') || instNorm.includes('indoreinstituteoflaw'))) return true;
+    return instNorm.includes(norm) || norm.includes(instNorm) || instId === norm;
+  });
+}
 
 export type CategoryType = 
   | 'Technical College'
@@ -141,6 +196,10 @@ export interface VideoCardData {
   tags: string[];
   productionProgress: number;
   votesCount: number;
+  videoUrl?: string;
+  authoritySpeaker?: string;
+  isLiveAuthorityVideo?: boolean;
+  collegeId?: string;
 }
 
 // Tailored colleges for each of the 6 categories
@@ -203,6 +262,14 @@ function getVideosForPerspective(category: CategoryType, perspective: ReviewPers
     let description = '';
     let tags: string[] = [];
 
+    const matchedInst = findMatchingInstitute(col.name);
+    const activeCollegeVideoUrl = matchedInst?.videoUrl || matchedInst?.backgroundVideoUrl;
+    const isSGSITS = col.name.toLowerCase().includes('sgsits') || matchedInst?.id === 'sgsits';
+
+    let videoUrl = (perspective === 'Review by College Authority' || isSGSITS) ? activeCollegeVideoUrl : undefined;
+    let isLiveAuthorityVideo = false;
+    let authoritySpeaker = '';
+
     if (perspective === 'Review by Indore Colleges') {
       title = `${col.name} Complete Campus Ground Audit & ROI Reality Review`;
       description = `360° independent inspection of ${col.name}: laboratories quality, actual verified placements, faculty expertise, fee breakdown, and ground reality.`;
@@ -212,9 +279,25 @@ function getVideosForPerspective(category: CategoryType, perspective: ReviewPers
       description = `Unfiltered student feedback on ${col.name}: attendance policies, campus crowd, hostel food & living, exams, coding clubs, and real placement assistance.`;
       tags = ['Student Feedback', 'Hostel Life', 'Campus Crowd', 'Honest Review'];
     } else {
-      title = `Executive Dialogue with Dean & Placement Director — ${col.name}`;
-      description = `Official executive dialogue with leadership of ${col.name}: discussing 2026 admissions, industry MoUs, syllabus updates, and student career roadmaps.`;
-      tags = ['Dean Interview', 'Accreditations', 'Industry MoUs', '2026 Roadmap'];
+      // Review by College Authority
+      if (isSGSITS) {
+        authoritySpeaker = 'Prof. Neetesh Purohit (Director, SGSITS)';
+        title = `Executive Dialogue & Authority Review — Prof. Neetesh Purohit (Director, SGSITS)`;
+        description = `Official review and institutional address by SGSITS Director: deep dive into autonomous curriculum, NIRF benchmarks, 44 LPA placements, and 2026 admissions roadmap.`;
+        tags = ['Director Review', 'Autonomous Curriculum', 'JEE Main Cutoffs', '44 LPA Placements'];
+        isLiveAuthorityVideo = Boolean(activeCollegeVideoUrl);
+        videoUrl = activeCollegeVideoUrl;
+      } else {
+        const foundDir = matchedInst?.facultyList?.find(f => f.qualification?.toLowerCase().includes('director') || f.role?.toLowerCase().includes('director'))?.name;
+        authoritySpeaker = foundDir ? `${foundDir} (Director)` : `Institutional Leadership & Academic Council`;
+        title = `Executive Dialogue with College Authority — ${col.name}`;
+        description = `Official executive dialogue with leadership of ${col.name}: discussing 2026 admissions, industry MoUs, syllabus updates, and student career roadmaps.`;
+        tags = ['Dean Interview', 'Accreditations', 'Industry MoUs', '2026 Roadmap'];
+        if (activeCollegeVideoUrl) {
+          isLiveAuthorityVideo = true;
+          videoUrl = activeCollegeVideoUrl;
+        }
+      }
     }
 
     return {
@@ -223,19 +306,24 @@ function getVideosForPerspective(category: CategoryType, perspective: ReviewPers
       location: col.loc,
       type: col.type,
       title,
-      duration: `${14 + idx * 2}m ${20 + idx * 5}s`,
+      duration: isLiveAuthorityVideo ? 'Official Stream' : `${14 + idx * 2}m ${20 + idx * 5}s`,
       thumbnail: col.img,
       perspectiveType: perspective,
       category,
       description,
       tags,
-      productionProgress: 75 + idx * 4,
-      votesCount: 42 + idx * 18
+      productionProgress: isLiveAuthorityVideo ? 100 : (75 + idx * 4),
+      votesCount: 42 + idx * 18,
+      videoUrl,
+      authoritySpeaker,
+      isLiveAuthorityVideo,
+      collegeId: matchedInst?.id || (isSGSITS ? 'sgsits' : undefined)
     };
   });
 }
 
 export default function ReviewsHierarchyTable() {
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState<CategoryType>('Technical College');
   
   // When null -> user is on the main Categories & Perspectives page
@@ -549,10 +637,17 @@ export default function ReviewsHierarchyTable() {
                         Video #{idx + 1}
                       </span>
 
-                      <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-[#F66710] text-white shadow-md animate-pulse">
-                        <Clock className="w-3 h-3" />
-                        <span>Coming Soon</span>
-                      </span>
+                      {video.isLiveAuthorityVideo && video.videoUrl ? (
+                        <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-600 text-white shadow-md">
+                          <CheckCircle2 className="w-3 h-3 text-white" />
+                          <span>Official Authority Video</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-[#F66710] text-white shadow-md animate-pulse">
+                          <Clock className="w-3 h-3" />
+                          <span>Coming Soon</span>
+                        </span>
+                      )}
                     </div>
 
                     {/* Center Play Button Overlay */}
@@ -594,6 +689,14 @@ export default function ReviewsHierarchyTable() {
                       >
                         {video.title}
                       </h4>
+
+                      {/* Speaker Badge if Authority Review */}
+                      {video.authoritySpeaker && (
+                        <div className="mb-2.5 inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
+                          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Speaker: {video.authoritySpeaker}</span>
+                        </div>
+                      )}
 
                       {/* Video Description */}
                       <p className="text-xs text-slate-500 font-normal leading-relaxed line-clamp-2 mb-3">
@@ -639,26 +742,36 @@ export default function ReviewsHierarchyTable() {
                         <span>{votes} Anticipating</span>
                       </button>
 
-                      <button
-                        onClick={() => toggleNotify(video.id, video.collegeName)}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                          isNotified
-                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                            : 'bg-slate-900 text-white hover:bg-[#F66710]'
-                        }`}
-                      >
-                        {isNotified ? (
-                          <>
-                            <Check className="w-3.5 h-3.5" />
-                            <span>Notified</span>
-                          </>
-                        ) : (
-                          <>
-                            <Bell className="w-3.5 h-3.5" />
-                            <span>Notify Me</span>
-                          </>
-                        )}
-                      </button>
+                      {video.isLiveAuthorityVideo && video.videoUrl ? (
+                        <button
+                          onClick={() => setPreviewVideoModal(video)}
+                          className="px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs"
+                        >
+                          <Play className="w-3.5 h-3.5 fill-white" />
+                          <span>Watch Authority Video</span>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => toggleNotify(video.id, video.collegeName)}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                            isNotified
+                              ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                              : 'bg-slate-900 text-white hover:bg-[#F66710]'
+                          }`}
+                        >
+                          {isNotified ? (
+                            <>
+                              <Check className="w-3.5 h-3.5" />
+                              <span>Notified</span>
+                            </>
+                          ) : (
+                            <>
+                              <Bell className="w-3.5 h-3.5" />
+                              <span>Notify Me</span>
+                            </>
+                          )}
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -713,93 +826,143 @@ export default function ReviewsHierarchyTable() {
                 <X className="w-5 h-5" />
               </button>
 
-              {/* SIMULATED VIDEO PLAYER SCREEN */}
-              <div className="relative aspect-16/9 bg-slate-950 overflow-hidden select-none">
-                <img 
-                  src={previewVideoModal.thumbnail} 
-                  alt={previewVideoModal.collegeName} 
-                  className="w-full h-full object-cover opacity-60"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80';
-                  }}
-                />
-
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/60 pointer-events-none" />
-
-                {/* Animated Teaser Watermark */}
-                <div className="absolute top-4 left-4 flex items-center gap-2">
-                  <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-[#F66710] text-white shadow-lg flex items-center gap-1.5">
-                    <Film className="w-3 h-3" />
-                    <span>Teaser Preview</span>
-                  </span>
-                  <span className="text-[10px] font-bold text-white/80 bg-black/60 px-2.5 py-1 rounded-full backdrop-blur-xs">
-                    4K Ultra HD
-                  </span>
-                </div>
-
-                {/* Center Video Teaser Animation */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 pointer-events-none">
-                  <div className="w-16 h-16 rounded-full bg-[#F66710]/95 text-white flex items-center justify-center mb-3 ring-8 ring-white/10 shadow-2xl">
-                    {isPlayingSimulated ? (
-                      <Play className="w-7 h-7 fill-white ml-1 animate-pulse" />
-                    ) : (
-                      <Pause className="w-7 h-7 text-white" />
-                    )}
-                  </div>
-
-                  <span className="text-xs font-black uppercase tracking-widest px-3.5 py-1 rounded-full bg-amber-500 text-black mb-1 shadow-md">
-                    Coming Soon • In Final Editing
-                  </span>
-                  <p className="text-xs text-slate-300 font-light max-w-sm">
-                    Premiere scheduled for 2026 Admissions Session
-                  </p>
-
-                  {/* Simulated Audio Visualizer Wave */}
-                  {isPlayingSimulated && (
-                    <div className="flex items-center gap-1 mt-3">
-                      {[16, 28, 12, 34, 20, 40, 18, 26, 32, 14, 22].map((height, i) => (
-                        <span 
-                          key={i} 
-                          className="w-1 bg-[#F66710] rounded-full animate-pulse" 
-                          style={{ height: `${height}px`, animationDelay: `${i * 0.1}s` }} 
+              {/* VIDEO PLAYER SCREEN: REAL VIDEO OR TEASER */}
+              {previewVideoModal.videoUrl ? (
+                <div className="relative aspect-16/9 bg-slate-950 overflow-hidden">
+                  {(() => {
+                    const parsed = parseVideoSource(previewVideoModal.videoUrl);
+                    if (parsed.type === 'youtube') {
+                      return (
+                        <iframe
+                          src={`${parsed.src}?autoplay=1&controls=1&rel=0`}
+                          title={previewVideoModal.title}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          className="w-full h-full border-0"
                         />
-                      ))}
-                    </div>
-                  )}
-                </div>
+                      );
+                    }
+                    if (parsed.type === 'vimeo') {
+                      return (
+                        <iframe
+                          src={`${parsed.src}?autoplay=1`}
+                          title={previewVideoModal.title}
+                          allowFullScreen
+                          className="w-full h-full border-0"
+                        />
+                      );
+                    }
+                    return (
+                      <video
+                        src={parsed.src}
+                        controls
+                        autoPlay
+                        playsInline
+                        className="w-full h-full object-cover"
+                      />
+                    );
+                  })()}
 
-                {/* Simulated Interactive Video Controls Bar */}
-                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/95 to-transparent flex flex-col gap-2">
-                  <div className="w-full h-1.5 bg-white/20 rounded-full overflow-hidden cursor-pointer">
-                    <div 
-                      className="h-full bg-[#F66710] rounded-full transition-all duration-300"
-                      style={{ width: `${(playerCurrentTime / 60) * 100}%` }}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between text-[11px] text-white/90">
-                    <div className="flex items-center gap-3">
-                      <button 
-                        onClick={() => setIsPlayingSimulated(!isPlayingSimulated)}
-                        className="hover:text-orange-400 transition cursor-pointer"
-                      >
-                        {isPlayingSimulated ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
-                      </button>
-                      <button 
-                        onClick={() => setIsMutedSimulated(!isMutedSimulated)}
-                        className="hover:text-orange-400 transition cursor-pointer"
-                      >
-                        {isMutedSimulated ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                      </button>
-                      <span>00:{playerCurrentTime.toString().padStart(2, '0')} / Est. {previewVideoModal.duration}</span>
-                    </div>
-
-                    <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider">
-                      Full 4K Video Coming Soon
+                  {/* Badges on top */}
+                  <div className="absolute top-4 left-4 flex items-center gap-2 pointer-events-none">
+                    <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-emerald-600 text-white shadow-lg flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5 text-white" />
+                      <span>Official Authority Review Video</span>
+                    </span>
+                    <span className="text-[10px] font-bold text-white/90 bg-black/70 px-2.5 py-1 rounded-full backdrop-blur-xs">
+                      Directorate Verified
                     </span>
                   </div>
                 </div>
-              </div>
+              ) : (
+                /* SIMULATED VIDEO PLAYER SCREEN */
+                <div className="relative aspect-16/9 bg-slate-950 overflow-hidden select-none">
+                  <img 
+                    src={previewVideoModal.thumbnail} 
+                    alt={previewVideoModal.collegeName} 
+                    className="w-full h-full object-cover opacity-60"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80';
+                    }}
+                  />
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/60 pointer-events-none" />
+
+                  {/* Animated Teaser Watermark */}
+                  <div className="absolute top-4 left-4 flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-[#F66710] text-white shadow-lg flex items-center gap-1.5">
+                      <Film className="w-3 h-3" />
+                      <span>Teaser Preview</span>
+                    </span>
+                    <span className="text-[10px] font-bold text-white/80 bg-black/60 px-2.5 py-1 rounded-full backdrop-blur-xs">
+                      4K Ultra HD
+                    </span>
+                  </div>
+
+                  {/* Center Video Teaser Animation */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 pointer-events-none">
+                    <div className="w-16 h-16 rounded-full bg-[#F66710]/95 text-white flex items-center justify-center mb-3 ring-8 ring-white/10 shadow-2xl">
+                      {isPlayingSimulated ? (
+                        <Play className="w-7 h-7 fill-white ml-1 animate-pulse" />
+                      ) : (
+                        <Pause className="w-7 h-7 text-white" />
+                      )}
+                    </div>
+
+                    <span className="text-xs font-black uppercase tracking-widest px-3.5 py-1 rounded-full bg-amber-500 text-black mb-1 shadow-md">
+                      Coming Soon • In Final Editing
+                    </span>
+                    <p className="text-xs text-slate-300 font-light max-w-sm">
+                      Premiere scheduled for 2026 Admissions Session
+                    </p>
+
+                    {/* Simulated Audio Visualizer Wave */}
+                    {isPlayingSimulated && (
+                      <div className="flex items-center gap-1 mt-3">
+                        {[16, 28, 12, 34, 20, 40, 18, 26, 32, 14, 22].map((height, i) => (
+                          <span 
+                            key={i} 
+                            className="w-1 bg-[#F66710] rounded-full animate-pulse" 
+                            style={{ height: `${height}px`, animationDelay: `${i * 0.1}s` }} 
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Simulated Interactive Video Controls Bar */}
+                  <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/95 to-transparent flex flex-col gap-2">
+                    <div className="w-full h-1.5 bg-white/20 rounded-full overflow-hidden cursor-pointer">
+                      <div 
+                        className="h-full bg-[#F66710] rounded-full transition-all duration-300"
+                        style={{ width: `${(playerCurrentTime / 60) * 100}%` }}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] text-white/90">
+                      <div className="flex items-center gap-3">
+                        <button 
+                          onClick={() => setIsPlayingSimulated(!isPlayingSimulated)}
+                          className="hover:text-orange-400 transition cursor-pointer"
+                        >
+                          {isPlayingSimulated ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
+                        </button>
+                        <button 
+                          onClick={() => setIsMutedSimulated(!isMutedSimulated)}
+                          className="hover:text-orange-400 transition cursor-pointer"
+                        >
+                          {isMutedSimulated ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                        </button>
+                        <span>00:{playerCurrentTime.toString().padStart(2, '0')} / Est. {previewVideoModal.duration}</span>
+                      </div>
+
+                      <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider">
+                        Full 4K Video Coming Soon
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* MODAL BODY */}
               <div className="p-6 sm:p-7 space-y-4">
@@ -821,6 +984,40 @@ export default function ReviewsHierarchyTable() {
                   </p>
                 </div>
 
+                {/* College Authority Callout if Live Video */}
+                {previewVideoModal.videoUrl && (
+                  <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-xs">
+                        {previewVideoModal.collegeId === 'sgsits' ? 'NP' : 'DIR'}
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-bold text-emerald-950 flex items-center gap-1.5">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>{previewVideoModal.authoritySpeaker || 'College Authority Leadership'}</span>
+                        </h4>
+                        <p className="text-[11px] text-emerald-700">
+                          Official Institutional Review &amp; Background Campus Video for {previewVideoModal.collegeName}
+                        </p>
+                      </div>
+                    </div>
+
+                    {previewVideoModal.collegeId && (
+                      <button
+                        onClick={() => {
+                          const colId = previewVideoModal.collegeId;
+                          setPreviewVideoModal(null);
+                          navigate(`/college/${colId}`);
+                        }}
+                        className="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs transition flex items-center gap-1.5 shrink-0 shadow-xs cursor-pointer"
+                      >
+                        <span>Visit {previewVideoModal.collegeName} Page</span>
+                        <ArrowLeft className="w-3.5 h-3.5 rotate-180" />
+                      </button>
+                    )}
+                  </div>
+                )}
+
                 {/* Topics Covered */}
                 <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
@@ -836,66 +1033,84 @@ export default function ReviewsHierarchyTable() {
                 </div>
 
                 {/* WhatsApp / Phone Alert Registration Box */}
-                <div className="p-4 rounded-2xl bg-orange-50/70 border border-orange-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-xs font-bold text-orange-950 flex items-center gap-1.5">
-                      <Bell className="w-4 h-4 text-[#F66710]" />
-                      <span>Get Instant Notification on Premiere</span>
-                    </p>
-                    <span className="text-[10px] text-[#F66710] font-bold">Free Alert</span>
-                  </div>
+                {!previewVideoModal.videoUrl && (
+                  <div className="p-4 rounded-2xl bg-orange-50/70 border border-orange-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-xs font-bold text-orange-950 flex items-center gap-1.5">
+                        <Bell className="w-4 h-4 text-[#F66710]" />
+                        <span>Get Instant Notification on Premiere</span>
+                      </p>
+                      <span className="text-[10px] text-[#F66710] font-bold">Free Alert</span>
+                    </div>
 
-                  {!isPhoneSubmitted ? (
-                    <div className="flex flex-col sm:flex-row gap-2 mt-2">
-                      <input
-                        type="text"
-                        placeholder="Enter WhatsApp or Phone Number (+91...)"
-                        value={notifyPhoneNumber}
-                        onChange={(e) => setNotifyPhoneNumber(e.target.value)}
-                        className="flex-1 px-3.5 py-2 text-xs rounded-xl border border-orange-200 bg-white focus:outline-hidden focus:border-[#F66710]"
-                      />
-                      <button
-                        onClick={() => {
-                          if (notifyPhoneNumber.trim().length >= 8) {
-                            setIsPhoneSubmitted(true);
-                            toggleNotify(previewVideoModal.id, previewVideoModal.collegeName);
-                          } else {
-                            toggleNotify(previewVideoModal.id, previewVideoModal.collegeName);
-                            setIsPhoneSubmitted(true);
-                          }
-                        }}
-                        className="px-4 py-2 bg-[#F66710] hover:bg-orange-600 text-white rounded-xl font-bold text-xs transition cursor-pointer shrink-0 shadow-xs"
-                      >
-                        Set Alert
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="p-2.5 rounded-xl bg-emerald-100 text-emerald-900 text-xs font-bold flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                      <span>Alert saved! We will send a direct video watch link upon publication.</span>
-                    </div>
-                  )}
-                </div>
+                    {!isPhoneSubmitted ? (
+                      <div className="flex flex-col sm:flex-row gap-2 mt-2">
+                        <input
+                          type="text"
+                          placeholder="Enter WhatsApp or Phone Number (+91...)"
+                          value={notifyPhoneNumber}
+                          onChange={(e) => setNotifyPhoneNumber(e.target.value)}
+                          className="flex-1 px-3.5 py-2 text-xs rounded-xl border border-orange-200 bg-white focus:outline-hidden focus:border-[#F66710]"
+                        />
+                        <button
+                          onClick={() => {
+                            if (notifyPhoneNumber.trim().length >= 8) {
+                              setIsPhoneSubmitted(true);
+                              toggleNotify(previewVideoModal.id, previewVideoModal.collegeName);
+                            } else {
+                              toggleNotify(previewVideoModal.id, previewVideoModal.collegeName);
+                              setIsPhoneSubmitted(true);
+                            }
+                          }}
+                          className="px-4 py-2 bg-[#F66710] hover:bg-orange-600 text-white rounded-xl font-bold text-xs transition cursor-pointer shrink-0 shadow-xs"
+                        >
+                          Set Alert
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="p-2.5 rounded-xl bg-emerald-100 text-emerald-900 text-xs font-bold flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <span>Alert saved! We will send a direct video watch link upon publication.</span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Footer buttons */}
                 <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
-                  <button
-                    onClick={() => {
-                      toggleNotify(previewVideoModal.id, previewVideoModal.collegeName);
-                    }}
-                    className={`flex-1 py-3 px-4 rounded-2xl font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer ${
-                      notifiedVideos[previewVideoModal.id]
-                        ? 'bg-emerald-600 text-white'
-                        : 'bg-slate-900 hover:bg-black text-white'
-                    }`}
-                  >
-                    <Bell className="w-4 h-4" />
-                    <span>
-                      {notifiedVideos[previewVideoModal.id]
-                        ? 'Notification Saved'
-                        : 'Notify Me for this Video'}
-                    </span>
-                  </button>
+                  {previewVideoModal.collegeId && (
+                    <button
+                      onClick={() => {
+                        const colId = previewVideoModal.collegeId;
+                        setPreviewVideoModal(null);
+                        navigate(`/college/${colId}`);
+                      }}
+                      className="py-3 px-4 rounded-2xl bg-[#F66710] hover:bg-orange-600 text-white font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                    >
+                      <Film className="w-4 h-4" />
+                      <span>Open Full College Background Video &amp; Page</span>
+                    </button>
+                  )}
+
+                  {!previewVideoModal.videoUrl && (
+                    <button
+                      onClick={() => {
+                        toggleNotify(previewVideoModal.id, previewVideoModal.collegeName);
+                      }}
+                      className={`flex-1 py-3 px-4 rounded-2xl font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer ${
+                        notifiedVideos[previewVideoModal.id]
+                          ? 'bg-emerald-600 text-white'
+                          : 'bg-slate-900 hover:bg-black text-white'
+                      }`}
+                    >
+                      <Bell className="w-4 h-4" />
+                      <span>
+                        {notifiedVideos[previewVideoModal.id]
+                          ? 'Notification Saved'
+                          : 'Notify Me for this Video'}
+                      </span>
+                    </button>
+                  )}
 
                   <a
                     href="https://www.youtube.com/@Indorecolleges"

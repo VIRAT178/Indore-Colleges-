@@ -1,7 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
 
 export interface Institute {
   id: string;
@@ -16,6 +12,8 @@ export interface Institute {
   indoreRating?: number;
   totalReviews: number;
   image: string;
+  videoUrl?: string;
+  backgroundVideoUrl?: string;
   description: string;
   facilities: string[];
   establishedYear: number;
@@ -31,6 +29,20 @@ export interface Institute {
   approval?: string;
   selectionCriteria?: string;
   updates?: string[];
+  brochureUrl?: string;
+  brochureFileName?: string;
+  highestPackage?: string;
+  lowestPackage?: string;
+  visionMission?: string;
+  achievements?: string;
+  campusPhoto?: string;
+  instagram?: string;
+  approvals?: string[];
+  affiliationType?: string;
+  affiliationPrivateName?: string;
+  isPartnerRegistered?: boolean;
+  status?: string;
+  courses?: string[];
   coursesList?: {
     name: string;
     duration: string;
@@ -186,6 +198,8 @@ export interface PartnerCollege {
   name: string;
   category: string;
   boardOrAffiliation: string;
+  affiliationType?: string;
+  affiliationPrivateName?: string;
   location: string;
   feePerAnnum: number;
   establishedYear: number;
@@ -195,7 +209,19 @@ export interface PartnerCollege {
   description: string;
   facilities: string[];
   website?: string;
+  instagram?: string;
   address?: string;
+  courses?: string[];
+  approvals?: string[];
+  brochureUrl?: string;
+  brochureFileName?: string;
+  achievements?: string;
+  highestPackage?: string;
+  lowestPackage?: string;
+  visionMission?: string;
+  campusPhoto?: string;
+  videoUrl?: string;
+  backgroundVideoUrl?: string;
   status: 'pending' | 'approved' | 'rejected';
   pendingUpdate?: CollegeUpdateRequest | null;
   createdAt: string;

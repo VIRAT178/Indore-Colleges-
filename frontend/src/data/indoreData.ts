@@ -1,7 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
 
 import { Institute } from '../types';
 
@@ -20,6 +16,8 @@ export const INDORE_INSTITUTES: Institute[] = [
     indoreRating: 3.9,
     totalReviews: 24,
     image: '/malwa_institute_campus.jpg',
+    videoUrl: 'https://www.youtube.com/watch?v=dJenbzi3TJs',
+    backgroundVideoUrl: 'https://www.youtube.com/watch?v=dJenbzi3TJs',
     description: 'Malwa Institute of Science and Technology (MIST Indore) is a premier engineering and business administration institute offering Undergraduate, Postgraduate, and Diploma courses in various specializations. Possessing world-class in-house facilities like massive auditoriums, an amphitheater, and its own fleet of free buses, the college grooms students to match modern corporate cultures.',
     facilities: ['Library', 'Laboratory', 'Cafeteria', 'Sports Arena', 'Medical Center', 'Hostels', 'Auditorium', 'Advanced Computer Labs', 'Modern Classrooms'],
     establishedYear: 2007,
@@ -80,6 +78,9 @@ export const INDORE_INSTITUTES: Institute[] = [
     rating: 4.2,
     totalReviews: 186,
     image: '/iit-indore.jpg',
+    // Background video URL (Put your MP4, WebM, or YouTube video URL here)
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-students-walking-in-a-university-campus-4336-large.mp4',
+    backgroundVideoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-students-walking-in-a-university-campus-4336-large.mp4',
     description: 'Indian Institute of Technology Indore (IIT Indore), established in 2009, is an autonomous public university of National Importance located on a 501.42-acre state-of-the-art campus in Simrol. Highly ranked nationally and globally, the institute is prominent for elite research, strong multi-disciplinary engineering programs, first-class single occupancy hosteling configurations, and leading technology transfer facilities.',
     facilities: ['Advanced Research Labs', 'Supercomputer Facility', 'Single Occupancy Hostels', 'Sports Complex', '24/7 Library', 'Start-up Incubator', 'Central Workshop', 'Health Centre'],
     establishedYear: 2009,
@@ -214,6 +215,11 @@ export const INDORE_INSTITUTES: Institute[] = [
     indoreRating: 4.8,
     totalReviews: 1100,
     image: '/sgsits.jpg',
+    // Background video & College Authority Review video URL
+    // You can replace this with any MP4, WebM, or YouTube video URL.
+    // This video will be used automatically in the SGSITS background video hero AND in the SGSITS College Authority Review section!
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-students-walking-in-a-university-campus-4336-large.mp4',
+    backgroundVideoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-students-walking-in-a-university-campus-4336-large.mp4',
     description: 'Shri Govindram Seksaria Institute of Technology and Science (SGSITS Indore), established in 1952, is a premier government-aided autonomous technical institute. Affiliated with RGPV and approved by the UGC and AICTE with a NAAC Grade A accreditation, it is ranked among the finest engineering colleges in Central India, acclaimed for high merit-based intake and strong core/software job placements.',
     facilities: ['Central Library', 'Computer Center', 'Gymnasium', 'Hostels (Separate Boys & Girls)', 'Dispensary', 'CIDI Centre', 'Central Workshop', 'Lush Green Grounds', 'High-speed Wi-Fi'],
     establishedYear: 1952,
