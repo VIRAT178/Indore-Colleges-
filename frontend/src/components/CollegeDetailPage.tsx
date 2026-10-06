@@ -191,7 +191,7 @@ export default function CollegeDetailPage({
       {/* ========================================================================= */}
       {/* 1. CINEMATIC HERO SECTION WITH BACKGROUND VIDEO */}
       {/* ========================================================================= */}
-      <div className="relative bg-slate-950 text-white overflow-hidden min-h-[580px] lg:h-[82vh] flex flex-col justify-between">
+      <div className="relative bg-slate-950 text-white overflow-hidden min-h-[380px] lg:h-[60vh] lg:min-h-[440px] flex flex-col justify-between">
         
         {/* Background Media Container */}
         <div className="absolute inset-0 w-full h-full overflow-hidden select-none pointer-events-none">
@@ -203,7 +203,7 @@ export default function CollegeDetailPage({
               loop
               muted={false}
               playsInline
-              className="w-full h-full object-cover object-center filter brightness-90 transition-opacity duration-700"
+              className="w-full h-full object-cover object-center transition-opacity duration-700"
               onError={() => setVideoError(true)}
             />
           ) : videoSource.type === 'youtube' && !videoError ? (
@@ -212,7 +212,7 @@ export default function CollegeDetailPage({
                 src={`${videoSource.src}?autoplay=1&mute=0&loop=1&playlist=${videoSource.videoId}&controls=0&showinfo=0&autohide=1&modestbranding=1&playsinline=1&rel=0&iv_load_policy=3&enablejsapi=1`}
                 title={`${institute.name} Campus Video`}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                className="w-full h-full object-cover pointer-events-none opacity-80"
+                className="w-full h-full object-cover pointer-events-none"
               />
             </div>
           ) : videoSource.type === 'vimeo' && !videoError ? (
@@ -221,7 +221,7 @@ export default function CollegeDetailPage({
                 src={`${videoSource.src}?autoplay=1&loop=1&muted=0&background=1`}
                 title={`${institute.name} Campus Video`}
                 allow="autoplay; fullscreen"
-                className="w-full h-full object-cover pointer-events-none opacity-80"
+                className="w-full h-full object-cover pointer-events-none"
               />
             </div>
           ) : (
@@ -230,13 +230,9 @@ export default function CollegeDetailPage({
               src={institute.image}
               alt={institute.name}
               referrerPolicy="no-referrer"
-              className="w-full h-full object-cover object-center filter brightness-85"
+              className="w-full h-full object-cover object-center"
             />
           )}
-
-          {/* Multi-stage Contrast Scrim for WCAG AA readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/40" />
-          <div className="absolute inset-0 bg-radial from-transparent via-slate-950/30 to-slate-950/75 pointer-events-none" />
         </div>
 
         {/* Top Floating Bar: Navigation */}
