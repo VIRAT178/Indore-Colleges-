@@ -480,18 +480,28 @@ export default function Home({
                 transition={{ duration: 1.0, ease: [0.4, 0, 0.2, 1] }}
                 className="absolute inset-0 w-full h-full flex items-center justify-center"
               >
-                <picture className="w-full h-full flex items-center justify-center">
-                  {/* Mobile Screen version (< 768px): User uploaded Indore Colleges Logo on White (scaled down so text fits cleanly) */}
-                  <source media="(max-width: 767px)" srcSet={bg.mobileSrc || '/indore-colleges-logo-on-white.png'} />
-                  {/* Desktop / Window Screen version (>= 768px): Single horizontal line Indore Colleges (bg2.jpeg) like before */}
-                  <source media="(min-width: 768px)" srcSet={bg.src} />
-                  <img 
-                    src={bg.src} 
-                    alt="Indore Colleges" 
-                    referrerPolicy="no-referrer"
-                    className="w-[60%] sm:w-[50%] max-w-[220px] sm:max-w-[260px] h-auto object-contain object-center mx-auto my-auto md:w-full md:h-full md:max-w-none md:object-cover md:brightness-[0.96] md:contrast-[1.02]"
-                  />
-                </picture>
+               <picture className="w-full h-full flex items-center justify-center">
+  {/* Mobile */}
+  <source
+    media="(max-width: 767px)"
+    srcSet="/Indore Colleges Logo on White.png"
+  />
+
+  {/* Desktop */}
+  <source
+    media="(min-width: 768px)"
+    srcSet="/bg2.jpeg"
+  />
+
+  {/* Fallback */}
+  <img
+    src="/bg2.jpeg"
+    alt="Indore Colleges"
+    className="w-full h-full object-cover object-center"
+    loading="eager"
+    fetchPriority="high"
+  />
+</picture>
               </motion.div>
             );
           })}
