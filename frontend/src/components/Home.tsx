@@ -480,28 +480,25 @@ export default function Home({
                 transition={{ duration: 1.0, ease: [0.4, 0, 0.2, 1] }}
                 className="absolute inset-0 w-full h-full flex items-center justify-center"
               >
-               <picture className="w-full h-full flex items-center justify-center">
-  {/* Mobile */}
-  <source
-    media="(max-width: 767px)"
-    srcSet="/Indore Colleges Logo on White.png"
+<div className="absolute inset-0 z-0">
+
+  {/* MOBILE — White Logo PNG */}
+  <img
+    src="/Indore Colleges Logo on White.png"
+    alt="Indore Colleges"
+    className="block md:hidden w-full h-full object-contain object-center"
+    loading="eager"
   />
 
-  {/* Desktop */}
-  <source
-    media="(min-width: 768px)"
-    srcSet="/bg2.jpeg"
-  />
-
-  {/* Fallback */}
+  {/* DESKTOP — Hero Background */}
   <img
     src="/bg2.jpeg"
     alt="Indore Colleges"
-    className="w-full h-full object-cover object-center"
+    className="hidden md:block w-full h-full object-cover object-center"
     loading="eager"
-    fetchPriority="high"
   />
-</picture>
+
+</div>
               </motion.div>
             );
           })}
