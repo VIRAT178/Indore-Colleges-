@@ -93,7 +93,7 @@ export default function Home({
 
   const ratingHeadingOptions = useMemo(() => ({
     google: 'According to Google Rating',
-    indore: 'According to Indore Colleges'
+    indore: 'According to Indore Colleges Rating'
   }), []);
 
   const [googleHeading, setGoogleHeading] = useState('');
@@ -675,26 +675,26 @@ export default function Home({
 
           {/* College Cards Grid / Split into Google Rating & Indore Colleges Rating categories */}
           {(() => {
-            // Category 01: Top 6 by Google Ratings & Search Reviews
+            // Category 01: Top 10 by Google Ratings & Search Reviews
             const GOOGLE_LISTS_BY_TAB: Record<string, string[]> = {
-              'Engineering': ['sgsits', 'iist-indore', 'iet-davv', 'piemr-indore', 'patel-college', 'ips-engineering'],
-              'BBA': ['softvision-college', 'alexia-college', 'gacc-indore', 'renaissance-college', 'pimr', 'radiant-institute'],
-              'BCA': ['softvision-college', 'sgsits', 'pioneer-institute', 'christian-eminent', 'holkar-science', 'renaissance-college'],
-              'MBA': ['jaipuria-indore', 'sgsits', 'ims-davv', 'pimr', 'renaissance-college', 'gujarati-professional'],
-              'LAW': ['iil-indore', 'nmims-law', 'symbiosis-university', 'pimr', 'renaissance-college', 'oriental-university'],
-              'MEDICAL': ['mgm-medical', 'saims', 'index-medical', 'shubhdeep-ayurved', 'sage-university', 'malwa-institute'],
-              'DESIGN': ['cindrebay-design', 'symbiosis-university', 'svvv-indore', 'renaissance-college', 'acropolis', 'sage-university']
+              'Engineering': ['sgsits', 'iist-indore', 'iet-davv', 'piemr-indore', 'patel-college', 'ips-engineering', 'lncts-indore', 'lnct-bhopal-indore', 'mit-indore', 'vaishnav-polytechnic'],
+              'BBA': ['softvision-college', 'alexia-college', 'gacc-indore', 'renaissance-college', 'pimr', 'radiant-institute', 'ims-davv', 'symbiosis-university', 'medi-caps-university', 'sage-university'],
+              'BCA': ['softvision-college', 'sgsits', 'pioneer-institute', 'christian-eminent', 'holkar-science', 'renaissance-college', 'gacc-indore', 'alexia-college', 'apj-kalam-univ', 'sage-university'],
+              'MBA': ['jaipuria-indore', 'sgsits', 'ims-davv', 'pimr', 'renaissance-college', 'gujarati-professional', 'iim-indore', 'ips-ibmr', 'nmims-indore', 'medi-caps-university'],
+              'LAW': ['iil-indore', 'nmims-law', 'symbiosis-university', 'pimr', 'renaissance-college', 'oriental-university', 'davv', 'iim-indore', 'sage-university', 'acropolis'],
+              'MEDICAL': ['mgm-medical', 'saims', 'index-medical', 'shubhdeep-ayurved', 'sage-university', 'malwa-institute', 'medi-caps-university', 'symbiosis-university', 'acropolis', 'davv'],
+              'DESIGN': ['cindrebay-design', 'symbiosis-university', 'svvv-indore', 'renaissance-college', 'acropolis', 'sage-university', 'medi-caps-university', 'pimr', 'softvision-college', 'nmims-stme']
             };
 
-            // Category 02: Top 6 Evaluated by Indore Colleges Academic & Placement Merit (Distinct from Google Ranking)
+            // Category 02: Top 10 evaluated by Indore Colleges Academic & Placement Merit
             const INDORE_LISTS_BY_TAB: Record<string, string[]> = {
-              'Engineering': ['iet-davv', 'medi-caps-university', 'acropolis', 'sgsits', 'symbiosis-university', 'svvv-indore'],
-              'BBA': ['pimr', 'ims-davv', 'symbiosis-university', 'medi-caps-university', 'sage-university', 'renaissance-college'],
-              'BCA': ['holkar-science', 'acropolis', 'medi-caps-university', 'softvision-college', 'sage-university', 'pioneer-institute'],
-              'MBA': ['iim-indore', 'ims-davv', 'jaipuria-indore', 'nmims-indore', 'pimr', 'ips-ibmr'],
-              'LAW': ['iil-indore', 'davv', 'nmims-law', 'symbiosis-university', 'pimr', 'renaissance-college'],
-              'MEDICAL': ['mgm-medical', 'saims', 'index-medical', 'shubhdeep-ayurved', 'medi-caps-university', 'sage-university'],
-              'DESIGN': ['symbiosis-university', 'cindrebay-design', 'svvv-indore', 'sage-university', 'renaissance-college', 'acropolis']
+              'Engineering': ['iet-davv', 'medi-caps-university', 'acropolis', 'sgsits', 'symbiosis-university', 'svvv-indore', 'iist-indore', 'patel-college', 'ips-engineering', 'mit-indore'],
+              'BBA': ['pimr', 'ims-davv', 'symbiosis-university', 'medi-caps-university', 'sage-university', 'renaissance-college', 'softvision-college', 'alexia-college', 'gacc-indore', 'jaipuria-indore'],
+              'BCA': ['holkar-science', 'acropolis', 'medi-caps-university', 'softvision-college', 'sage-university', 'pioneer-institute', 'christian-eminent', 'gacc-indore', 'apj-kalam-univ', 'svvv-indore'],
+              'MBA': ['iim-indore', 'ims-davv', 'jaipuria-indore', 'nmims-indore', 'pimr', 'ips-ibmr', 'sgsits', 'renaissance-college', 'medi-caps-university', 'symbiosis-university'],
+              'LAW': ['iil-indore', 'davv', 'nmims-law', 'symbiosis-university', 'pimr', 'renaissance-college', 'oriental-university', 'iim-indore', 'sage-university', 'acropolis'],
+              'MEDICAL': ['mgm-medical', 'saims', 'index-medical', 'shubhdeep-ayurved', 'medi-caps-university', 'sage-university', 'symbiosis-university', 'acropolis', 'davv', 'malwa-institute'],
+              'DESIGN': ['symbiosis-university', 'cindrebay-design', 'svvv-indore', 'sage-university', 'renaissance-college', 'acropolis', 'softvision-college', 'medi-caps-university', 'pimr', 'gacc-indore']
             };
 
             // Specific Indore Colleges Rating scores per tab
@@ -928,14 +928,18 @@ export default function Home({
             const googleIds = GOOGLE_LISTS_BY_TAB[activeSearchedTab] || [];
             const googleColleges = googleIds
               .map(id => INDORE_INSTITUTES.find(inst => inst.id === id))
-              .filter(Boolean) as Institute[];
+              .filter(Boolean)
+              .sort((a, b) => getGoogleRating(b) - getGoogleRating(a))
+              .slice(0, 10) as Institute[];
 
             const indoreIds = INDORE_LISTS_BY_TAB[activeSearchedTab] || [];
             const indoreColleges = indoreIds
               .map(id => INDORE_INSTITUTES.find(inst => inst.id === id))
-              .filter(Boolean) as Institute[];
+              .filter(Boolean)
+              .sort((a, b) => getIndoreRating(b) - getIndoreRating(a))
+              .slice(0, 10) as Institute[];
 
-            const renderCollegeCard = (college: Institute, ratingType: 'google' | 'indore') => {
+            const renderCollegeCard = (college: Institute, ratingType: 'google' | 'indore', rank: number) => {
               const ratingVal = ratingType === 'google' ? getGoogleRating(college) : getIndoreRating(college);
               const displayRating = ratingVal.toFixed(1);
               const reviewsCount = ratingType === 'google' ? getGoogleReviewsCount(college) : null;
@@ -946,7 +950,6 @@ export default function Home({
                   key={`${ratingType}-${college.id}`}
                   className="bg-white rounded-2xl border border-gray-200/80 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden group"
                 >
-                  {/* Image Header */}
                   <div 
                     onClick={() => onViewCollegeDetail && onViewCollegeDetail(college)}
                     className="relative aspect-[16/10] bg-gray-50 overflow-hidden cursor-pointer"
@@ -957,6 +960,9 @@ export default function Home({
                       referrerPolicy="no-referrer"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
+                    <div className="absolute left-2.5 top-2.5 bg-white/95 backdrop-blur-xs px-2 py-1 rounded-full text-[10px] font-black text-[#0F244C] border border-gray-200 shadow-sm">
+                      #{rank}
+                    </div>
                     {ratingType === 'google' ? (
                       <div className="absolute top-2.5 right-2.5 bg-white/95 backdrop-blur-xs py-1 px-2.5 rounded-lg text-[11px] font-black text-gray-800 flex items-center gap-1.5 shadow-xs border border-gray-100">
                         <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24">
@@ -978,43 +984,37 @@ export default function Home({
                     )}
                   </div>
 
-                  {/* Body Content */}
                   <div className="p-3.5 flex-1 flex flex-col justify-between">
                     <div>
                       <h3 
                         onClick={() => onViewCollegeDetail && onViewCollegeDetail(college)}
-                        className="text-xs sm:text-sm font-bold text-gray-900 group-hover:text-red-600 transition-colors line-clamp-2 cursor-pointer font-outfit min-h-[2.25rem]"
+                        className="text-base sm:text-lg lg:text-[1.35rem] font-black text-[#0F244C] group-hover:text-red-600 transition-colors cursor-pointer font-outfit leading-snug min-h-[3.1rem]"
                       >
                         {college.name}
                       </h3>
-                      
-                      {/* Fees */}
-                      <p className="text-xs font-extrabold text-gray-800 mt-1.5">
+
+                      <p className="text-base font-extrabold text-gray-800 mt-2">
                         {formatFee(college.feePerAnnum)}
-                        <span className="text-[10px] text-gray-400 font-normal ml-1">Avg. Fees</span>
                       </p>
 
-                      {/* Small info line */}
-                      <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-gray-500 mt-1 font-medium">
-                        <MapPin className="h-3 w-3 text-gray-400 flex-shrink-0" />
-                        <span className="truncate">{college.location}, Indore</span>
+                      <div className="flex items-center gap-1.5 text-sm sm:text-base text-gray-600 mt-1.5 font-medium">
+                        <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                        <span>{college.location}, Indore</span>
                       </div>
 
-                      {/* Google Review Snippet Quote */}
                       {ratingType === 'google' && googleQuote && (
-                        <div className="mt-2 text-[10.5px] text-gray-600 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100 flex items-start gap-1">
+                        <div className="mt-2.5 text-sm text-gray-600 bg-slate-50 px-2.5 py-2 rounded-lg border border-slate-100 flex items-start gap-1.5">
                           <span className="text-blue-500 font-bold shrink-0 leading-none">“</span>
-                          <span className="line-clamp-1 italic text-gray-600 leading-snug">{googleQuote}</span>
+                          <span className="line-clamp-2 italic text-gray-600 leading-snug">{googleQuote}</span>
                         </div>
                       )}
                     </div>
 
-                    {/* Apply Now button */}
                     <div className="mt-3 pt-2.5 border-t border-gray-100">
                       <button
                         type="button"
                         onClick={onOpenCounseling}
-                        className="w-full border border-red-600 hover:bg-red-600 hover:text-white text-red-600 font-extrabold py-1.5 px-3 rounded-xl text-[11px] tracking-wider uppercase transition-all duration-200 active:scale-95 text-center cursor-pointer"
+                        className="w-full border border-red-600 hover:bg-red-600 hover:text-white text-red-600 font-extrabold py-2 px-3 rounded-xl text-[11px] sm:text-xs tracking-wider uppercase transition-all duration-200 active:scale-95 text-center cursor-pointer"
                       >
                         Apply Now
                       </button>
@@ -1062,7 +1062,7 @@ export default function Home({
 
                     {/* 2-Column Grid with 6 Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {googleColleges.map((college) => renderCollegeCard(college, 'google'))}
+                      {googleColleges.map((college, index) => renderCollegeCard(college, 'google', index + 1))}
                     </div>
                   </div>
 
@@ -1094,7 +1094,7 @@ export default function Home({
 
                     {/* 2-Column Grid with 6 Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {indoreColleges.map((college) => renderCollegeCard(college, 'indore'))}
+                      {indoreColleges.map((college, index) => renderCollegeCard(college, 'indore', index + 1))}
                     </div>
                   </div>
                 </div>
