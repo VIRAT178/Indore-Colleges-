@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Logo, { LogoIcon } from './Logo';
+import StreamSelector from './StreamSelector';
 import { INDORE_INSTITUTES, INDORE_LOCATIONS, CATEGORIES } from '../data/indoreData';
 import { Institute } from '../types';
 
@@ -1106,6 +1107,13 @@ export default function Home({
         </div>
       </section>
 
+      {/* Stream discovery selector */}
+      <section className="py-10 sm:py-12 bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <StreamSelector onSelectStream={stream => setSelectedStream?.(stream)} />
+        </div>
+      </section>
+
       {/* 3. CATEGORIES SECTION ("Choose your Institute") */}
       <section className="py-10 sm:py-12 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -1662,4 +1670,3 @@ export default function Home({
     </div>
   );
 }
-
