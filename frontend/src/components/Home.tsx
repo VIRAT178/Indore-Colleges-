@@ -86,9 +86,20 @@ export default function Home({
     'Pharmacy',
     'Law'
   ], []);
+
   const [currentDisciplineIndex, setCurrentDisciplineIndex] = useState(0);
   const [typedText, setTypedText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const ratingHeadingOptions = useMemo(() => ({
+    google: 'According to Google Rating',
+    indore: 'According to Indore Colleges Rating'
+  }), []);
+
+  const [googleHeading, setGoogleHeading] = useState('');
+  const [indoreHeading, setIndoreHeading] = useState('');
+  const [isGoogleDeleting, setIsGoogleDeleting] = useState(false);
+  const [isIndoreDeleting, setIsIndoreDeleting] = useState(false);
 
   useEffect(() => {
     const currentWord = dynamicDisciplines[currentDisciplineIndex];
@@ -117,6 +128,60 @@ export default function Home({
 
     return () => clearTimeout(timeout);
   }, [typedText, isDeleting, currentDisciplineIndex, dynamicDisciplines]);
+
+  useEffect(() => {
+    const currentText = ratingHeadingOptions.google;
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (!isGoogleDeleting) {
+      if (googleHeading.length < currentText.length) {
+        timeout = setTimeout(() => {
+          setGoogleHeading(currentText.slice(0, googleHeading.length + 1));
+        }, 35);
+      } else {
+        timeout = setTimeout(() => {
+          setIsGoogleDeleting(true);
+        }, 1800);
+      }
+    } else {
+      if (googleHeading.length > 0) {
+        timeout = setTimeout(() => {
+          setGoogleHeading(currentText.slice(0, googleHeading.length - 1));
+        }, 20);
+      } else {
+        setIsGoogleDeleting(false);
+      }
+    }
+
+    return () => clearTimeout(timeout);
+  }, [googleHeading, isGoogleDeleting, ratingHeadingOptions.google]);
+
+  useEffect(() => {
+    const currentText = ratingHeadingOptions.indore;
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (!isIndoreDeleting) {
+      if (indoreHeading.length < currentText.length) {
+        timeout = setTimeout(() => {
+          setIndoreHeading(currentText.slice(0, indoreHeading.length + 1));
+        }, 35);
+      } else {
+        timeout = setTimeout(() => {
+          setIsIndoreDeleting(true);
+        }, 1800);
+      }
+    } else {
+      if (indoreHeading.length > 0) {
+        timeout = setTimeout(() => {
+          setIndoreHeading(currentText.slice(0, indoreHeading.length - 1));
+        }, 20);
+      } else {
+        setIsIndoreDeleting(false);
+      }
+    }
+
+    return () => clearTimeout(timeout);
+  }, [indoreHeading, isIndoreDeleting, ratingHeadingOptions.indore]);
 
   // Auto-slide transition if multiple backgrounds exist
   useEffect(() => {
@@ -973,7 +1038,7 @@ export default function Home({
                   </div>
 
                   {/* Left Side Category: According to Google Rating */}
-                                  <div className="bg-gray-50/80 p-4 sm:p-6 rounded-3xl border border-gray-200/80 shadow-2xs">
+                  <div className="bg-gray-50/80 p-4 sm:p-6 rounded-3xl border border-gray-200/80 shadow-2xs">
                     {/* Header Banner */}
                     <div className="bg-white border border-gray-200/90 rounded-2xl p-4 sm:p-5 mb-6 shadow-xs text-center flex flex-col items-center justify-center">
                       <div className="flex items-center justify-center gap-2 mb-2">
@@ -989,8 +1054,9 @@ export default function Home({
                           CATEGORY 01
                         </span>
                       </div>
-                      <h3 className="text-[1.4rem] sm:text-[1.5rem] lg:text-[2rem] font-black text-[#0F244C] font-outfit leading-tight tracking-tight">
-                        According to Google Rating
+                      <h3 className="text-[1.7rem] sm:text-[2rem] lg:text-[2.4rem] font-black text-[#0F244C] font-outfit leading-tight tracking-tight min-h-[2.4em] flex items-center justify-center">
+                        {googleHeading}
+                        <span className="inline-block w-[3px] h-[1em] ml-1 rounded-sm bg-[#0F244C] animate-pulse" />
                       </h3>
                     </div>
 
@@ -1011,7 +1077,7 @@ export default function Home({
                   </div>
 
                   {/* Right Side Category: According to Indore Colleges Rating */}
-                   <div className="bg-gray-50/80 p-4 sm:p-6 rounded-3xl border border-gray-200/80 shadow-2xs">
+                  <div className="bg-gray-50/80 p-4 sm:p-6 rounded-3xl border border-gray-200/80 shadow-2xs">
                     {/* Header Banner */}
                     <div className="bg-white border border-gray-200/90 rounded-2xl p-4 sm:p-5 mb-6 shadow-xs text-center flex flex-col items-center justify-center">
                       <div className="flex items-center justify-center gap-2 mb-2">
@@ -1020,8 +1086,9 @@ export default function Home({
                           CATEGORY 02
                         </span>
                       </div>
-                      <h3 className="text-[1.4rem] sm:text-[1.5rem] lg:text-[2rem] font-black text-[#0F244C] font-outfit leading-tight tracking-tight">
-                        According to Indore Colleges
+                      <h3 className="text-[1.7rem] sm:text-[2rem] lg:text-[2.4rem] font-black text-[#0F244C] font-outfit leading-tight tracking-tight min-h-[2.4em] flex items-center justify-center">
+                        {indoreHeading}
+                        <span className="inline-block w-[3px] h-[1em] ml-1 rounded-sm bg-[#0F244C] animate-pulse" />
                       </h3>
                     </div>
 
