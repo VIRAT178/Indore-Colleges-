@@ -93,7 +93,7 @@ export default function Home({
 
   const ratingHeadingOptions = useMemo(() => ({
     google: 'According to Google Rating',
-    indore: 'According to Indore Colleges Rating'
+    indore: 'According to Indore Colleges'
   }), []);
 
   const [googleHeading, setGoogleHeading] = useState('');
