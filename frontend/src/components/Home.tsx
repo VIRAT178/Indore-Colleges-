@@ -1021,7 +1021,7 @@ export default function Home({
                         </span>
                       </div>
                       <h3 className="text-[1.4rem] sm:text-[1.5rem] lg:text-[2rem] font-black text-[#0F244C] font-outfit leading-tight tracking-tight">
-                        According to Indore Colleges Rating
+                        According to Indore Colleges
                       </h3>
                     </div>
 
