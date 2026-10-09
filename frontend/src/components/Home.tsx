@@ -79,7 +79,13 @@ export default function Home({
 
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
 
-  const dynamicDisciplines = useMemo(() => ['Colleges'], []);
+  const dynamicDisciplines = useMemo(() => [
+    'Engineering',
+    'Management',
+    'Science',
+    'Pharmacy',
+    'Law'
+  ], []);
   const [currentDisciplineIndex, setCurrentDisciplineIndex] = useState(0);
   const [typedText, setTypedText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
