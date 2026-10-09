@@ -677,7 +677,7 @@ export default function Home({
           {(() => {
             // Category 01: Top 10 by Google Ratings & Search Reviews
             const GOOGLE_LISTS_BY_TAB: Record<string, string[]> = {
-              'Engineering': ['sgsits', 'iist-indore', 'iet-davv', 'piemr-indore', 'patel-college', 'ips-engineering', 'lncts-indore', 'lnct-bhopal-indore', 'mit-indore', 'vaishnav-polytechnic'],
+              'Engineering': ['sgsits', 'iist-indore', 'iet-davv', 'piemr-indore', 'patel-college', 'ips-engineering', 'lncts-indore', 'lnct-bhopal-indore', 'malwa-institute', 'vaishnav-polytechnic'],
               'BBA': ['softvision-college', 'alexia-college', 'gacc-indore', 'renaissance-college', 'pimr', 'radiant-institute', 'ims-davv', 'symbiosis-university', 'medi-caps-university', 'sage-university'],
               'BCA': ['softvision-college', 'sgsits', 'pioneer-institute', 'christian-eminent', 'holkar-science', 'renaissance-college', 'gacc-indore', 'alexia-college', 'apj-kalam-univ', 'sage-university'],
               'MBA': ['jaipuria-indore', 'sgsits', 'ims-davv', 'pimr', 'renaissance-college', 'gujarati-professional', 'iim-indore', 'ips-ibmr', 'nmims-indore', 'medi-caps-university'],
@@ -688,7 +688,7 @@ export default function Home({
 
             // Category 02: Top 10 evaluated by Indore Colleges Academic & Placement Merit
             const INDORE_LISTS_BY_TAB: Record<string, string[]> = {
-              'Engineering': ['iet-davv', 'medi-caps-university', 'acropolis', 'sgsits', 'symbiosis-university', 'svvv-indore', 'iist-indore', 'patel-college', 'ips-engineering', 'mit-indore'],
+              'Engineering': ['iet-davv', 'medi-caps-university', 'acropolis', 'sgsits', 'symbiosis-university', 'svvv-indore', 'iist-indore', 'patel-college', 'ips-engineering', 'malwa-institute'],
               'BBA': ['pimr', 'ims-davv', 'symbiosis-university', 'medi-caps-university', 'sage-university', 'renaissance-college', 'softvision-college', 'alexia-college', 'gacc-indore', 'jaipuria-indore'],
               'BCA': ['holkar-science', 'acropolis', 'medi-caps-university', 'softvision-college', 'sage-university', 'pioneer-institute', 'christian-eminent', 'gacc-indore', 'apj-kalam-univ', 'svvv-indore'],
               'MBA': ['iim-indore', 'ims-davv', 'jaipuria-indore', 'nmims-indore', 'pimr', 'ips-ibmr', 'sgsits', 'renaissance-college', 'medi-caps-university', 'symbiosis-university'],
@@ -912,10 +912,6 @@ export default function Home({
               return '500+';
             };
 
-            const getGoogleQuote = (college: Institute): string | undefined => {
-              return GOOGLE_COLLEGE_META[college.id]?.quote;
-            };
-
             const getIndoreRating = (college: Institute): number => {
               const tabRatings = INDORE_RATINGS_BY_TAB[activeSearchedTab];
               if (tabRatings && tabRatings[college.id] !== undefined) {
@@ -943,8 +939,6 @@ export default function Home({
               const ratingVal = ratingType === 'google' ? getGoogleRating(college) : getIndoreRating(college);
               const displayRating = ratingVal.toFixed(1);
               const reviewsCount = ratingType === 'google' ? getGoogleReviewsCount(college) : null;
-              const googleQuote = getGoogleQuote(college);
-
               return (
                 <div 
                   key={`${ratingType}-${college.id}`}
@@ -988,27 +982,14 @@ export default function Home({
                     <div className="flex-1">
                       <h3 
                         onClick={() => onViewCollegeDetail && onViewCollegeDetail(college)}
-                        className="text-base sm:text-lg lg:text-[1.35rem] font-black text-[#0F244C] group-hover:text-red-600 transition-colors cursor-pointer font-outfit leading-snug line-clamp-3 min-h-[5.5rem]"
+                        className="text-sm sm:text-base lg:text-lg font-black text-[#0F244C] group-hover:text-red-600 transition-colors cursor-pointer font-outfit leading-snug line-clamp-3 min-h-[4.5rem]"
                       >
                         {college.name}
                       </h3>
 
-                      <p className="text-base font-extrabold text-gray-800 mt-2 min-h-7 flex items-center">
-                        {formatFee(college.feePerAnnum)}
-                      </p>
-
-                      <div className="flex items-center gap-1.5 text-sm sm:text-base text-gray-600 mt-1.5 font-medium h-6">
-                        <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                      <div className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-600 mt-1.5 font-medium h-6">
+                        <MapPin className="h-3.5 w-3.5 text-gray-500 flex-shrink-0" />
                         <span className="truncate">{college.location}, Indore</span>
-                      </div>
-
-                      <div className="mt-2.5 h-14 text-sm text-gray-600 bg-slate-50 px-2.5 py-2 rounded-lg border border-slate-100 flex items-start gap-1.5">
-                        {googleQuote && (
-                          <>
-                            <span className="text-blue-500 font-bold shrink-0 leading-none">“</span>
-                            <span className="line-clamp-2 italic text-gray-600 leading-snug">{googleQuote}</span>
-                          </>
-                        )}
                       </div>
                     </div>
 
