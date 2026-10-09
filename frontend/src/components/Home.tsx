@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Search, 
   MapPin, 
@@ -79,6 +78,47 @@ export default function Home({
   ];
 
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
+
+  // Dynamic typing disciplines in hero
+  const dynamicDisciplines = useMemo(() => [
+    'Engineering',
+    'Management',
+    'Science',
+    'Pharmacy',
+    'Law'
+  ], []);
+
+  const [currentDisciplineIndex, setCurrentDisciplineIndex] = useState(0);
+  const [typedText, setTypedText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const currentWord = dynamicDisciplines[currentDisciplineIndex];
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (!isDeleting) {
+      if (typedText.length < currentWord.length) {
+        timeout = setTimeout(() => {
+          setTypedText(currentWord.slice(0, typedText.length + 1));
+        }, 90);
+      } else {
+        timeout = setTimeout(() => {
+          setIsDeleting(true);
+        }, 1800);
+      }
+    } else {
+      if (typedText.length > 0) {
+        timeout = setTimeout(() => {
+          setTypedText(currentWord.slice(0, typedText.length - 1));
+        }, 45);
+      } else {
+        setIsDeleting(false);
+        setCurrentDisciplineIndex((prev) => (prev + 1) % dynamicDisciplines.length);
+      }
+    }
+
+    return () => clearTimeout(timeout);
+  }, [typedText, isDeleting, currentDisciplineIndex, dynamicDisciplines]);
 
   // Auto-slide transition if multiple backgrounds exist
   useEffect(() => {
@@ -469,9 +509,42 @@ export default function Home({
                 className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]"
                 style={{ color: 'rgba(246, 103, 16, 1)' }}
               >
-                Colleges
+                {typedText}
               </span>
+              <span 
+                className="inline-block w-[3px] sm:w-[3.5px] h-6 sm:h-8 md:h-9 ml-1.5 rounded-full animate-pulse" 
+                style={{ backgroundColor: 'rgba(246, 103, 16, 1)' }}
+              />
             </span>
+
+            <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 mt-2.5 text-xs sm:text-sm font-bold text-white/80 tracking-wide">
+              {dynamicDisciplines.map((stream, sIdx) => {
+                const isCurrent = dynamicDisciplines[currentDisciplineIndex] === stream;
+                return (
+                  <span key={stream} className="inline-flex items-center gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedCategory(stream);
+                        setActiveTab('explore');
+                      }}
+                      className={`transition-all duration-300 cursor-pointer ${
+                        isCurrent
+                          ? 'font-black scale-105 drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]'
+                          : 'hover:text-white'
+                      }`}
+                      style={isCurrent ? { color: 'rgba(246, 103, 16, 1)' } : undefined}
+                      title={`Browse ${stream} Colleges in Indore`}
+                    >
+                      {stream}
+                    </button>
+                    {sIdx < dynamicDisciplines.length - 1 && (
+                      <span className="text-white/40 font-normal select-none">|</span>
+                    )}
+                  </span>
+                );
+              })}
+            </div>
           </motion.h1>
 
           {/* Open spacer leaving unobstructed view for the background image text */}
@@ -539,7 +612,7 @@ export default function Home({
           
           <div className="border-b border-gray-200 pb-4 mb-8 text-center">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight font-outfit mb-4 text-center">
-                Choose Course & Search Best Colleges of Indore
+              The most Searched Colleges
             </h2>
             
             {/* Horizontal Tabs: Engineering, BBA, BCA, MBA, LAW, MEDICAL, DESIGN */}
@@ -1576,4 +1649,3 @@ export default function Home({
     </div>
   );
 }
-
