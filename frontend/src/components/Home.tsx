@@ -943,12 +943,12 @@ export default function Home({
               const ratingVal = ratingType === 'google' ? getGoogleRating(college) : getIndoreRating(college);
               const displayRating = ratingVal.toFixed(1);
               const reviewsCount = ratingType === 'google' ? getGoogleReviewsCount(college) : null;
-              const googleQuote = ratingType === 'google' ? getGoogleQuote(college) : undefined;
+              const googleQuote = getGoogleQuote(college);
 
               return (
                 <div 
                   key={`${ratingType}-${college.id}`}
-                  className="bg-white rounded-2xl border border-gray-200/80 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden group"
+                  className="h-full bg-white rounded-2xl border border-gray-200/80 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden group"
                 >
                   <div 
                     onClick={() => onViewCollegeDetail && onViewCollegeDetail(college)}
@@ -984,30 +984,32 @@ export default function Home({
                     )}
                   </div>
 
-                  <div className="p-3.5 flex-1 flex flex-col justify-between">
-                    <div>
+                  <div className="p-3.5 flex-1 flex flex-col">
+                    <div className="flex-1">
                       <h3 
                         onClick={() => onViewCollegeDetail && onViewCollegeDetail(college)}
-                        className="text-base sm:text-lg lg:text-[1.35rem] font-black text-[#0F244C] group-hover:text-red-600 transition-colors cursor-pointer font-outfit leading-snug min-h-[3.1rem]"
+                        className="text-base sm:text-lg lg:text-[1.35rem] font-black text-[#0F244C] group-hover:text-red-600 transition-colors cursor-pointer font-outfit leading-snug line-clamp-3 min-h-[5.5rem]"
                       >
                         {college.name}
                       </h3>
 
-                      <p className="text-base font-extrabold text-gray-800 mt-2">
+                      <p className="text-base font-extrabold text-gray-800 mt-2 min-h-7 flex items-center">
                         {formatFee(college.feePerAnnum)}
                       </p>
 
-                      <div className="flex items-center gap-1.5 text-sm sm:text-base text-gray-600 mt-1.5 font-medium">
+                      <div className="flex items-center gap-1.5 text-sm sm:text-base text-gray-600 mt-1.5 font-medium h-6">
                         <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0" />
-                        <span>{college.location}, Indore</span>
+                        <span className="truncate">{college.location}, Indore</span>
                       </div>
 
-                      {ratingType === 'google' && googleQuote && (
-                        <div className="mt-2.5 text-sm text-gray-600 bg-slate-50 px-2.5 py-2 rounded-lg border border-slate-100 flex items-start gap-1.5">
-                          <span className="text-blue-500 font-bold shrink-0 leading-none">“</span>
-                          <span className="line-clamp-2 italic text-gray-600 leading-snug">{googleQuote}</span>
-                        </div>
-                      )}
+                      <div className="mt-2.5 h-14 text-sm text-gray-600 bg-slate-50 px-2.5 py-2 rounded-lg border border-slate-100 flex items-start gap-1.5">
+                        {googleQuote && (
+                          <>
+                            <span className="text-blue-500 font-bold shrink-0 leading-none">“</span>
+                            <span className="line-clamp-2 italic text-gray-600 leading-snug">{googleQuote}</span>
+                          </>
+                        )}
+                      </div>
                     </div>
 
                     <div className="mt-3 pt-2.5 border-t border-gray-100">
@@ -1679,3 +1681,4 @@ export default function Home({
     </div>
   );
 }
+
