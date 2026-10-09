@@ -989,7 +989,7 @@ export default function Home({
                           CATEGORY 01
                         </span>
                       </div>
-                      <h3 className="text-[1.7rem] sm:text-[2rem] lg:text-[2.4rem] font-black text-[#0F244C] font-outfit leading-tight tracking-tight">
+                      <h3 className="text-[1.4rem] sm:text-[1.5rem] lg:text-[2rem] font-black text-[#0F244C] font-outfit leading-tight tracking-tight">
                         According to Google Rating
                       </h3>
                     </div>
@@ -1020,7 +1020,7 @@ export default function Home({
                           CATEGORY 02
                         </span>
                       </div>
-                      <h3 className="text-[1.7rem] sm:text-[2rem] lg:text-[2.4rem] font-black text-[#0F244C] font-outfit leading-tight tracking-tight">
+                      <h3 className="text-[1.4rem] sm:text-[1.5rem] lg:text-[2rem] font-black text-[#0F244C] font-outfit leading-tight tracking-tight">
                         According to Indore Colleges Rating
                       </h3>
                     </div>
