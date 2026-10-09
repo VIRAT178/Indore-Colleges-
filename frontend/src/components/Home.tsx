@@ -1,9 +1,5 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   MapPin, 
@@ -83,47 +79,6 @@ export default function Home({
   ];
 
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
-
-  // Dynamic typing disciplines in hero
-  const dynamicDisciplines = useMemo(() => [
-    'Engineering',
-    'Management',
-    'Science',
-    'Pharmacy',
-    'Law'
-  ], []);
-
-  const [currentDisciplineIndex, setCurrentDisciplineIndex] = useState(0);
-  const [typedText, setTypedText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => {
-    const currentWord = dynamicDisciplines[currentDisciplineIndex];
-    let timeout: ReturnType<typeof setTimeout>;
-
-    if (!isDeleting) {
-      if (typedText.length < currentWord.length) {
-        timeout = setTimeout(() => {
-          setTypedText(currentWord.slice(0, typedText.length + 1));
-        }, 90);
-      } else {
-        timeout = setTimeout(() => {
-          setIsDeleting(true);
-        }, 1800);
-      }
-    } else {
-      if (typedText.length > 0) {
-        timeout = setTimeout(() => {
-          setTypedText(currentWord.slice(0, typedText.length - 1));
-        }, 45);
-      } else {
-        setIsDeleting(false);
-        setCurrentDisciplineIndex((prev) => (prev + 1) % dynamicDisciplines.length);
-      }
-    }
-
-    return () => clearTimeout(timeout);
-  }, [typedText, isDeleting, currentDisciplineIndex, dynamicDisciplines]);
 
   // Auto-slide transition if multiple backgrounds exist
   useEffect(() => {
@@ -464,49 +419,31 @@ export default function Home({
     <div id="home_view" className="w-full bg-white font-sans overflow-hidden">
       
       {/* 1. HERO BANNER SECTION (INDORE COLLEGES PURPOSE) */}
-      <section className="relative pt-8 pb-10 sm:pt-10 sm:pb-12 md:pt-12 md:pb-16 px-4 sm:px-6 lg:px-8 min-h-[600px] sm:min-h-[620px] md:min-h-[500px] lg:min-h-[520px] overflow-hidden border-b border-gray-150 flex flex-col justify-center items-center bg-white md:bg-gray-950">
+      <section className="relative pt-5 pb-10 sm:pt-7 sm:pb-14 md:pt-8 md:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-gray-150 flex flex-col justify-center items-center bg-gray-950">
         {/* Full-width education portal hero background carousel slider */}
-        <div className="absolute inset-0 w-full h-full z-0 overflow-hidden pointer-events-none flex items-center justify-center">
+        <div className="absolute inset-0 w-full h-full z-0 overflow-hidden pointer-events-none">
           {heroBackgrounds.map((bg, idx) => {
             const isSelected = idx === currentBgIndex;
             return (
-              <motion.div
+              <motion.img 
                 key={bg.id}
+                src={bg.src} 
+                alt="Indore Colleges" 
+                referrerPolicy="no-referrer"
                 initial={{ opacity: 0 }}
                 animate={{ 
                   opacity: isSelected ? 1 : 0,
                   scale: isSelected ? 1 : 1.02
                 }}
                 transition={{ duration: 1.0, ease: [0.4, 0, 0.2, 1] }}
-                className="absolute inset-0 w-full h-full flex items-center justify-center"
-              >
-<div className="absolute inset-0 z-0">
-
-  {/* MOBILE — White Logo PNG */}
-  <img
-    src="/Indore Colleges Logo on White.png"
-    alt="Indore Colleges"
-    className="block md:hidden w-full h-full object-contain object-center"
-    loading="eager"
-  />
-
-  {/* DESKTOP — Hero Background */}
-  <img
-    src="/bg2.jpeg"
-    alt="Indore Colleges"
-    className="hidden md:block w-full h-full object-cover object-center"
-    loading="eager"
-  />
-
-</div>
-              </motion.div>
+                className="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.96] contrast-[1.02]"
+              />
             );
           })}
-          
-          {/* Desktop overlays: darker at top/bottom for readability, completely transparent in the center so bg image text is crisp */}
-          <div className="hidden md:block absolute inset-0 bg-gradient-to-b from-gray-950/70 via-transparent to-gray-950/75 pointer-events-none" />
-          <div className="hidden md:block absolute -top-24 -right-24 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="hidden md:block absolute -bottom-24 -left-24 w-96 h-96 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
+          {/* Subtle overlay: darker at top/bottom for readability, completely transparent in the center so bg image text is crisp */}
+          <div className="absolute inset-0 bg-gradient-to-b from-gray-950/70 via-transparent to-gray-950/75 pointer-events-none" />
+          <div className="absolute -top-24 -right-24 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
         </div>
 
         <div className="mx-auto max-w-5xl w-full relative z-10 text-center flex flex-col items-center justify-center -mt-2 sm:-mt-3 md:-mt-4">
@@ -514,7 +451,7 @@ export default function Home({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-black text-gray-900 md:text-white tracking-tight leading-[1.28] font-outfit max-w-5xl mx-auto text-center drop-shadow-none md:drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-black text-white tracking-tight leading-[1.28] font-outfit max-w-5xl mx-auto text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]"
           >
             <span>Find the best colleges in Indore</span>
             <span className="block mt-1 sm:mt-1.5">
@@ -532,54 +469,20 @@ export default function Home({
                 className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]"
                 style={{ color: 'rgba(246, 103, 16, 1)' }}
               >
-                {typedText}
+                Colleges
               </span>
-              <span 
-                className="inline-block w-[3px] sm:w-[3.5px] h-6 sm:h-8 md:h-9 ml-1.5 rounded-full animate-pulse" 
-                style={{ backgroundColor: 'rgba(246, 103, 16, 1)' }}
-              />
             </span>
-
-            {/* Disciplines row with dynamic highlight */}
-            <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 mt-2.5 text-xs sm:text-sm font-bold text-gray-700 md:text-white/80 tracking-wide">
-              {dynamicDisciplines.map((stream, sIdx) => {
-                const isCurrent = dynamicDisciplines[currentDisciplineIndex] === stream;
-                return (
-                  <span key={stream} className="inline-flex items-center gap-2.5">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedCategory(stream);
-                        setActiveTab('explore');
-                      }}
-                      className={`transition-all duration-300 cursor-pointer ${
-                        isCurrent
-                          ? 'font-black underline decoration-2 underline-offset-4 scale-105 drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]'
-                          : 'hover:text-gray-900 md:hover:text-white hover:underline underline-offset-4'
-                      }`}
-                      style={isCurrent ? { color: 'rgba(246, 103, 16, 1)', textDecorationColor: 'rgba(246, 103, 16, 1)' } : undefined}
-                      title={`Browse ${stream} Colleges in Indore`}
-                    >
-                      {stream}
-                    </button>
-                    {sIdx < dynamicDisciplines.length - 1 && (
-                      <span className="text-gray-400 md:text-white/40 font-normal select-none">|</span>
-                    )}
-                  </span>
-                );
-              })}
-            </div>
           </motion.h1>
 
-          {/* Open spacer leaving unobstructed view for the background image logo & text */}
-          <div className="h-36 sm:h-40 md:h-24 lg:h-28 w-full pointer-events-none" aria-hidden="true" />
+          {/* Open spacer leaving unobstructed view for the background image text */}
+          <div className="h-20 sm:h-28 md:h-36 lg:h-40 w-full pointer-events-none" aria-hidden="true" />
 
           {/* Action Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="flex flex-wrap items-center justify-center gap-3 pt-4 mx-auto"
+            className="flex flex-wrap items-center justify-center gap-3 pt-5 mx-auto"
           >
             <button
               type="button"
@@ -591,7 +494,7 @@ export default function Home({
                 setSearchQuery('');
                 setActiveTab('explore');
               }}
-              className="inline-flex bg-white hover:bg-gray-100 active:scale-95 text-gray-900 font-extrabold px-6 py-3 rounded-xl transition-all duration-200 border border-gray-200 md:border-transparent shadow-lg md:shadow-xl text-xs sm:text-sm tracking-wider uppercase items-center gap-2 cursor-pointer"
+              className="inline-flex bg-white hover:bg-gray-100 active:scale-95 text-gray-900 font-extrabold px-6 py-3 rounded-xl transition-all duration-200 shadow-xl text-xs sm:text-sm tracking-wider uppercase items-center gap-2 cursor-pointer"
             >
               Explore Top Colleges
               <ArrowUpRight className="h-4 w-4" />
@@ -612,24 +515,23 @@ export default function Home({
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35 }}
-            className="pt-4 mt-4 border-t border-gray-200 md:border-white/20 grid grid-cols-3 gap-4 sm:gap-8 max-w-md w-full mx-auto text-center"
+            className="pt-5 mt-5 border-t border-white/20 grid grid-cols-3 gap-4 sm:gap-8 max-w-md w-full mx-auto text-center"
           >
             <div className="text-center">
-              <div className="text-xl sm:text-2xl font-black text-gray-900 md:text-white font-outfit">50+</div>
-              <div className="text-[11px] sm:text-xs text-gray-600 md:text-gray-200 font-medium mt-0.5">Indore Institutes</div>
+              <div className="text-xl sm:text-2xl font-black text-white font-outfit">50+</div>
+              <div className="text-[11px] sm:text-xs text-gray-200 font-medium mt-0.5">Indore Institutes</div>
             </div>
             <div className="text-center">
-              <div className="text-xl sm:text-2xl font-black text-gray-900 md:text-white font-outfit">10,000+</div>
-              <div className="text-[11px] sm:text-xs text-gray-600 md:text-gray-200 font-medium mt-0.5">Students Counselled</div>
+              <div className="text-xl sm:text-2xl font-black text-white font-outfit">10,000+</div>
+              <div className="text-[11px] sm:text-xs text-gray-200 font-medium mt-0.5">Students Counselled</div>
             </div>
             <div className="text-center">
-              <div className="text-xl sm:text-2xl font-black text-gray-900 md:text-white font-outfit">100%</div>
-              <div className="text-[11px] sm:text-xs text-gray-600 md:text-gray-200 font-medium mt-0.5">Free Guidance</div>
+              <div className="text-xl sm:text-2xl font-black text-white font-outfit">100%</div>
+              <div className="text-[11px] sm:text-xs text-gray-200 font-medium mt-0.5">Free Guidance</div>
             </div>
           </motion.div>
         </div>
       </section>
-
 
       {/* 2. THE MOST SEARCHED COLLEGES SECTION (CARDEKHO-STYLE DYNAMIC TABS) */}
       <section className="py-10 sm:py-12 bg-white border-y border-gray-100">
@@ -637,7 +539,7 @@ export default function Home({
           
           <div className="border-b border-gray-200 pb-4 mb-8 text-center">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight font-outfit mb-4 text-center">
-              The most Searched Colleges
+                Choose Course & Search Best Colleges of Indore
             </h2>
             
             {/* Horizontal Tabs: Engineering, BBA, BCA, MBA, LAW, MEDICAL, DESIGN */}
@@ -1674,3 +1576,4 @@ export default function Home({
     </div>
   );
 }
+
