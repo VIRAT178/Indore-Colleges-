@@ -370,7 +370,7 @@ export default function ReviewsHierarchyTable() {
           {!showingPerspectives ? (
           <div>
             <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wider text-slate-900 mb-6 text-center">
-              CATEGORIES
+              COLLEGES CATEGORIES
             </h2>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3.5 md:gap-4">
