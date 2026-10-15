@@ -1,8 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
@@ -825,7 +820,7 @@ async function startServer() {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
   }));
-  app.use(express.json());
+  app.use(express.json({ limit: '12mb' }));
 
   // Health check endpoint for Render, uptime monitors, and load balancers
   app.get(['/api/health', '/health'], (req, res) => {
@@ -2144,6 +2139,20 @@ Instructions:
       }
     });
   }
+
+  app.use((err: any, _req, res, next) => {
+    if (err?.type === 'entity.too.large') {
+      return res.status(413).json({
+        error: 'Request body is too large. Upload files no larger than 4 MB each or provide links instead.'
+      });
+    }
+
+    if (err?.type === 'entity.parse.failed') {
+      return res.status(400).json({ error: 'Request body contains invalid JSON.' });
+    }
+
+    next(err);
+  });
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`EduPath server is listening on port ${PORT}`);
