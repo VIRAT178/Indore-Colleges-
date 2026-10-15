@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Home from './components/Home';
@@ -295,9 +294,12 @@ export function getPageSeo(pathname: string, institutes: Institute[]): PageSeo |
 function ScrollToTopAndSEO({ institutes }: { institutes: Institute[] }) {
   const { pathname } = useLocation();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    window.history.scrollRestoration = 'manual';
     window.scrollTo(0, 0);
+  }, [pathname]);
 
+  useEffect(() => {
     const seo = getPageSeo(pathname, institutes);
     if (!seo) {
       removeCollegeJsonLd();
@@ -1116,6 +1118,12 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
       if (selectedLocation.startsWith('Zone: ')) {
         const targetZone = selectedLocation.replace('Zone: ', '').toLowerCase();
         if (getInstituteZone(inst.location) !== targetZone) return false;
+      } else if (selectedLocation.startsWith('Areas: ')) {
+        const targetAreas = selectedLocation
+          .replace('Areas: ', '')
+          .split('|')
+          .map(area => area.toLowerCase());
+        if (!targetAreas.some(area => inst.location.toLowerCase().includes(area))) return false;
       } else if (inst.location !== selectedLocation) {
         return false;
       }
