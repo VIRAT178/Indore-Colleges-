@@ -493,17 +493,22 @@ export default function Home({
     }
   ];
 
-  // Localities list (Indore regional)
+  // Locality groups and their matching institute locations
   const LOCALITIES = [
-    { name: 'Vijay Nagar', dist: '1.2 km' },
-    { name: 'Scheme No.54', dist: '1.8 km' },
-    { name: 'Ring Road', dist: '2.5 km' },
-    { name: 'Kanadia Road', dist: '4.2 km' },
-    { name: 'Khajrana Road', dist: '3.9 km' },
-    { name: 'Bicholi Mardana', dist: '5.8 km' },
-    { name: 'Anurag Nagar', dist: '2.1 km' },
-    { name: 'Khandwa Road', dist: '7.4 km' }
+    { name: 'Vijay Nagar', locations: ['Vijay Nagar'] },
+    { name: 'Scheme No. 54', locations: ['Scheme 54'] },
+    { name: 'Bhawarkua & Navlakha', locations: ['Bhawarkua', 'Navlakha'] },
+    { name: 'Super Corridor', locations: ['Super Corridor'] },
+    { name: 'Rau & Pitampur', locations: ['Rau', 'Pitampur', 'Pigdamber'] },
+    { name: 'Sanwer Road', locations: ['Sanwer Road'] },
+    { name: 'Bypass Road & Manglia', locations: ['Bypass Road', 'Manglia'] },
+    { name: 'Khandwa Road & Takshashila Campus', locations: ['Khandwa Road', 'Takshashila Campus'] }
   ];
+  const getLocalityCollegeCount = (locations: string[]) =>
+    INDORE_INSTITUTES.filter(institute =>
+      institute.type === 'college' &&
+      locations.some(location => institute.location.toLowerCase().includes(location.toLowerCase()))
+    ).length;
 
   return (
     <div id="home_view" className="w-full bg-white font-sans overflow-hidden">
@@ -539,7 +544,7 @@ export default function Home({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-             className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-black text-black tracking-tight leading-[1.28] font-outfit max-w-5xl mx-auto text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-black text-black tracking-tight leading-[1.28] font-outfit max-w-5xl mx-auto text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]"
           >
             <span>Find the best colleges in Indore</span>
             <span className="block mt-1 sm:mt-1.5">
@@ -610,16 +615,16 @@ export default function Home({
             className="pt-5 mt-5 border-t border-white/20 grid grid-cols-3 gap-4 sm:gap-8 max-w-md w-full mx-auto text-center"
           >
             <div className="text-center">
-              <div className="text-xl sm:text-2xl font-black text-white font-outfit">50+</div>
-              <div className="text-[11px] sm:text-xs text-gray-200 font-medium mt-0.5">Indore Institutes</div>
+              <div className="text-xl sm:text-2xl font-black text-black font-outfit">50+</div>
+              <div className="text-[11px] sm:text-xs text-gray-700 font-medium mt-0.5">Indore Institutes</div>
             </div>
             <div className="text-center">
-              <div className="text-xl sm:text-2xl font-black text-white font-outfit">10,000+</div>
-              <div className="text-[11px] sm:text-xs text-gray-200 font-medium mt-0.5">Students Counselled</div>
+              <div className="text-xl sm:text-2xl font-black text-black font-outfit">10,000+</div>
+              <div className="text-[11px] sm:text-xs text-gray-700 font-medium mt-0.5">Students Counselled</div>
             </div>
             <div className="text-center">
-              <div className="text-xl sm:text-2xl font-black text-white font-outfit">100%</div>
-              <div className="text-[11px] sm:text-xs text-gray-200 font-medium mt-0.5">Free Guidance</div>
+              <div className="text-xl sm:text-2xl font-black text-black font-outfit">100%</div>
+              <div className="text-[11px] sm:text-xs text-gray-700 font-medium mt-0.5">Free Guidance</div>
             </div>
           </motion.div>
         </div>
@@ -1379,7 +1384,7 @@ export default function Home({
               <span>Campus Map Hubs</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F244C] font-outfit text-center">
-              Popular Localities near you in Indore
+              Explore Colleges by Location in Indore
             </h2>
           </div>
 
@@ -1389,20 +1394,24 @@ export default function Home({
               <motion.div 
                 key={idx}
                 whileHover={{ scale: 1.02, y: -2 }}
-                onClick={() => handleLocalityClick(loc.name)}
+                onClick={() => handleLocalityClick(
+                  loc.locations.length === 1
+                    ? loc.locations[0]
+                    : `Areas: ${loc.locations.join('|')}`
+                )}
                 className="group cursor-pointer bg-white border border-gray-100 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-lg hover:border-red-600/30 hover:bg-red-600/5 transition-all flex items-center justify-between"
               >
                 <div className="flex items-center space-x-3 sm:space-x-3.5 min-w-0">
                   <div className="h-9 w-9 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all flex-shrink-0">
                     <MapPin className="h-4 w-4" />
                   </div>
-                  <div className="truncate">
+                  <div className="min-w-0">
                     <h4 className="text-xs sm:text-sm font-bold text-[#0F244C] group-hover:text-red-600 transition font-outfit truncate">{loc.name}</h4>
                     <p className="text-[10px] text-gray-400 font-medium mt-0.5">Indore Zone</p>
                   </div>
                 </div>
                 <span className="text-[10px] font-bold text-gray-400 bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-1 group-hover:bg-red-600/10 group-hover:text-red-600 transition-all flex-shrink-0">
-                  {loc.dist}
+                  {getLocalityCollegeCount(loc.locations)} Colleges
                 </span>
               </motion.div>
             ))}
