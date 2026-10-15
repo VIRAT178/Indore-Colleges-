@@ -335,6 +335,7 @@ function ScrollToTopAndSEO({ institutes }: { institutes: Institute[] }) {
 
 function CollegeDetailRoute({
   institutes,
+  institutesLoaded,
   onScheduleCounseling,
   shortlistedIds,
   handleToggleShortlist,
@@ -342,6 +343,7 @@ function CollegeDetailRoute({
   handleToggleCart
 }: {
   institutes: Institute[];
+  institutesLoaded: boolean;
   onScheduleCounseling: (inst: Institute) => void;
   shortlistedIds: string[];
   handleToggleShortlist: (id: string) => void;
@@ -352,7 +354,7 @@ function CollegeDetailRoute({
   const navigate = useNavigate();
   const college = institutes.find(i => i.id === id);
 
-  if (!college && institutes.length > 0) {
+  if (!college && institutesLoaded && institutes.length > 0) {
     return <Navigate to="/explore" replace />;
   }
 
@@ -760,6 +762,7 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
 
   const [institutes, setInstitutes] = useState<Institute[]>(initialInstitutes);
   const [loading, setLoading] = useState(initialInstitutes.length === 0);
+  const [institutesLoaded, setInstitutesLoaded] = useState(false);
 
   // Derive activeTab from current route path
   const getActiveTabFromPath = (path: string): 'home' | 'explore' | 'register' | 'dashboard' | 'blogs' | 'about' | 'careers' | 'contact' | 'college-portal' | 'admin-panel' => {
@@ -1015,13 +1018,14 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
     setLoading(initialInstitutes.length === 0);
     try {
       const res = await fetch('/api/institutes');
-      if (res.ok) {
-        const data = await res.json();
-        setInstitutes(data);
-      }
+      if (!res.ok) throw new Error(`Institute API returned ${res.status}`);
+      const data: unknown = await res.json();
+      if (!Array.isArray(data)) throw new Error('Institute API returned invalid data');
+      setInstitutes(data);
     } catch (err) {
       console.error('Error fetching Indore institutes:', err);
     } finally {
+      setInstitutesLoaded(true);
       setLoading(false);
     }
   };
@@ -1270,6 +1274,7 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
               element={
                 <CollegeDetailRoute
                   institutes={institutes}
+                  institutesLoaded={institutesLoaded}
                   onScheduleCounseling={handleOpenCounseling}
                   shortlistedIds={shortlistedIds}
                   handleToggleShortlist={handleToggleShortlist}
