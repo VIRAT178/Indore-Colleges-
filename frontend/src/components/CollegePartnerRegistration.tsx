@@ -1,8 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState } from 'react';
 import Logo from './Logo';
 import { 
@@ -58,6 +53,8 @@ const APPROVAL_OPTIONS = [
   'PCI',
   'Higher Education'
 ];
+
+const MAX_UPLOAD_SIZE_BYTES = 4 * 1024 * 1024;
 
 export default function CollegePartnerRegistration() {
   const [activeTab, setActiveTab] = useState<'selection' | 'register' | 'login' | 'dashboard'>('selection');
@@ -137,6 +134,13 @@ export default function CollegePartnerRegistration() {
   const handleBrochureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setErrorMsg('');
+      if (file.size > MAX_UPLOAD_SIZE_BYTES) {
+        e.target.value = '';
+        setErrorMsg('Brochure files must be 4 MB or smaller. You can also provide a brochure link.');
+        return;
+      }
+
       setBrochureFileName(file.name);
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -149,6 +153,13 @@ export default function CollegePartnerRegistration() {
   const handleCampusPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setErrorMsg('');
+      if (file.size > MAX_UPLOAD_SIZE_BYTES) {
+        e.target.value = '';
+        setErrorMsg('Campus photos must be 4 MB or smaller. You can also provide a photo link.');
+        return;
+      }
+
       setCampusPhotoName(file.name);
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -232,6 +243,14 @@ export default function CollegePartnerRegistration() {
           password
         })
       });
+
+      if (!res.headers.get('content-type')?.includes('application/json')) {
+        throw new Error(
+          res.ok
+            ? 'The server returned an unexpected response. Please try again.'
+            : 'The server could not process your registration. Try smaller files or provide links instead.'
+        );
+      }
 
       const data = await res.json();
       if (!res.ok) {
@@ -763,7 +782,7 @@ export default function CollegePartnerRegistration() {
                   <div className="space-y-1.5">
                     <label className="flex items-center justify-center gap-2 px-3 py-2 rounded-xl border border-dashed border-slate-300 hover:border-[#FA6E00] bg-slate-50 hover:bg-orange-50/40 text-slate-600 cursor-pointer transition text-xs font-semibold">
                       <UploadCloud className="h-4 w-4 text-[#FA6E00]" />
-                      <span>{brochureFileName || 'Upload Brochure (PDF / Doc)'}</span>
+                      <span>{brochureFileName || 'Upload Brochure (PDF / Doc, max 4 MB)'}</span>
                       <input
                         type="file"
                         accept=".pdf,.doc,.docx"
@@ -893,7 +912,7 @@ export default function CollegePartnerRegistration() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
                     <label className="flex flex-col items-center justify-center p-3 rounded-xl border border-dashed border-slate-300 hover:border-[#FA6E00] bg-slate-50 hover:bg-orange-50/40 text-slate-600 cursor-pointer transition text-xs font-semibold">
                       <Camera className="h-5 w-5 text-[#FA6E00] mb-1" />
-                      <span>{campusPhotoName || 'Upload Campus Photo'}</span>
+                      <span>{campusPhotoName || 'Upload Campus Photo (max 4 MB)'}</span>
                       <input
                         type="file"
                         accept="image/*"
