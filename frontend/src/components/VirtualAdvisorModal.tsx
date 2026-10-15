@@ -63,7 +63,8 @@ export default function VirtualAdvisorModal({
   const [selectedGrade, setSelectedGrade] = useState<string>('B.Tech');
   const [selectedStream, setSelectedStream] = useState<string>('Engineering');
   const [selectedFeeRange, setSelectedFeeRange] = useState<string>('50K to 70K');
-  const [selectedBoard, setSelectedBoard] = useState<string>('STATE BOARD');
+  const [selectedBoard, setSelectedBoard] = useState<string>('AICTE');
+  const [otherAffiliation, setOtherAffiliation] = useState('');
 
   // Lead Info
   const [fullName, setFullName] = useState('');
@@ -120,6 +121,10 @@ export default function VirtualAdvisorModal({
   };
 
   const handleNext = () => {
+    if (step === 4 && selectedBoard === 'OTHER' && !otherAffiliation.trim()) {
+      return;
+    }
+
     if (step < 5) {
       setStep(step + 1);
     }
@@ -140,7 +145,8 @@ export default function VirtualAdvisorModal({
     // Structure selected requirements summary
     const typeLabel = `${selectedStream} College`;
     const academicLabel = `${selectedGrade} (${selectedStream})`;
-    const queryMessage = `Virtual Advisor Lead: Looking for ${typeLabel} (${academicLabel}) in fee range ${selectedFeeRange}, affiliation pref: ${selectedBoard}. Preferred Area: ${location}. Student Gender: ${gender}`;
+    const affiliationPreference = selectedBoard === 'OTHER' ? otherAffiliation.trim() : selectedBoard;
+    const queryMessage = `Virtual Advisor Lead: Looking for ${typeLabel} (${academicLabel}) in fee range ${selectedFeeRange}, affiliation pref: ${affiliationPreference}. Preferred Area: ${location}. Student Gender: ${gender}`;
 
     try {
       // 1. Submit real lead ticket to persistent backend /api/counseling
@@ -195,7 +201,7 @@ export default function VirtualAdvisorModal({
         onApplyFilters({
           type: mappedType,
           category: instType === 'college' ? selectedStream : 'All',
-          board: selectedBoard === 'STATE BOARD' ? 'State Board' : selectedBoard,
+          board: affiliationPreference,
           location: location,
           maxFee: getFeeValue(selectedFeeRange)
         });
@@ -249,9 +255,6 @@ export default function VirtualAdvisorModal({
           <h2 className="text-lg sm:text-xl font-black text-gray-900 tracking-tight">
             Hi, I am your Virtual Admission Advisor.
           </h2>
-          <p className="text-[11px] sm:text-xs text-gray-400 font-normal mt-0.5 max-w-lg mx-auto leading-relaxed">
-            Walk us through your preferences so that I can suggest and filter the absolute best institute choices for you.
-          </p>
         </div>
 
         {/* Content Wizard View */}
@@ -470,21 +473,39 @@ export default function VirtualAdvisorModal({
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-w-xl mx-auto">
-                  {['AICTE', 'UGC Recognized', 'RGPV Affiliated', 'Autonomous', 'STATE BOARD', 'OTHER'].map(board => (
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 max-w-3xl mx-auto">
+                  {['AICTE', 'UGC', 'PCI', 'Higher Education', 'OTHER'].map(board => (
                     <button
                       key={board}
                       onClick={() => setSelectedBoard(board)}
-                      className={`py-2 px-3 rounded-lg border text-xs font-bold transition duration-200 ${
+                      className={`py-2 px-2 rounded-xl border text-[10px] sm:text-xs font-bold transition duration-200 flex items-center justify-center gap-1.5 ${
                         selectedBoard === board 
-                          ? 'bg-red-600 text-white border-red-600 shadow-sm'
-                          : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-100'
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                          : 'bg-white text-slate-700 hover:bg-gray-50 border-slate-200'
                       }`}
                     >
+                      <Check className={`h-3.5 w-3.5 shrink-0 ${selectedBoard === board ? 'text-emerald-600' : 'text-slate-300'}`} />
                       {board}
                     </button>
                   ))}
                 </div>
+
+                {selectedBoard === 'OTHER' && (
+                  <div className="max-w-md mx-auto">
+                    <label htmlFor="other-affiliation" className="block text-xs font-bold text-gray-600 mb-1">
+                      Specify affiliation / recognition *
+                    </label>
+                    <input
+                      id="other-affiliation"
+                      type="text"
+                      required
+                      value={otherAffiliation}
+                      onChange={(event) => setOtherAffiliation(event.target.value)}
+                      placeholder="Enter affiliation or recognition"
+                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                    />
+                  </div>
+                )}
 
                 <div className="flex items-center justify-center space-x-3 pt-3 border-t border-gray-50">
                   <button 
@@ -495,7 +516,8 @@ export default function VirtualAdvisorModal({
                   </button>
                   <button 
                     onClick={handleNext}
-                    className="px-6 py-2 bg-red-600 hover:bg-red-500 text-white font-extrabold text-xs rounded-xl transition"
+                    disabled={selectedBoard === 'OTHER' && !otherAffiliation.trim()}
+                    className="px-6 py-2 bg-red-600 hover:bg-red-500 disabled:hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold text-xs rounded-xl transition"
                   >
                     Next
                   </button>
@@ -695,3 +717,4 @@ export default function VirtualAdvisorModal({
     </div>
   );
 }
+
