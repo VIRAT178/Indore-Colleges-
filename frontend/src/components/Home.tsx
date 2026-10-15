@@ -504,12 +504,6 @@ export default function Home({
     { name: 'Bypass Road & Manglia', locations: ['Bypass Road', 'Manglia'] },
     { name: 'Khandwa Road & Takshashila Campus', locations: ['Khandwa Road', 'Takshashila Campus'] }
   ];
-  const getLocalityCollegeCount = (locations: string[]) =>
-    INDORE_INSTITUTES.filter(institute =>
-      institute.type === 'college' &&
-      locations.some(location => institute.location.toLowerCase().includes(location.toLowerCase()))
-    ).length;
-
   return (
     <div id="home_view" className="w-full bg-white font-sans overflow-hidden">
       
@@ -1380,7 +1374,7 @@ export default function Home({
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-8 text-center">
             <div className="inline-flex items-center justify-center space-x-2 text-xs font-bold text-red-600 uppercase tracking-wider mb-2">
-              <MapPin className="h-4 w-4" />
+              <MapPin className="h-5 w-5" />
               <span>Campus Map Hubs</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F244C] font-outfit text-center">
@@ -1399,20 +1393,16 @@ export default function Home({
                     ? loc.locations[0]
                     : `Areas: ${loc.locations.join('|')}`
                 )}
-                className="group cursor-pointer bg-white border border-gray-100 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-lg hover:border-red-600/30 hover:bg-red-600/5 transition-all flex items-center justify-between"
+                className="group cursor-pointer bg-white border border-gray-100 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-lg hover:border-red-600/30 hover:bg-red-600/5 transition-all flex items-center"
               >
                 <div className="flex items-center space-x-3 sm:space-x-3.5 min-w-0">
-                  <div className="h-9 w-9 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all flex-shrink-0">
+                  <div className="h-10 w-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all flex-shrink-0">
                     <MapPin className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-xs sm:text-sm font-bold text-[#0F244C] group-hover:text-red-600 transition font-outfit truncate">{loc.name}</h4>
-                    <p className="text-[10px] text-gray-400 font-medium mt-0.5">Indore Zone</p>
+                    <h4 className="text-sm sm:text-base font-bold text-[#0F244C] group-hover:text-red-600 transition font-outfit">{loc.name}</h4>
                   </div>
                 </div>
-                <span className="text-[10px] font-bold text-gray-400 bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-1 group-hover:bg-red-600/10 group-hover:text-red-600 transition-all flex-shrink-0">
-                  {getLocalityCollegeCount(loc.locations)} Colleges
-                </span>
               </motion.div>
             ))}
           </div>
