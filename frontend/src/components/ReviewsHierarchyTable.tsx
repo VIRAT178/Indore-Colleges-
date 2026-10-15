@@ -66,23 +66,6 @@ function parseVideoSource(url?: string): {
   };
 }
 
-// Match college names to institutes in indoreData
-function findMatchingInstitute(name: string): Institute | undefined {
-  const norm = name.toLowerCase().replace(/[^a-z0-9]/g, '');
-  return INDORE_INSTITUTES.find((inst) => {
-    const instNorm = inst.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-    const instId = inst.id.toLowerCase();
-    if (norm.includes('sgsits') && (instId.includes('sgsits') || instNorm.includes('sgsits'))) return true;
-    if (norm.includes('ietdavv') && (instId.includes('iet') || instNorm.includes('iet'))) return true;
-    if (norm.includes('acropolis') && (instId.includes('acropolis') || instNorm.includes('acropolis'))) return true;
-    if (norm.includes('medicaps') && (instId.includes('medicaps') || instNorm.includes('medicaps'))) return true;
-    if (norm.includes('chamelidevi') && (instId.includes('chameli') || instNorm.includes('chameli'))) return true;
-    if (norm.includes('svvv') && (instId.includes('svvv') || instNorm.includes('vaishnav'))) return true;
-    if (norm.includes('iil') && (instId.includes('iil') || instNorm.includes('indoreinstituteoflaw'))) return true;
-    return instNorm.includes(norm) || norm.includes(instNorm) || instId === norm;
-  });
-}
-
 export type CategoryType = 
   | 'Technical College'
   | 'Pharmacy College'
@@ -202,69 +185,28 @@ export interface VideoCardData {
   collegeId?: string;
 }
 
-// Tailored colleges for each of the 6 categories
-const CATEGORY_COLLEGES: Record<CategoryType, { name: string; loc: string; type: string; img: string }[]> = {
-  'Technical College': [
-    { name: 'SGSITS Indore', loc: 'Park Road, Vallabh Nagar', type: 'Autonomous Govt Aided', img: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80' },
-    { name: 'IET DAVV Indore', loc: 'Khandwa Road, DAVV Campus', type: 'State University Dept', img: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Acropolis Institute (AITR)', loc: 'Manglia Bypass, Indore', type: 'Private Autonomous', img: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Medi-Caps University', loc: 'AB Road, Pigdamber, Rau', type: 'Private State University', img: 'https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Chameli Devi Group (CDGI)', loc: 'Gram Umrikheda, Khandwa Road', type: 'Private Engineering', img: 'https://images.unsplash.com/photo-1592280771190-3e2e4d571952?auto=format&fit=crop&w=800&q=80' },
-    { name: 'SVVV Indore', loc: 'Ujjain Road, Indore', type: 'Private University', img: 'https://images.unsplash.com/photo-1519452635265-7b1fbfd1e4e0?auto=format&fit=crop&w=800&q=80' }
-  ],
-  'Pharmacy College': [
-    { name: 'SGSITS Dept of Pharmacy', loc: 'Park Road, Indore', type: 'Autonomous PCI Approved', img: 'https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Modern Institute of Pharma', loc: 'Alwasa, Sanwer Road', type: 'PCI Approved', img: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80' },
-    { name: 'IPS Academy College of Pharmacy', loc: 'Knowledge Village, Rajendra Nagar', type: 'Autonomous PCI Approved', img: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Choithram College of Pharmacy', loc: 'Manik Bagh Road, Indore', type: 'Private PCI Approved', img: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80' },
-    { name: 'SAGE University Pharma Sciences', loc: 'Kailod Kartal, Bypass Road', type: 'Private University', img: 'https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Oriental University Pharmacy', loc: 'Sanwer Road, Jakhya', type: 'PCI Accredited', img: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=800&q=80' }
-  ],
-  'PG College': [
-    { name: 'IMS DAVV Indore', loc: 'Takshashila Campus, Khandwa Road', type: 'University Department', img: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Prestige Institute (PIMR PG)', loc: 'Sector 54, Scheme 74C, Vijay Nagar', type: 'Autonomous NAAC A++', img: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80' },
-    { name: 'SCSIT DAVV (Computer Apps)', loc: 'Khandwa Road, DAVV', type: 'State University Dept', img: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Jaipuria Institute of Management', loc: 'Dakachya, Indore Bypass', type: 'AICTE Approved PGDM', img: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80' },
-    { name: 'IPS Academy IBMR', loc: 'Rajendra Nagar, AB Road', type: 'Autonomous Management', img: 'https://images.unsplash.com/photo-1507537297725-24a1c029d3ca?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Pioneer Institute of Management', loc: 'Sector R, Mahalaxmi Nagar', type: 'AICTE / DAVV Approved', img: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=80' }
-  ],
-  'Professional College': [
-    { name: 'Prestige Institute (UG Campus)', loc: 'Scheme 54, Vijay Nagar', type: 'Autonomous UG College', img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Renaissance University Professional', loc: 'Gram Revati, Sanwer Road', type: 'Private University', img: 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=800&q=80' },
-    { name: 'IPS Academy Commerce & BBA', loc: 'Knowledge Village, Rajendra Nagar', type: 'Affiliated to DAVV', img: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80' },
-    { name: 'St. Paul Institute (SIPS)', loc: 'Lalaram Nagar, Indore', type: 'Autonomous Minority', img: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Christian Eminent College', loc: 'F-Sector, HIG Colony, Indore', type: 'NAAC A Accredited', img: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80' },
-    { name: 'BM College of Commerce & Tech', loc: 'Gokanya, Rau Bypass', type: 'Private College', img: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80' }
-  ],
-  'Law College': [
-    { name: 'Indore Institute of Law (IIL)', loc: 'Rau Pithampur Road, Indore', type: 'Bar Council Approved', img: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80' },
-    { name: 'School of Law, DAVV', loc: 'Takshashila Campus, Khandwa Road', type: 'State University Dept', img: 'https://images.unsplash.com/photo-1479142506502-19b3a3b7ff33?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Prestige School of Law', loc: 'Vijay Nagar, Indore', type: 'Autonomous Law College', img: 'https://images.unsplash.com/photo-1436450412740-6b988f486c6b?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Renaissance Law College', loc: 'Sanwer Road, Indore', type: 'BCI Recognized', img: 'https://images.unsplash.com/photo-1505664194779-8beaceb93744?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Oriental School of Law', loc: 'Opp. Revati Range, Sanwer Road', type: 'Private Law School', img: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=800&q=80' },
-    { name: 'SAGE University Faculty of Law', loc: 'Bypass Road, Indore', type: 'State Private University', img: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80' }
-  ],
-  'Science College': [
-    { name: 'Choithram College of Nursing', loc: 'Manik Bagh Road, Indore', type: 'INC Approved Healthcare', img: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80' },
-    { name: 'SAIMS Institute of Nursing', loc: 'Sanwer Road, Indore', type: 'Medical University Attached', img: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Index Nursing Sciences', loc: 'Index City, Nemawar Road', type: 'INC / MPNRC Approved', img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Bombay Hospital College of Nursing', loc: 'Ring Road, IDA Scheme 94', type: 'Hospital Attached College', img: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Modern Institute of Paramedical', loc: 'Sanwer Road, Indore', type: 'Paramedical Council', img: 'https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Arihant Science & Nursing College', loc: 'Khandwa Road, Indore', type: 'MPNRC Recognized', img: 'https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&w=800&q=80' }
-  ]
+const CATEGORY_INSTITUTE_TYPES: Record<CategoryType, string[]> = {
+  'Technical College': ['Engineering'],
+  'Professional College': ['Management', 'Arts & Science'],
+  'PG College': ['Management', 'Arts & Science'],
+  'Pharmacy College': ['Medical'],
+  'Law College': ['Law'],
+  'Science College': ['Medical', 'Arts & Science'],
 };
 
 function getVideosForPerspective(category: CategoryType, perspective: ReviewPerspectiveType): VideoCardData[] {
-  const colleges = CATEGORY_COLLEGES[category] || CATEGORY_COLLEGES['Technical College'];
+  const colleges = INDORE_INSTITUTES
+    .filter(institute => institute.type === 'college' && CATEGORY_INSTITUTE_TYPES[category].includes(institute.category))
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 10);
 
   return colleges.map((col, idx) => {
     let title = '';
     let description = '';
     let tags: string[] = [];
 
-    const matchedInst = findMatchingInstitute(col.name);
-    const activeCollegeVideoUrl = matchedInst?.videoUrl || matchedInst?.backgroundVideoUrl;
-    const isSGSITS = col.name.toLowerCase().includes('sgsits') || matchedInst?.id === 'sgsits';
+    const activeCollegeVideoUrl = col.videoUrl || col.backgroundVideoUrl;
+    const isSGSITS = col.name.toLowerCase().includes('sgsits') || col.id === 'sgsits';
 
     let videoUrl = (perspective === 'Review by College Authority' || isSGSITS) ? activeCollegeVideoUrl : undefined;
     let isLiveAuthorityVideo = false;
@@ -288,7 +230,7 @@ function getVideosForPerspective(category: CategoryType, perspective: ReviewPers
         isLiveAuthorityVideo = Boolean(activeCollegeVideoUrl);
         videoUrl = activeCollegeVideoUrl;
       } else {
-        const foundDir = matchedInst?.facultyList?.find(f => f.qualification?.toLowerCase().includes('director') || f.role?.toLowerCase().includes('director'))?.name;
+        const foundDir = col.facultyList?.find(f => f.qualification?.toLowerCase().includes('director') || f.role?.toLowerCase().includes('director'))?.name;
         authoritySpeaker = foundDir ? `${foundDir} (Director)` : `Institutional Leadership & Academic Council`;
         title = `Executive Dialogue with College Authority — ${col.name}`;
         description = `Official executive dialogue with leadership of ${col.name}: discussing 2026 admissions, industry MoUs, syllabus updates, and student career roadmaps.`;
@@ -303,21 +245,21 @@ function getVideosForPerspective(category: CategoryType, perspective: ReviewPers
     return {
       id: `${category}-${perspective}-${idx}`,
       collegeName: col.name,
-      location: col.loc,
-      type: col.type,
+      location: col.location,
+      type: col.category,
       title,
       duration: isLiveAuthorityVideo ? 'Official Stream' : `${14 + idx * 2}m ${20 + idx * 5}s`,
-      thumbnail: col.img,
+      thumbnail: col.image,
       perspectiveType: perspective,
       category,
       description,
       tags,
-      productionProgress: isLiveAuthorityVideo ? 100 : (75 + idx * 4),
+      productionProgress: isLiveAuthorityVideo ? 100 : Math.min(75 + idx * 4, 100),
       votesCount: 42 + idx * 18,
       videoUrl,
       authoritySpeaker,
       isLiveAuthorityVideo,
-      collegeId: matchedInst?.id || (isSGSITS ? 'sgsits' : undefined)
+      collegeId: col.id
     };
   });
 }
@@ -607,7 +549,7 @@ export default function ReviewsHierarchyTable() {
                 </span>
               </h3>
               <p className="text-xs text-slate-500 font-normal mt-1">
-                Showing video reviews for <strong>{activeCategory}</strong> curated under <strong>{selectedPerspectiveForVideos}</strong>.
+                Showing the top {videosList.length} rated colleges in <strong>{activeCategory}</strong> under <strong>{selectedPerspectiveForVideos}</strong>.
               </p>
             </div>
 
