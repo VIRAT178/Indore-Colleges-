@@ -325,6 +325,7 @@ function getVideosForPerspective(category: CategoryType, perspective: ReviewPers
 export default function ReviewsHierarchyTable() {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState<CategoryType>('Technical College');
+  const [showingPerspectives, setShowingPerspectives] = useState(false);
   
   // When null -> user is on the main Categories & Perspectives page
   // When set to a ReviewPerspectiveType -> user is redirected to the Videos page for that perspective!
@@ -430,9 +431,9 @@ export default function ReviewsHierarchyTable() {
       {/* ========================================================================= */}
       {!selectedPerspectiveForVideos ? (
         <div className="space-y-7 sm:space-y-8">
-          {/* 1. CATEGORIES: 3 cards in one layer and 3 cards in the second layer */}
+          {!showingPerspectives ? (
           <div>
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-3.5">
+            <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wider text-slate-900 mb-6 text-center">
               CATEGORIES
             </h2>
 
@@ -445,7 +446,10 @@ export default function ReviewsHierarchyTable() {
                   <button
                     key={cat.id}
                     type="button"
-                    onClick={() => setActiveCategory(cat.id)}
+                    onClick={() => {
+                      setActiveCategory(cat.id);
+                      setShowingPerspectives(true);
+                    }}
                     className={`w-full p-3 sm:p-4 md:p-5 rounded-2xl text-center transition-all duration-200 cursor-pointer bg-white border flex flex-col items-center justify-between gap-2 sm:gap-2.5 group min-h-[135px] sm:min-h-[150px] ${
                       isSelected
                         ? 'border-2 border-[#F66710] shadow-sm ring-2 sm:ring-4 ring-orange-500/10'
@@ -492,14 +496,23 @@ export default function ReviewsHierarchyTable() {
               })}
             </div>
           </div>
+          ) : (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+              <button
+                onClick={() => setShowingPerspectives(false)}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-[#F66710] text-white text-xs font-bold transition shadow-xs cursor-pointer self-start"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Categories</span>
+              </button>
+              <span className="text-xs text-slate-500 font-semibold">{activeCategory}</span>
+            </div>
 
-          {/* 2. SHOWING 3 PERSPECTIVES */}
+            {/* 2. REVIEW PERSPECTIVES */}
           <div>
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-3.5">
-              SHOWING 3 PERSPECTIVES FOR:{' '}
-              <span className="font-black text-slate-950">
-                {activeCategory.toUpperCase()}
-              </span>
+            <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wider text-slate-900 mb-5 text-center">
+              REVIEWS
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -534,6 +547,8 @@ export default function ReviewsHierarchyTable() {
               })}
             </div>
           </div>
+          </div>
+          )}
         </div>
       ) : (
         /* ========================================================================= */
@@ -552,20 +567,26 @@ export default function ReviewsHierarchyTable() {
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-[#F66710] text-white text-xs font-bold transition shadow-xs cursor-pointer self-start"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>← Back to Categories &amp; Perspectives</span>
+              <span>Back to Reviews</span>
             </button>
 
             {/* Breadcrumb Navigation */}
             <div className="flex items-center gap-2 text-xs text-slate-500 font-semibold flex-wrap">
               <button 
-                onClick={() => setSelectedPerspectiveForVideos(null)}
+                onClick={() => {
+                  setSelectedPerspectiveForVideos(null);
+                  setShowingPerspectives(false);
+                }}
                 className="hover:text-[#F66710] transition cursor-pointer"
               >
                 Categories
               </button>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
               <button 
-                onClick={() => setSelectedPerspectiveForVideos(null)}
+                onClick={() => {
+                  setSelectedPerspectiveForVideos(null);
+                  setShowingPerspectives(true);
+                }}
                 className="hover:text-[#F66710] transition cursor-pointer"
               >
                 {activeCategory}
@@ -794,10 +815,13 @@ export default function ReviewsHierarchyTable() {
             </div>
 
             <button
-              onClick={() => setSelectedPerspectiveForVideos(null)}
+              onClick={() => {
+                setSelectedPerspectiveForVideos(null);
+                setShowingPerspectives(true);
+              }}
               className="px-4 py-2.5 rounded-xl bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-bold text-xs transition cursor-pointer shrink-0"
             >
-              ← Back to Categories
+              ← Back to Reviews
             </button>
           </div>
         </motion.div>
