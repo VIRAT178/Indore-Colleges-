@@ -11,14 +11,12 @@ import {
   PhoneCall, 
   Compass, 
   HelpCircle, 
-  ShieldCheck, 
   Award, 
   Quote,
   CheckCircle2,
   MessageSquare,
   GraduationCap,
   Calendar,
-  Sparkles,
   ChevronRight,
   TrendingUp,
   Building,
@@ -336,18 +334,6 @@ export default function Home({
     }
   };
 
-  // Indian Cities Grid Data
-  const CITIES = [
-    { name: 'Mumbai', img: 'https://images.unsplash.com/photo-1566552881560-0be862a7c445?auto=format&fit=crop&w=300&q=80' },
-    { name: 'Delhi', img: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=300&q=80' },
-    { name: 'Bangalore', img: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=300&q=80' },
-    { name: 'Chennai', img: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=300&q=80' },
-    { name: 'Hyderabad', img: 'https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?auto=format&fit=crop&w=300&q=80' },
-    { name: 'Indore', img: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&w=300&q=80', active: true },
-    { name: 'Pune', img: './public/iet-davv.jpg' },
-    { name: 'Kolkata', img: 'https://images.unsplash.com/photo-1558431382-27e303142255?auto=format&fit=crop&w=300&q=80' }
-  ];
-
   // Reviews Data
   interface ReviewItem {
     name: string;
@@ -523,7 +509,7 @@ export default function Home({
     <div id="home_view" className="w-full bg-white font-sans overflow-hidden">
       
       {/* 1. HERO BANNER SECTION (INDORE COLLEGES PURPOSE) */}
-      <section className="relative pt-5 pb-10 sm:pt-7 sm:pb-14 md:pt-8 md:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-gray-150 flex flex-col justify-center items-center bg-gray-950">
+      <section className="relative pt-5 pb-10 sm:pt-7 sm:pb-14 md:pt-8 md:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-gray-150 flex flex-col justify-center items-center bg-white">
         {/* Full-width education portal hero background carousel slider */}
         <div className="absolute inset-0 w-full h-full z-0 overflow-hidden pointer-events-none">
           {heroBackgrounds.map((bg, idx) => {
@@ -540,12 +526,10 @@ export default function Home({
                   scale: isSelected ? 1 : 1.02
                 }}
                 transition={{ duration: 1.0, ease: [0.4, 0, 0.2, 1] }}
-                className="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.96] contrast-[1.02]"
+                className="absolute inset-0 w-full h-full object-cover object-center"
               />
             );
           })}
-          {/* Subtle overlay: darker at top/bottom for readability, completely transparent in the center so bg image text is crisp */}
-          <div className="absolute inset-0 bg-gradient-to-b from-gray-950/70 via-transparent to-gray-950/75 pointer-events-none" />
           <div className="absolute -top-24 -right-24 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
         </div>
@@ -647,7 +631,7 @@ export default function Home({
           
           <div className="border-b border-gray-200 pb-4 mb-8 text-center">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight font-outfit mb-4 text-center">
-              The most Searched Colleges
+              Choose Course & Search Best College in Indore
             </h2>
             
             {/* Horizontal Tabs: Engineering, BBA, BCA, MBA, LAW, MEDICAL, DESIGN */}
@@ -1114,137 +1098,13 @@ export default function Home({
         </div>
       </section>
 
-      {/* 3. CATEGORIES SECTION ("Choose your Institute") */}
-      <section className="py-10 sm:py-12 bg-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
-            <div>
-              <div className="inline-flex items-center space-x-2 text-xs font-bold text-red-600 uppercase tracking-wider mb-2">
-                <BookOpen className="h-4 w-4" />
-                <span>Explore Specializations</span>
-              </div>
-              <h2 className="text-3xl font-extrabold tracking-tight text-[#0F244C] font-outfit">
-                Choose your Institute Category
-              </h2>
-              <p className="text-sm text-gray-500 max-w-xl font-normal mt-2">
-                Browse our verified directories of colleges in Indore structured precisely according to stream priorities.
-              </p>
-            </div>
-            <button 
-              onClick={() => handleCategoryClick('Engineering', 'college')}
-              className="mt-6 md:mt-0 text-xs font-bold text-red-600 hover:text-red-700 inline-flex items-center gap-1.5 hover:underline transition self-start"
-            >
-              <span>View All Directories</span>
-              <ArrowUpRight className="h-4 w-4" />
-            </button>
-          </div>
-
-          {/* Categories Grid with visual cards and arrow buttons */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-            {/* Engineering & Tech */}
-            <div 
-              onClick={() => handleCategoryClick('Engineering', 'college')}
-              className="group cursor-pointer bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col h-full"
-            >
-              <div className="h-36 sm:h-40 overflow-hidden relative bg-gray-50">
-                <img 
-                  src='/ims-davv.jpg'
-                  alt="Engineering campus" 
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                />
-                <span className="absolute top-3 right-3 bg-white/95 p-2 rounded-xl shadow-md text-gray-800 transition group-hover:bg-red-600 group-hover:text-white">
-                  <ArrowUpRight className="h-4 w-4" />
-                </span>
-              </div>
-              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-[#0F244C] group-hover:text-red-600 transition font-outfit">Engineering & Science</h3>
-                </div>
-              </div>
-            </div>
-
-            {/* Management */}
-            <div 
-              onClick={() => handleCategoryClick('Management', 'college')}
-              className="group cursor-pointer bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col h-full"
-            >
-              <div className="h-36 sm:h-40 overflow-hidden relative bg-gray-50">
-                <img 
-                  src="/iim-indore.jpg" 
-                  alt="Management class" 
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                />
-                <span className="absolute top-3 right-3 bg-white/95 p-2 rounded-xl shadow-md text-gray-800 transition group-hover:bg-red-600 group-hover:text-white">
-                  <ArrowUpRight className="h-4 w-4" />
-                </span>
-              </div>
-              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-[#0F244C] group-hover:text-red-600 transition font-outfit">Management</h3>
-                </div>
-              </div>
-            </div>
-
-            {/* Medical & Sciences */}
-            <div 
-              onClick={() => handleCategoryClick('Medical', 'college')}
-              className="group cursor-pointer bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col h-full"
-            >
-              <div className="h-36 sm:h-40 overflow-hidden relative bg-gray-50">
-                <img 
-                  src="/saims.jpg" 
-                  alt="Medical lab" 
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                />
-                <span className="absolute top-3 right-3 bg-white/95 p-2 rounded-xl shadow-md text-gray-800 transition group-hover:bg-red-600 group-hover:text-white">
-                  <ArrowUpRight className="h-4 w-4" />
-                </span>
-              </div>
-              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-[#0F244C] group-hover:text-red-600 transition font-outfit">Medical & Dental</h3>
-                </div>
-              </div>
-            </div>
-
-            {/* Design & Creative */}
-            <div 
-              onClick={() => handleCategoryClick('Design', 'college')}
-              className="group cursor-pointer bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col h-full"
-            >
-              <div className="h-36 sm:h-40 overflow-hidden relative bg-gray-50">
-                <img 
-                  src="/ips-ibmr.jpg" 
-                  alt="Design studio" 
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                />
-                <span className="absolute top-3 right-3 bg-white/95 p-2 rounded-xl shadow-md text-gray-800 transition group-hover:bg-red-600 group-hover:text-white">
-                  <ArrowUpRight className="h-4 w-4" />
-                </span>
-              </div>
-              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-[#0F244C] group-hover:text-red-600 transition font-outfit">Design & Arts</h3>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
       {/* 4. REVIEWS & TRUST TESTIMONIALS SECTION */}
       <section className="py-12 sm:py-16 bg-slate-50 border-y border-gray-100">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
           {/* Section Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-            <div>
+          <div className="flex flex-col items-center text-center mb-10">
+            <div className="flex flex-col items-center">
               <div className="inline-flex items-center space-x-2 text-xs font-bold text-red-600 uppercase tracking-wider mb-2">
                 <Users className="h-4 w-4" />
                 <span>Verified Indore Testimonials</span>
@@ -1252,26 +1112,6 @@ export default function Home({
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#0F244C] font-outfit mt-1">
                 Student &amp; Parent Reviews
               </h2>
-              <p className="text-xs sm:text-sm text-gray-500 mt-2 max-w-2xl font-normal leading-relaxed">
-                Real feedback from students and parents who discovered transparent fee breakdowns, verified cutoffs, and locked direct admissions across Indore&apos;s leading institutions.
-              </p>
-            </div>
-
-            {/* Overall Rating Pill & Highlights */}
-            <div className="flex items-center gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-gray-200/80 shadow-xs shrink-0">
-              <div className="h-12 w-12 rounded-xl bg-amber-50 border border-amber-200 flex flex-col items-center justify-center">
-                <span className="text-base font-extrabold text-[#0F244C] leading-none">4.9</span>
-                <div className="flex items-center mt-0.5">
-                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                </div>
-              </div>
-              <div className="text-left">
-                <div className="flex items-center space-x-1.5">
-                  <span className="text-xs font-bold text-[#0F244C]">Over 10,000+ Families</span>
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-                </div>
-                <p className="text-[11px] text-gray-500 font-medium mt-0.5">100% Unbiased Indore Academic Advisory</p>
-              </div>
             </div>
           </div>
 
@@ -1389,32 +1229,6 @@ export default function Home({
               ))}
           </div>
 
-          {/* Counseling & Advisory Banner (Replacing Video Card) */}
-          <div className="mt-12 bg-gradient-to-r from-[#0F244C] to-[#1E3A8A] rounded-2xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl border border-white/10">
-            <div className="space-y-1.5 text-center md:text-left">
-              <div className="inline-flex items-center space-x-1.5 bg-white/10 px-2.5 py-1 rounded-full text-[11px] font-semibold text-white/90 mb-1">
-                <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-                <span>Direct Admissions &amp; Counseling Support</span>
-              </div>
-              <h3 className="text-lg sm:text-xl font-bold font-outfit">
-                Need Unbiased College Alignment in Indore?
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-300 max-w-xl font-normal">
-                Speak directly with an Indore academic counselor to compare actual college cutoffs, fee discounts, campus hostels, and genuine placement reports.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3 w-full md:w-auto shrink-0">
-              <button 
-                onClick={onOpenCounseling}
-                className="w-full md:w-auto bg-red-600 hover:bg-red-700 active:scale-95 text-white rounded-xl px-6 py-3.5 text-xs font-bold transition shadow-lg flex items-center justify-center space-x-2 cursor-pointer"
-              >
-                <MessageSquare className="h-4 w-4" />
-                <span>Talk to a Human Advisor</span>
-              </button>
-            </div>
-          </div>
-
         </div>
       </section>
 
@@ -1429,10 +1243,10 @@ export default function Home({
 
             {/* Left Column: Process Information */}
             <div className="lg:col-span-6 space-y-8 relative z-10">
-              <span className="text-[11px] font-bold text-rose-300 uppercase tracking-widest bg-white/5 border border-white/10 px-4.5 py-1.5 rounded-full">
+              <span className="self-center text-[11px] font-bold text-rose-300 uppercase tracking-widest bg-white/5 border border-white/10 px-4.5 py-1.5 rounded-full">
                 Admissions Desk
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight font-outfit leading-tight">
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight font-outfit leading-tight text-center">
                 Schedule a Direct Counseling Meeting
               </h2>
               
@@ -1556,86 +1370,15 @@ export default function Home({
         </div>
       </section>
 
-      {/* 6. NATIONWIDE PRESENCE GRID */}
-      <section className="py-10 sm:py-12 bg-slate-50 border-y border-gray-100">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-12 gap-10 sm:gap-12 items-center">
-            
-            {/* Left Col: Grid of landmark cities */}
-            <div className="lg:col-span-7">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {CITIES.map((city, idx) => (
-                  <div 
-                    key={idx}
-                    onClick={() => city.name === 'Indore' ? handleLocalityClick('All') : {}}
-                    className={`group relative rounded-3xl overflow-hidden aspect-square shadow-sm border ${
-                      city.active 
-                        ? 'border-red-600 cursor-pointer shadow-md' 
-                        : 'border-gray-200 cursor-default opacity-85 hover:opacity-100'
-                    } transition duration-300 bg-white`}
-                  >
-                    <img 
-                      src={city.img} 
-                      alt={city.name} 
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent flex items-end p-4" />
-                    
-                    <div className="absolute bottom-4 left-4 text-white">
-                      <p className="text-xs font-extrabold tracking-tight font-outfit">{city.name}</p>
-                      {city.active && (
-                        <span className="inline-block text-[8px] bg-red-600 text-white font-black uppercase tracking-widest px-2 py-0.5 rounded-md mt-1.5 font-sans">
-                          Active Center
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right Col: Prominent text headline */}
-            <div className="lg:col-span-5 space-y-5">
-              <div className="inline-flex items-center space-x-2 text-xs font-bold text-red-600 uppercase tracking-wider">
-                <Compass className="h-4 w-4" />
-                <span>Nationwide Presence</span>
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#0F244C] leading-tight font-outfit">
-                Our National Outreach
-              </h2>
-              <p className="text-sm text-gray-500 leading-relaxed font-normal">
-                We track and register verified directories of premier institutes across India's largest metropolitan cities. While our technology platform guides families nationwide, our core active counseling desk and physical team are fully deployed in <span className="text-[#0F244C] font-bold">Indore</span>.
-              </p>
-              <div className="pt-4 flex flex-wrap gap-2 text-xs">
-                <button
-                  type="button"
-                  onClick={() => handleLocalityClick('All')}
-                  className="bg-[#0F244C] hover:bg-[#16336a] text-white px-5 py-3.5 rounded-xl text-xs font-bold transition shadow-md flex items-center gap-2 cursor-pointer"
-                >
-                  <span>Explore Indore Directory</span>
-                  <ArrowUpRight className="h-4 w-4 text-sky-400" />
-                </button>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-
-
-
-
       {/* 9. POPULAR LOCALITIES IN INDORE */}
       <section className="py-10 sm:py-12 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <div className="inline-flex items-center space-x-2 text-xs font-bold text-red-600 uppercase tracking-wider mb-2">
+          <div className="mb-8 text-center">
+            <div className="inline-flex items-center justify-center space-x-2 text-xs font-bold text-red-600 uppercase tracking-wider mb-2">
               <MapPin className="h-4 w-4" />
               <span>Campus Map Hubs</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F244C] font-outfit">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F244C] font-outfit text-center">
               Popular Localities near you in Indore
             </h2>
           </div>
