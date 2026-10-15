@@ -7,6 +7,7 @@ import fs from 'fs';
 import nodemailer from 'nodemailer';
 import { MongoClient, Db } from 'mongodb';
 import cors from 'cors';
+import { randomBytes } from 'crypto';
 import { INDORE_INSTITUTES } from '../frontend/src/data/indoreData.js';
 import { CounselingRequest, CallbackRequest, Review, SchoolRegistrationRequest, CollegeUpdateRequest } from '../frontend/src/types.js';
 import { createSitemapXml } from '../frontend/src/utils/sitemap.js';
@@ -83,6 +84,21 @@ const DEFAULT_CALLBACKS: CallbackRequest[] = [
 let mongoClient: MongoClient | null = null;
 let mongoDb: Db | null = null;
 let isMongoConnecting = false;
+const adminSessionTokens = new Map<string, number>();
+const ADMIN_SESSION_TTL_MS = 12 * 60 * 60 * 1000;
+
+function isAdminSession(authorizationHeader?: string): boolean {
+  const token = authorizationHeader?.match(/^Bearer\s+(.+)$/i)?.[1];
+  if (!token) return false;
+
+  const expiresAt = adminSessionTokens.get(token);
+  if (!expiresAt) return false;
+  if (expiresAt <= Date.now()) {
+    adminSessionTokens.delete(token);
+    return false;
+  }
+  return true;
+}
 
 async function seedDatabase(db: Db) {
   try {
@@ -1826,10 +1842,35 @@ async function startServer() {
     const envAdminPassword = process.env.ADMIN_PASSWORD || 'adminpassword';
 
     if (emailTrimmed === envAdminEmail && password === envAdminPassword) {
-      res.json({ success: true, token: 'admin-secret-session-token' });
+      const token = randomBytes(32).toString('hex');
+      adminSessionTokens.set(token, Date.now() + ADMIN_SESSION_TTL_MS);
+      res.json({ success: true, token });
     } else {
       res.status(401).json({ error: 'Invalid admin credentials.' });
     }
+  });
+
+  app.get('/api/admin/session', (req, res) => {
+    if (!isAdminSession(req.headers.authorization)) {
+      return res.status(401).json({ error: 'Admin session is invalid or expired.' });
+    }
+    res.json({ success: true });
+  });
+
+  app.post('/api/admin/logout', (req, res) => {
+    const token = req.headers.authorization?.match(/^Bearer\s+(.+)$/i)?.[1];
+    if (!token || !isAdminSession(req.headers.authorization)) {
+      return res.status(401).json({ error: 'Admin session is invalid or expired.' });
+    }
+    adminSessionTokens.delete(token);
+    res.json({ success: true });
+  });
+
+  app.use('/api/admin', (req, res, next) => {
+    if (!isAdminSession(req.headers.authorization)) {
+      return res.status(401).json({ error: 'A valid admin session is required.' });
+    }
+    next();
   });
 
   // 2. Admin Get All College Partner Registrations
@@ -1841,6 +1882,20 @@ async function startServer() {
     } catch (err: any) {
       console.error("Admin fetch registrations error:", err);
       res.status(500).json({ error: err.message || "Database connection error" });
+    }
+  });
+
+  app.delete('/api/admin/registrations/:id', async (req, res) => {
+    try {
+      const db = await getMongoDb();
+      const result = await db.collection('college_registrations').deleteOne({ id: req.params.id });
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ error: 'College registration not found.' });
+      }
+      res.json({ success: true });
+    } catch (err: any) {
+      console.error('Admin delete registration error:', err);
+      res.status(500).json({ error: err.message || 'Database connection error' });
     }
   });
 
@@ -2016,6 +2071,20 @@ async function startServer() {
     }
   });
 
+  app.delete('/api/admin/counseling-leads/:id', async (req, res) => {
+    try {
+      const db = await getMongoDb();
+      const result = await db.collection('counseling_requests').deleteOne({ id: req.params.id });
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ error: 'Counselling lead not found.' });
+      }
+      res.json({ success: true });
+    } catch (err: any) {
+      console.error('Admin delete counselling lead error:', err);
+      res.status(500).json({ error: err.message || 'Database connection error' });
+    }
+  });
+
   // 5. Admin Get All Callback Leads
   app.get('/api/admin/callback-leads', async (req, res) => {
     try {
@@ -2028,6 +2097,20 @@ async function startServer() {
     }
   });
 
+  app.delete('/api/admin/callback-leads/:id', async (req, res) => {
+    try {
+      const db = await getMongoDb();
+      const result = await db.collection('callback_requests').deleteOne({ id: req.params.id });
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ error: 'Callback lead not found.' });
+      }
+      res.json({ success: true });
+    } catch (err: any) {
+      console.error('Admin delete callback lead error:', err);
+      res.status(500).json({ error: err.message || 'Database connection error' });
+    }
+  });
+
   // 6. Admin Get All User Profiles
   app.get('/api/admin/user-profiles', async (req, res) => {
     try {
@@ -2037,6 +2120,23 @@ async function startServer() {
     } catch (err: any) {
       console.error("Admin fetch users error:", err);
       res.status(500).json({ error: err.message || "Database connection error" });
+    }
+  });
+
+  app.delete('/api/admin/user-profiles/:email', async (req, res) => {
+    try {
+      const email = req.params.email.trim().toLowerCase();
+      const db = await getMongoDb();
+      const result = await db.collection('users').deleteOne({ email });
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ error: 'User profile not found.' });
+      }
+      await db.collection('counseling_requests').deleteMany({ email });
+      await db.collection('callback_requests').deleteMany({ email });
+      res.json({ success: true });
+    } catch (err: any) {
+      console.error('Admin delete user profile error:', err);
+      res.status(500).json({ error: err.message || 'Database connection error' });
     }
   });
 
@@ -2140,15 +2240,17 @@ Instructions:
     });
   }
 
-  app.use((err: any, _req, res, next) => {
-    if (err?.type === 'entity.too.large') {
-      return res.status(413).json({
-        error: 'Request body is too large. Upload files no larger than 4 MB each or provide links instead.'
-      });
-    }
+  app.use((err: unknown, _req, res, next) => {
+    if (typeof err === 'object' && err !== null && 'type' in err) {
+      if (err.type === 'entity.too.large') {
+        return res.status(413).json({
+          error: 'Request body is too large. Upload files no larger than 4 MB each or provide links instead.'
+        });
+      }
 
-    if (err?.type === 'entity.parse.failed') {
-      return res.status(400).json({ error: 'Request body contains invalid JSON.' });
+      if (err.type === 'entity.parse.failed') {
+        return res.status(400).json({ error: 'Request body contains invalid JSON.' });
+      }
     }
 
     next(err);
