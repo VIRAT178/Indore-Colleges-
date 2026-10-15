@@ -572,7 +572,7 @@ export default function ReviewsHierarchyTable() {
                   key={video.id}
                   className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
                 >
-                  {/* Thumbnail & Play Overlay */}
+                  {/* College thumbnail with play action and card number */}
                   <div 
                     onClick={() => setPreviewVideoModal(video)}
                     className="relative aspect-16/9 bg-slate-950 overflow-hidden cursor-pointer select-none"
@@ -587,26 +587,11 @@ export default function ReviewsHierarchyTable() {
                       }}
                     />
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/50 pointer-events-none" />
+                    <div className="absolute inset-0 bg-black/35 pointer-events-none" />
 
-                    {/* Top Badges */}
-                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
-                      <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white border border-white/20">
-                        Video #{idx + 1}
-                      </span>
-
-                      {video.isLiveAuthorityVideo && video.videoUrl ? (
-                        <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-600 text-white shadow-md">
-                          <CheckCircle2 className="w-3 h-3 text-white" />
-                          <span>Official Authority Video</span>
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-[#F66710] text-white shadow-md animate-pulse">
-                          <Clock className="w-3 h-3" />
-                          <span>Coming Soon</span>
-                        </span>
-                      )}
-                    </div>
+                    <span className="absolute top-3 right-3 text-[10px] sm:text-xs font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-black/75 text-white border border-white/20">
+                      #{idx + 1}
+                    </span>
 
                     {/* Center Play Button Overlay */}
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -615,30 +600,14 @@ export default function ReviewsHierarchyTable() {
                       </div>
                     </div>
 
-                    {/* Bottom Info inside Thumbnail */}
-                    <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-[10px] text-white font-bold">
-                      <span className="px-2 py-0.5 rounded bg-black/70 backdrop-blur-xs">
-                        4K Ultra HD
-                      </span>
-                      <span className="px-2 py-0.5 rounded bg-black/70 backdrop-blur-xs flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-amber-400" />
-                        <span>Est. {video.duration}</span>
-                      </span>
-                    </div>
                   </div>
 
                   {/* Card Body */}
                   <div className="p-5 flex-1 flex flex-col justify-between">
                     <div>
-                      {/* College Name & Location */}
-                      <div className="flex items-center justify-between gap-2 mb-2">
-                        <span className="text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-orange-50 text-[#F66710] border border-orange-100">
-                          {video.collegeName}
-                        </span>
-                        <span className="text-[10px] text-slate-400 font-medium truncate">
-                          {video.location}
-                        </span>
-                      </div>
+                      <h3 className="text-base sm:text-lg font-black leading-snug text-[#F66710] mb-2 break-words">
+                        {video.collegeName}
+                      </h3>
 
                       {/* Video Title */}
                       <h4 
