@@ -46,9 +46,6 @@ export default function StreamSelector({ onSelectStream }: StreamSelectorProps) 
         >
           Are you looking for?
         </motion.h2>
-        <p className="text-sm sm:text-base text-gray-600 mt-4 max-w-xl mx-auto font-semibold leading-loose space-y-2 sm:space-y-0">
-          Explore <span className="px-2.5 py-1 rounded-lg bg-red-50 text-red-600 border border-red-100 font-extrabold inline-block transition hover:scale-105 duration-200">Top Educational Streams</span> and get <span className="px-2.5 py-1 rounded-lg bg-red-50 text-red-600 border border-red-100 font-extrabold inline-block transition hover:scale-105 duration-200">Tailored Recommendations</span> for Indore&apos;s <span className="px-2.5 py-1 rounded-lg bg-red-50 text-red-600 border border-red-100 font-extrabold inline-block transition hover:scale-105 duration-200">Best Colleges</span>.
-        </p>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
