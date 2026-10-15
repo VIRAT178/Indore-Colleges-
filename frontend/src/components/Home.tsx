@@ -539,7 +539,7 @@ export default function Home({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-black text-white tracking-tight leading-[1.28] font-outfit max-w-5xl mx-auto text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]"
+             className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-black text-black tracking-tight leading-[1.28] font-outfit max-w-5xl mx-auto text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]"
           >
             <span>Find the best colleges in Indore</span>
             <span className="block mt-1 sm:mt-1.5">
