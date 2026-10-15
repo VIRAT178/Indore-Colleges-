@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { INDORE_INSTITUTES } from '../data/indoreData';
-import { Institute } from '../types';
 import { 
   GraduationCap, 
   Building2, 
@@ -265,7 +263,6 @@ function getVideosForPerspective(category: CategoryType, perspective: ReviewPers
 }
 
 export default function ReviewsHierarchyTable() {
-  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState<CategoryType>('Technical College');
   const [showingPerspectives, setShowingPerspectives] = useState(false);
   
@@ -290,9 +287,6 @@ export default function ReviewsHierarchyTable() {
   const [isPlayingSimulated, setIsPlayingSimulated] = useState<boolean>(true);
   const [isMutedSimulated, setIsMutedSimulated] = useState<boolean>(false);
   const [playerCurrentTime, setPlayerCurrentTime] = useState<number>(12);
-  const [notifyPhoneNumber, setNotifyPhoneNumber] = useState<string>('');
-  const [isPhoneSubmitted, setIsPhoneSubmitted] = useState<boolean>(false);
-
   // Toast
   const [notificationToast, setNotificationToast] = useState<{ title: string; desc: string } | null>(null);
 
@@ -609,41 +603,6 @@ export default function ReviewsHierarchyTable() {
                         {video.collegeName}
                       </h3>
 
-                      {/* Video Title */}
-                      <h4 
-                        onClick={() => setPreviewVideoModal(video)}
-                        className="font-bold text-base text-slate-900 group-hover:text-[#F66710] transition leading-snug cursor-pointer line-clamp-2 mb-2"
-                      >
-                        {video.title}
-                      </h4>
-
-                      {/* Speaker Badge if Authority Review */}
-                      {video.authoritySpeaker && (
-                        <div className="mb-2.5 inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
-                          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>Speaker: {video.authoritySpeaker}</span>
-                        </div>
-                      )}
-
-                      {/* Video Description */}
-                      <p className="text-xs text-slate-500 font-normal leading-relaxed line-clamp-2 mb-3">
-                        {video.description}
-                      </p>
-
-                      {/* Production Progress */}
-                      <div className="mb-3.5 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                        <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 mb-1">
-                          <span>Production Progress</span>
-                          <span className="text-[#F66710] font-black">{video.productionProgress}% Finalized</span>
-                        </div>
-                        <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-gradient-to-r from-amber-500 to-[#F66710] rounded-full" 
-                            style={{ width: `${video.productionProgress}%` }}
-                          />
-                        </div>
-                      </div>
-
                       {/* Tags */}
                       <div className="flex flex-wrap gap-1.5 mb-4">
                         {video.tags.map((tag, i) => (
@@ -747,10 +706,7 @@ export default function ReviewsHierarchyTable() {
             >
               {/* Close Button */}
               <button
-                onClick={() => {
-                  setPreviewVideoModal(null);
-                  setIsPhoneSubmitted(false);
-                }}
+                onClick={() => setPreviewVideoModal(null)}
                 className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/70 hover:bg-black text-white flex items-center justify-center transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
@@ -894,175 +850,11 @@ export default function ReviewsHierarchyTable() {
                 </div>
               )}
 
-              {/* MODAL BODY */}
-              <div className="p-6 sm:p-7 space-y-4">
-                <div>
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md bg-orange-100 text-[#F66710]">
-                      {previewVideoModal.collegeName} • {previewVideoModal.category}
-                    </span>
-                    <span className="text-xs text-slate-500 font-bold">
-                      {previewVideoModal.perspectiveType}
-                    </span>
-                  </div>
-
-                  <h3 className="text-lg sm:text-xl font-bold text-slate-950 mt-2 leading-snug">
-                    {previewVideoModal.title}
-                  </h3>
-                  <p className="text-xs text-slate-600 font-normal mt-2 leading-relaxed">
-                    {previewVideoModal.description}
-                  </p>
-                </div>
-
-                {/* College Authority Callout if Live Video */}
-                {previewVideoModal.videoUrl && (
-                  <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-xs">
-                        {previewVideoModal.collegeId === 'sgsits' ? 'NP' : 'DIR'}
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-bold text-emerald-950 flex items-center gap-1.5">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>{previewVideoModal.authoritySpeaker || 'College Authority Leadership'}</span>
-                        </h4>
-                        <p className="text-[11px] text-emerald-700">
-                          Official Institutional Review &amp; Background Campus Video for {previewVideoModal.collegeName}
-                        </p>
-                      </div>
-                    </div>
-
-                    {previewVideoModal.collegeId && (
-                      <button
-                        onClick={() => {
-                          const colId = previewVideoModal.collegeId;
-                          setPreviewVideoModal(null);
-                          navigate(`/college/${colId}`);
-                        }}
-                        className="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs transition flex items-center gap-1.5 shrink-0 shadow-xs cursor-pointer"
-                      >
-                        <span>Visit {previewVideoModal.collegeName} Page</span>
-                        <ArrowLeft className="w-3.5 h-3.5 rotate-180" />
-                      </button>
-                    )}
-                  </div>
-                )}
-
-                {/* Topics Covered */}
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                    Topics Documented in this Video:
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {previewVideoModal.tags.map((t, idx) => (
-                      <span key={idx} className="text-xs bg-white text-slate-800 border border-slate-200 px-2.5 py-1 rounded-lg font-medium">
-                        ✓ {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* WhatsApp / Phone Alert Registration Box */}
-                {!previewVideoModal.videoUrl && (
-                  <div className="p-4 rounded-2xl bg-orange-50/70 border border-orange-200">
-                    <div className="flex items-center justify-between mb-2">
-                      <p className="text-xs font-bold text-orange-950 flex items-center gap-1.5">
-                        <Bell className="w-4 h-4 text-[#F66710]" />
-                        <span>Get Instant Notification on Premiere</span>
-                      </p>
-                      <span className="text-[10px] text-[#F66710] font-bold">Free Alert</span>
-                    </div>
-
-                    {!isPhoneSubmitted ? (
-                      <div className="flex flex-col sm:flex-row gap-2 mt-2">
-                        <input
-                          type="text"
-                          placeholder="Enter WhatsApp or Phone Number (+91...)"
-                          value={notifyPhoneNumber}
-                          onChange={(e) => setNotifyPhoneNumber(e.target.value)}
-                          className="flex-1 px-3.5 py-2 text-xs rounded-xl border border-orange-200 bg-white focus:outline-hidden focus:border-[#F66710]"
-                        />
-                        <button
-                          onClick={() => {
-                            if (notifyPhoneNumber.trim().length >= 8) {
-                              setIsPhoneSubmitted(true);
-                              toggleNotify(previewVideoModal.id, previewVideoModal.collegeName);
-                            } else {
-                              toggleNotify(previewVideoModal.id, previewVideoModal.collegeName);
-                              setIsPhoneSubmitted(true);
-                            }
-                          }}
-                          className="px-4 py-2 bg-[#F66710] hover:bg-orange-600 text-white rounded-xl font-bold text-xs transition cursor-pointer shrink-0 shadow-xs"
-                        >
-                          Set Alert
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="p-2.5 rounded-xl bg-emerald-100 text-emerald-900 text-xs font-bold flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                        <span>Alert saved! We will send a direct video watch link upon publication.</span>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Footer buttons */}
-                <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
-                  {previewVideoModal.collegeId && (
-                    <button
-                      onClick={() => {
-                        const colId = previewVideoModal.collegeId;
-                        setPreviewVideoModal(null);
-                        navigate(`/college/${colId}`);
-                      }}
-                      className="py-3 px-4 rounded-2xl bg-[#F66710] hover:bg-orange-600 text-white font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer shadow-xs"
-                    >
-                      <Film className="w-4 h-4" />
-                      <span>Open Full College Background Video &amp; Page</span>
-                    </button>
-                  )}
-
-                  {!previewVideoModal.videoUrl && (
-                    <button
-                      onClick={() => {
-                        toggleNotify(previewVideoModal.id, previewVideoModal.collegeName);
-                      }}
-                      className={`flex-1 py-3 px-4 rounded-2xl font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer ${
-                        notifiedVideos[previewVideoModal.id]
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-slate-900 hover:bg-black text-white'
-                      }`}
-                    >
-                      <Bell className="w-4 h-4" />
-                      <span>
-                        {notifiedVideos[previewVideoModal.id]
-                          ? 'Notification Saved'
-                          : 'Notify Me for this Video'}
-                      </span>
-                    </button>
-                  )}
-
-                  <a
-                    href="https://www.youtube.com/@Indorecolleges"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="py-3 px-4 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition flex items-center justify-center gap-2 shrink-0 shadow-xs"
-                    title="Subscribe @Indorecolleges on YouTube"
-                  >
-                    <Youtube className="w-4 h-4" />
-                    <span>Subscribe @Indorecolleges</span>
-                  </a>
-
-                  <button
-                    onClick={() => {
-                      setPreviewVideoModal(null);
-                      setIsPhoneSubmitted(false);
-                    }}
-                    className="py-3 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer"
-                  >
-                    Close
-                  </button>
-                </div>
+              {/* Modal details */}
+              <div className="p-5 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-950 text-center leading-snug">
+                  {previewVideoModal.collegeName}
+                </h3>
               </div>
             </motion.div>
           </div>
