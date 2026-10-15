@@ -540,24 +540,19 @@ export default function ReviewsHierarchyTable() {
 
 
           {/* Videos Grid Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+          <div className="flex flex-col items-center gap-4 text-center">
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center justify-center gap-2.5">
                 <span>{activeCategory} Video Reviews</span>
                 <span className="text-xs px-2.5 py-0.5 rounded-full bg-orange-100 text-[#F66710] font-bold">
                   {videosList.length} Videos
                 </span>
               </h3>
-              <p className="text-xs text-slate-500 font-normal mt-1">
-                Showing the top {videosList.length} rated colleges in <strong>{activeCategory}</strong> under <strong>{selectedPerspectiveForVideos}</strong>.
-              </p>
-            </div>
 
             <a
               href="https://www.youtube.com/@Indorecolleges"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-xs transition shrink-0 group self-start sm:self-auto cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-xs transition shrink-0 group cursor-pointer"
             >
               <Youtube className="w-4 h-4" />
               <span>Subscribe on YouTube @Indorecolleges</span>
