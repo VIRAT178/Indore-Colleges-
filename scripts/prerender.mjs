@@ -23,6 +23,15 @@ const baseRoutes = [
   '/explore/law',
   '/explore/medical',
   '/explore/design',
+  '/register',
+  '/dashboard',
+  '/reviews',
+  '/blogs',
+  '/about',
+  '/careers',
+  '/contact',
+  '/college-portal',
+  '/admin-panel',
 ];
 
 function escapeAttribute(value) {
@@ -98,3 +107,4 @@ for (const route of routes) {
 
 await rm(serverBundleDirectory, {recursive: true, force: true});
 console.log(`Prerendered ${routes.length} routes (${routes.length - baseRoutes.length} colleges) to ${outputDirectory}`);
+
