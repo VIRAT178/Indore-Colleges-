@@ -914,7 +914,7 @@ export default function Home({
                   key={`${ratingType}-${college.id}`}
                   className="rounded-xl border border-gray-200/80 bg-white px-3 py-3 sm:px-3.5 shadow-xs transition-all duration-200 hover:border-red-200 hover:shadow-sm"
                 >
-                  <div className="mb-2 font-outfit text-base font-extrabold leading-none text-[#0F244C] sm:text-lg">
+                   <div className="mb-2 text-center font-outfit text-lg font-extrabold leading-none text-[#0F244C] sm:text-xl">
                     Rank #{rank}
                   </div>
                   <div className="flex items-center gap-2.5 sm:gap-3">
