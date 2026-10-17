@@ -922,7 +922,7 @@ export default function Home({
                     <button
                       type="button"
                       onClick={() => onViewCollegeDetail?.(college)}
-                      className="min-w-0 flex-1 text-left font-outfit text-sm font-bold leading-snug text-[#0F244C] transition-colors hover:text-red-600 sm:text-base"
+                                            className="min-w-0 flex-1 text-left font-outfit text-sm font-bold leading-snug text-orange-600 transition-colors hover:text-black sm:text-base"
                       title={college.name}
                     >
                       {college.name}
