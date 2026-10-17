@@ -885,16 +885,6 @@ export default function Home({
               return college.rating || 4.1;
             };
 
-            const getGoogleReviewsCount = (college: Institute): string => {
-              if (GOOGLE_COLLEGE_META[college.id]?.reviewsCount) {
-                return GOOGLE_COLLEGE_META[college.id].reviewsCount;
-              }
-              if (college.totalReviews) {
-                return college.totalReviews >= 1000 ? `${(college.totalReviews / 1000).toFixed(1)}K` : `${college.totalReviews}`;
-              }
-              return '500+';
-            };
-
             const getIndoreRating = (college: Institute): number => {
               const tabRatings = INDORE_RATINGS_BY_TAB[activeSearchedTab];
               if (tabRatings && tabRatings[college.id] !== undefined) {
@@ -919,44 +909,32 @@ export default function Home({
               .slice(0, 10) as Institute[];
 
             const renderCollegeListItem = (college: Institute, ratingType: 'google' | 'indore', rank: number) => {
-              const ratingVal = ratingType === 'google' ? getGoogleRating(college) : getIndoreRating(college);
-              const displayRating = ratingVal.toFixed(1);
-              const reviewsCount = ratingType === 'google' ? getGoogleReviewsCount(college) : null;
               return (
                 <div
                   key={`${ratingType}-${college.id}`}
-                  className="flex items-center gap-2.5 sm:gap-3 rounded-xl border border-gray-200/80 bg-white px-2.5 py-3 sm:px-3.5 shadow-xs transition-all duration-200 hover:border-red-200 hover:shadow-sm"
+                  className="rounded-xl border border-gray-200/80 bg-white px-3 py-3 sm:px-3.5 shadow-xs transition-all duration-200 hover:border-red-200 hover:shadow-sm"
                 >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0F244C] text-[11px] font-black text-white">
-                    #{rank}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => onViewCollegeDetail?.(college)}
-                    className="min-w-0 flex-1 text-left font-outfit text-xs font-bold leading-snug text-[#0F244C] transition-colors hover:text-red-600 sm:text-sm"
-                    title={college.name}
-                  >
-                    {college.name}
-                  </button>
-                  <div className={`flex shrink-0 items-center gap-1 rounded-lg px-1.5 py-1 text-[11px] font-extrabold sm:px-2 ${
-                    ratingType === 'google' ? 'bg-blue-50 text-gray-800' : 'bg-slate-900 text-white'
-                  }`}>
-                    {ratingType === 'google' ? (
-                      <span className="font-black text-blue-600">G</span>
-                    ) : (
-                      <LogoIcon className="h-3.5 w-3.5" light />
-                    )}
-                    <span>{displayRating}</span>
-                    {reviewsCount && <span className="hidden text-[10px] font-semibold text-gray-500 sm:inline">({reviewsCount})</span>}
+                  <div className="mb-2 font-outfit text-base font-extrabold leading-none text-[#0F244C] sm:text-lg">
+                    Rank #{rank}
                   </div>
-                  <button
-                    type="button"
-                    onClick={onOpenCounseling}
-                    aria-label={`Apply now at ${college.name}`}
-                    className="shrink-0 rounded-lg border border-orange-500 px-2 py-2 text-[9px] font-extrabold uppercase tracking-wide text-orange-600 transition-colors hover:bg-orange-500 hover:text-white active:scale-95 sm:px-3 sm:text-[10px]"
-                  >
-                    Apply Now
-                  </button>
+                  <div className="flex items-center gap-2.5 sm:gap-3">
+                    <button
+                      type="button"
+                      onClick={() => onViewCollegeDetail?.(college)}
+                      className="min-w-0 flex-1 text-left font-outfit text-xs font-bold leading-snug text-[#0F244C] transition-colors hover:text-red-600 sm:text-sm"
+                      title={college.name}
+                    >
+                      {college.name}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={onOpenCounseling}
+                      aria-label={`Apply now at ${college.name}`}
+                      className="shrink-0 rounded-lg border border-orange-500 px-2 py-2 text-[9px] font-extrabold uppercase tracking-wide text-orange-600 transition-colors hover:bg-orange-500 hover:text-white active:scale-95 sm:px-3 sm:text-[10px]"
+                    >
+                      Apply Now
+                    </button>
+                  </div>
                 </div>
               );
             };
