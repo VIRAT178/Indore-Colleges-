@@ -951,7 +951,7 @@ export default function Home({
                   </div>
                   <button
                     type="button"
-                    onClick={() => onViewCollegeDetail?.(college)}
+                    onClick={onOpenCounseling}
                     aria-label={`Apply now at ${college.name}`}
                     className="shrink-0 rounded-lg border border-orange-500 px-2 py-2 text-[9px] font-extrabold uppercase tracking-wide text-orange-600 transition-colors hover:bg-orange-500 hover:text-white active:scale-95 sm:px-3 sm:text-[10px]"
                   >
