@@ -912,30 +912,28 @@ export default function Home({
               return (
                 <div
                   key={`${ratingType}-${college.id}`}
-                  className="rounded-xl border border-gray-200/80 bg-white px-3 py-3 sm:px-3.5 shadow-xs transition-all duration-200 hover:border-red-200 hover:shadow-sm"
+                  className="flex items-center gap-2 rounded-xl border border-gray-200/80 bg-white px-3 py-3 sm:gap-3 sm:px-3.5 shadow-xs transition-all duration-200 hover:border-red-200 hover:shadow-sm"
                 >
-                  <div className="mb-2 text-center font-outfit text-lg font-extrabold leading-none text-[#0F244C] sm:text-xl">
+                  <div className="shrink-0 font-outfit text-base font-extrabold leading-none text-[#0F244C] sm:text-lg">
                     Rank #{rank}
                   </div>
-                  <div className="flex items-center gap-2.5 sm:gap-3">
-                    <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-[#0F244C]" />
-                    <button
-                      type="button"
-                      onClick={() => onViewCollegeDetail?.(college)}
-                                            className="min-w-0 flex-1 text-left font-outfit text-sm font-bold leading-snug text-orange-600 transition-colors hover:text-black sm:text-base"
-                      title={college.name}
-                    >
-                      {college.name}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={onOpenCounseling}
-                      aria-label={`Apply now at ${college.name}`}
-                      className="shrink-0 rounded-lg border border-orange-500 px-2 py-2 text-[9px] font-extrabold uppercase tracking-wide text-orange-600 transition-colors hover:bg-orange-500 hover:text-white active:scale-95 sm:px-3 sm:text-[10px]"
-                    >
-                      Apply Now
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onViewCollegeDetail?.(college)}
+                    className="min-w-0 flex-1 text-left font-outfit text-sm font-bold leading-snug text-orange-600 transition-colors hover:text-black sm:text-base"
+                    title={college.name}
+                  >
+                    {college.name}
+                  </button>
+                  <span aria-hidden="true" className="shrink-0 text-gray-400">|</span>
+                  <button
+                    type="button"
+                    onClick={onOpenCounseling}
+                    aria-label={`Apply now at ${college.name}`}
+                    className="shrink-0 rounded-lg border border-orange-500 px-2 py-2 text-[9px] font-extrabold uppercase tracking-wide text-orange-600 transition-colors hover:bg-orange-500 hover:text-white active:scale-95 sm:px-3 sm:text-[10px]"
+                  >
+                    Apply Now
+                  </button>
                 </div>
               );
             };
