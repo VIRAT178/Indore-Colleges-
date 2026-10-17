@@ -660,7 +660,7 @@ export default function Home({
           {(() => {
             // Category 01: Top 10 by Google Ratings & Search Reviews
             const GOOGLE_LISTS_BY_TAB: Record<string, string[]> = {
-              'Engineering': ['sgsits', 'iist-indore', 'iet-davv', 'piemr-indore', 'patel-college', 'ips-engineering', 'lncts-indore', 'lnct-bhopal-indore', 'malwa-institute', 'vaishnav-polytechnic'],
+              'Engineering': ['sgsits', 'iist-indore', 'iet-davv', 'piemr-indore', 'patel-college', 'ips-engineering', 'lncts-indore', 'lnct-bhopal-indore', 'malwa-institute', 'acropolis'],
               'BBA': ['softvision-college', 'alexia-college', 'gacc-indore', 'renaissance-college', 'pimr', 'radiant-institute', 'ims-davv', 'symbiosis-university', 'medi-caps-university', 'sage-university'],
               'BCA': ['softvision-college', 'sgsits', 'pioneer-institute', 'christian-eminent', 'holkar-science', 'renaissance-college', 'gacc-indore', 'alexia-college', 'apj-kalam-univ', 'sage-university'],
               'MBA': ['jaipuria-indore', 'sgsits', 'ims-davv', 'pimr', 'renaissance-college', 'gujarati-professional', 'iim-indore', 'ips-ibmr', 'nmims-indore', 'medi-caps-university'],
@@ -914,14 +914,15 @@ export default function Home({
                   key={`${ratingType}-${college.id}`}
                   className="rounded-xl border border-gray-200/80 bg-white px-3 py-3 sm:px-3.5 shadow-xs transition-all duration-200 hover:border-red-200 hover:shadow-sm"
                 >
-                   <div className="mb-2 text-center font-outfit text-lg font-extrabold leading-none text-[#0F244C] sm:text-xl">
+                  <div className="mb-2 text-center font-outfit text-lg font-extrabold leading-none text-[#0F244C] sm:text-xl">
                     Rank #{rank}
                   </div>
                   <div className="flex items-center gap-2.5 sm:gap-3">
+                    <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-[#0F244C]" />
                     <button
                       type="button"
                       onClick={() => onViewCollegeDetail?.(college)}
-                      className="min-w-0 flex-1 text-left font-outfit text-xs font-bold leading-snug text-[#0F244C] transition-colors hover:text-red-600 sm:text-sm"
+                      className="min-w-0 flex-1 text-left font-outfit text-sm font-bold leading-snug text-[#0F244C] transition-colors hover:text-red-600 sm:text-base"
                       title={college.name}
                     >
                       {college.name}
