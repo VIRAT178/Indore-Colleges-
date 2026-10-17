@@ -917,6 +917,7 @@ export default function Home({
                   <div className="shrink-0 font-outfit text-base font-extrabold leading-none text-[#0F244C] sm:text-lg">
                     Rank #{rank}
                   </div>
+                   <span aria-hidden="true" className="shrink-0 text-gray-400">|</span>
                   <button
                     type="button"
                     onClick={() => onViewCollegeDetail?.(college)}
