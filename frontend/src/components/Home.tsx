@@ -538,7 +538,7 @@ export default function Home({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-black text-black tracking-tight leading-[1.28] font-outfit max-w-5xl mx-auto text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-black text-black tracking-tight leading-[1.28] font-outfit max-w-5xl mx-auto text-center"
           >
             <span>Find the best colleges in Indore</span>
             <span className="block mt-1 sm:mt-1.5">
@@ -553,8 +553,7 @@ export default function Home({
             </span>
             <span className="mt-2 sm:mt-2.5 text-xl sm:text-3xl md:text-4xl lg:text-[40px] font-extrabold tracking-normal min-h-[44px] sm:min-h-[50px] flex items-center justify-center">
               <span 
-                className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]"
-                style={{ color: 'rgba(246, 103, 16, 1)' }}
+                style={{ color: 'rgba(246, 103, 16, 1)', textShadow: 'none' }}
               >
                 {typedText}
               </span>
@@ -919,74 +918,45 @@ export default function Home({
               .sort((a, b) => getIndoreRating(b) - getIndoreRating(a))
               .slice(0, 10) as Institute[];
 
-            const renderCollegeCard = (college: Institute, ratingType: 'google' | 'indore', rank: number) => {
+            const renderCollegeListItem = (college: Institute, ratingType: 'google' | 'indore', rank: number) => {
               const ratingVal = ratingType === 'google' ? getGoogleRating(college) : getIndoreRating(college);
               const displayRating = ratingVal.toFixed(1);
               const reviewsCount = ratingType === 'google' ? getGoogleReviewsCount(college) : null;
               return (
-                <div 
+                <div
                   key={`${ratingType}-${college.id}`}
-                  className="h-full bg-white rounded-2xl border border-gray-200/80 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden group"
+                  className="flex items-center gap-2.5 sm:gap-3 rounded-xl border border-gray-200/80 bg-white px-2.5 py-3 sm:px-3.5 shadow-xs transition-all duration-200 hover:border-red-200 hover:shadow-sm"
                 >
-                  <div 
-                    onClick={() => onViewCollegeDetail && onViewCollegeDetail(college)}
-                    className="relative aspect-[16/10] bg-gray-50 overflow-hidden cursor-pointer"
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0F244C] text-[11px] font-black text-white">
+                    #{rank}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => onViewCollegeDetail?.(college)}
+                    className="min-w-0 flex-1 text-left font-outfit text-xs font-bold leading-snug text-[#0F244C] transition-colors hover:text-red-600 sm:text-sm"
+                    title={college.name}
                   >
-                    <img 
-                      src={college.image || '/sgsits.jpg'} 
-                      alt={college.name} 
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute left-2.5 top-2.5 bg-white/95 backdrop-blur-xs px-2 py-1 rounded-full text-[10px] font-black text-[#0F244C] border border-gray-200 shadow-sm">
-                      #{rank}
-                    </div>
+                    {college.name}
+                  </button>
+                  <div className={`flex shrink-0 items-center gap-1 rounded-lg px-1.5 py-1 text-[11px] font-extrabold sm:px-2 ${
+                    ratingType === 'google' ? 'bg-blue-50 text-gray-800' : 'bg-slate-900 text-white'
+                  }`}>
                     {ratingType === 'google' ? (
-                      <div className="absolute top-2.5 right-2.5 bg-white/95 backdrop-blur-xs py-1 px-2.5 rounded-lg text-[11px] font-black text-gray-800 flex items-center gap-1.5 shadow-xs border border-gray-100">
-                        <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24">
-                          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                        </svg>
-                        <span>{displayRating}</span>
-                        {reviewsCount && (
-                          <span className="text-[10px] text-gray-500 font-semibold font-sans">({reviewsCount})</span>
-                        )}
-                      </div>
+                      <span className="font-black text-blue-600">G</span>
                     ) : (
-                      <div className="absolute top-2.5 right-2.5 bg-slate-900/90 backdrop-blur-xs text-white py-1 px-2.5 rounded-lg text-[11px] font-black flex items-center gap-1.5 shadow-xs border border-white/10">
-                        <LogoIcon className="h-3.5 w-3.5 shrink-0" light />
-                        <span>{displayRating}</span>
-                      </div>
+                      <LogoIcon className="h-3.5 w-3.5" light />
                     )}
+                    <span>{displayRating}</span>
+                    {reviewsCount && <span className="hidden text-[10px] font-semibold text-gray-500 sm:inline">({reviewsCount})</span>}
                   </div>
-
-                  <div className="p-3.5 flex-1 flex flex-col">
-                    <div className="flex-1">
-                      <h3 
-                        onClick={() => onViewCollegeDetail && onViewCollegeDetail(college)}
-                        className="text-sm sm:text-base lg:text-lg font-black text-[#0F244C] group-hover:text-red-600 transition-colors cursor-pointer font-outfit leading-snug line-clamp-3 min-h-[4.5rem]"
-                      >
-                        {college.name}
-                      </h3>
-
-                      <div className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-600 mt-1.5 font-medium h-6">
-                        <MapPin className="h-3.5 w-3.5 text-gray-500 flex-shrink-0" />
-                        <span className="truncate">{college.location}, Indore</span>
-                      </div>
-                    </div>
-
-                    <div className="mt-3 pt-2.5 border-t border-gray-100">
-                      <button
-                        type="button"
-                        onClick={onOpenCounseling}
-                        className="w-full border border-red-600 hover:bg-red-600 hover:text-white text-red-600 font-extrabold py-2 px-3 rounded-xl text-[11px] sm:text-xs tracking-wider uppercase transition-all duration-200 active:scale-95 text-center cursor-pointer"
-                      >
-                        Apply Now
-                      </button>
-                    </div>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onViewCollegeDetail?.(college)}
+                    aria-label={`Apply now at ${college.name}`}
+                    className="shrink-0 rounded-lg border border-orange-500 px-2 py-2 text-[9px] font-extrabold uppercase tracking-wide text-orange-600 transition-colors hover:bg-orange-500 hover:text-white active:scale-95 sm:px-3 sm:text-[10px]"
+                  >
+                    Apply Now
+                  </button>
                 </div>
               );
             };
@@ -1027,9 +997,8 @@ export default function Home({
                       </h3>
                     </div>
 
-                    {/* 2-Column Grid with 6 Cards */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {googleColleges.map((college, index) => renderCollegeCard(college, 'google', index + 1))}
+                    <div className="space-y-3">
+                      {googleColleges.map((college, index) => renderCollegeListItem(college, 'google', index + 1))}
                     </div>
                   </div>
 
@@ -1059,9 +1028,8 @@ export default function Home({
                       </h3>
                     </div>
 
-                    {/* 2-Column Grid with 6 Cards */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {indoreColleges.map((college, index) => renderCollegeCard(college, 'indore', index + 1))}
+                    <div className="space-y-3">
+                      {indoreColleges.map((college, index) => renderCollegeListItem(college, 'indore', index + 1))}
                     </div>
                   </div>
                 </div>
