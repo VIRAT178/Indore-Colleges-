@@ -140,6 +140,9 @@ export interface ChatMessage {
 export interface UserProfile {
   email: string;
   name: string;
+  phone?: string;
+  courseInterested?: string;
+  twelfthSubject?: string;
   fatherName?: string;
   fatherEmail?: string;
   motherName?: string;
@@ -228,4 +231,3 @@ export interface PartnerCollege {
   updatedAt?: string;
   lastApprovedAt?: string;
 }
-
