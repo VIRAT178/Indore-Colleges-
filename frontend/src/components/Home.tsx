@@ -509,7 +509,7 @@ export default function Home({
       
       {/* 1. HERO BANNER SECTION (INDORE COLLEGES PURPOSE) */}
       <section className="relative pt-5 pb-10 sm:pt-7 sm:pb-14 md:pt-8 md:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-gray-150 flex flex-col justify-center items-center bg-white">
-        {/* Full-width education portal hero background carousel slider */}
+        {/* Keep the existing carousel on larger screens and use the supplied portrait artwork on mobile. */}
         <div className="absolute inset-0 w-full h-full z-0 overflow-hidden pointer-events-none">
           {heroBackgrounds.map((bg, idx) => {
             const isSelected = idx === currentBgIndex;
@@ -525,12 +525,19 @@ export default function Home({
                   scale: isSelected ? 1 : 1.02
                 }}
                 transition={{ duration: 1.0, ease: [0.4, 0, 0.2, 1] }}
-                className="absolute inset-0 w-full h-full object-cover object-center"
+                className="absolute inset-0 hidden h-full w-full object-cover object-center md:block"
               />
             );
           })}
-          <div className="absolute -top-24 -right-24 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
+          <div
+            className="absolute inset-x-0 top-0 h-full bg-top bg-no-repeat md:hidden"
+            style={{
+              backgroundImage: "url('/indore-college-mobile-bg.png')",
+              backgroundSize: '100% auto'
+            }}
+          />
+          <div className="absolute -top-24 -right-24 hidden h-96 w-96 rounded-full bg-red-600/10 blur-3xl pointer-events-none md:block" />
+          <div className="absolute -bottom-24 -left-24 hidden h-96 w-96 rounded-full bg-amber-600/10 blur-3xl pointer-events-none md:block" />
         </div>
 
         <div className="mx-auto max-w-5xl w-full relative z-10 text-center flex flex-col items-center justify-center -mt-2 sm:-mt-3 md:-mt-4">
@@ -564,8 +571,8 @@ export default function Home({
             </span>
           </motion.h1>
 
-          {/* Open spacer leaving unobstructed view for the background image text */}
-          <div className="h-20 sm:h-28 md:h-36 lg:h-40 w-full pointer-events-none" aria-hidden="true" />
+          {/* Leave room for the artwork's centered logo on mobile. */}
+          <div className="h-[70vw] w-full pointer-events-none md:h-36 lg:h-40" aria-hidden="true" />
 
           {/* Action Buttons */}
           <motion.div
@@ -917,7 +924,7 @@ export default function Home({
                   <div className="shrink-0 font-outfit text-base font-extrabold leading-none text-[#0F244C] sm:text-lg">
                     Rank #{rank}
                   </div>
-                   <span aria-hidden="true" className="shrink-0 text-gray-400">|</span>
+                  <span aria-hidden="true" className="shrink-0 text-gray-400">|</span>
                   <button
                     type="button"
                     onClick={() => onViewCollegeDetail?.(college)}
