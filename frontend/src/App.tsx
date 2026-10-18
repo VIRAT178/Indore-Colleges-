@@ -23,7 +23,7 @@ import AdminPortal from './components/AdminPortal';
 import { Institute, SearchFilters, UserProfile } from './types';
 import { Search, MapPin, Award, IndianRupee, HelpCircle, PhoneCall, Check, X, Compass, ChevronRight, HelpCircle as HelpIcon, Cpu, Briefcase, Laptop, Scale, HeartPulse, Palette, TrendingUp, ChevronLeft, Sparkles, GraduationCap } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { INDORE_LOCATIONS, CATEGORIES, BOARDS } from './data/indoreData';
+import { INDORE_LOCATIONS, INDORE_LOCALITY_GROUPS, CATEGORIES, BOARDS } from './data/indoreData';
 
 export function getInstituteZone(locationStr: string): string {
   const loc = (locationStr || '').toLowerCase();
@@ -1128,6 +1128,9 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
           .split('|')
           .map(area => area.toLowerCase());
         if (!targetAreas.some(area => inst.location.toLowerCase().includes(area))) return false;
+      } else if (INDORE_LOCALITY_GROUPS.some(group => group.name === selectedLocation)) {
+        const selectedGroup = INDORE_LOCALITY_GROUPS.find(group => group.name === selectedLocation);
+        if (!selectedGroup?.collegeIds.includes(inst.id)) return false;
       } else if (inst.location !== selectedLocation) {
         return false;
       }
