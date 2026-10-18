@@ -23,7 +23,7 @@ import AdminPortal from './components/AdminPortal';
 import { Institute, SearchFilters, UserProfile } from './types';
 import { Search, MapPin, Award, IndianRupee, HelpCircle, PhoneCall, Check, X, Compass, ChevronRight, HelpCircle as HelpIcon, Cpu, Briefcase, Laptop, Scale, HeartPulse, Palette, TrendingUp, ChevronLeft, Sparkles, GraduationCap } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { INDORE_LOCATIONS, INDORE_LOCALITY_GROUPS, CATEGORIES, BOARDS } from './data/indoreData';
+import { INDORE_INSTITUTES, INDORE_LOCATIONS, INDORE_LOCALITY_GROUPS, CATEGORIES, BOARDS } from './data/indoreData';
 
 export function getInstituteZone(locationStr: string): string {
   const loc = (locationStr || '').toLowerCase();
@@ -297,6 +297,8 @@ function ScrollToTopAndSEO({ institutes }: { institutes: Institute[] }) {
   useLayoutEffect(() => {
     window.history.scrollRestoration = 'manual';
     window.scrollTo(0, 0);
+    const frame = window.requestAnimationFrame(() => window.scrollTo(0, 0));
+    return () => window.cancelAnimationFrame(frame);
   }, [pathname]);
 
   useEffect(() => {
@@ -352,7 +354,7 @@ function CollegeDetailRoute({
 }) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const college = institutes.find(i => i.id === id);
+  const college = institutes.find(i => i.id === id) || INDORE_INSTITUTES.find(i => i.id === id);
 
   if (!college && institutesLoaded && institutes.length > 0) {
     return <Navigate to="/explore" replace />;
@@ -413,8 +415,128 @@ function ExploreRoute({
   cartIds,
   navigate
 }: any) {
-  const { streamParam } = useParams<{ streamParam?: string }>();
+  const { streamParam, localitySlug } = useParams<{ streamParam?: string; localitySlug?: string }>();
   const selectedStream = streamParam || null;
+  const selectedLocality = localitySlug
+    ? INDORE_LOCALITY_GROUPS.find(group =>
+      group.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') === localitySlug
+    )
+    : null;
+
+  if (localitySlug && !selectedLocality) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (selectedLocality) {
+    const localityInstitutes = selectedLocality.collegeIds
+      .map((id: string) => institutes.find((institute: Institute) => institute.id === id)
+        || INDORE_INSTITUTES.find(institute => institute.id === id))
+      .filter((institute: Institute | undefined): institute is Institute => Boolean(institute));
+
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        key={`locality-${localitySlug}`}
+      >
+        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 sm:p-6 rounded-2xl border border-gray-200/60 shadow-xs">
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => navigate('/')}
+                className="p-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl text-gray-700 transition flex items-center justify-center cursor-pointer"
+                aria-label="Back to home"
+              >
+                <ChevronLeft className="h-5 w-5 stroke-[2.5]" />
+              </button>
+              <div>
+                <h1 className="text-xl sm:text-2xl font-black text-gray-900">{selectedLocality.name}</h1>
+                <p className="text-sm text-gray-500 mt-1">
+                  {localityInstitutes.length} colleges in this location
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className="text-sm font-bold text-red-600 hover:text-red-500 transition bg-red-50/50 hover:bg-red-50 px-4 py-2.5 rounded-xl cursor-pointer"
+            >
+              Explore Other Locations
+            </button>
+          </div>
+
+          <div className="bg-white rounded-3xl border border-gray-200/60 shadow-sm overflow-hidden divide-y divide-gray-150">
+            {localityInstitutes.map((institute, index) => (
+              <motion.div
+                key={institute.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.04 }}
+                className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-red-50/5 transition duration-150"
+              >
+                <div className="flex items-start sm:items-center gap-4 min-w-0">
+                  <div className={`h-11 w-11 rounded-xl flex items-center justify-center font-black text-sm shrink-0 border ${
+                    index === 0 ? 'bg-amber-500/10 text-amber-600 border-amber-200' :
+                    index === 1 ? 'bg-slate-400/10 text-slate-600 border-slate-200' :
+                    index === 2 ? 'bg-amber-700/10 text-amber-800 border-amber-300' :
+                    'bg-gray-50 text-gray-500 border-gray-200'
+                  }`}>
+                    #{index + 1}
+                  </div>
+
+                  <div className="space-y-1 min-w-0">
+                    <Link
+                      to={`/college/${institute.id}`}
+                      className="font-extrabold text-base sm:text-lg text-gray-900 hover:text-red-600 hover:underline transition decoration-2 decoration-red-500/30"
+                    >
+                      {institute.name}
+                    </Link>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-gray-400 font-bold">
+                      <span className="inline-flex items-center gap-1.5">
+                        <MapPin className="h-3.5 w-3.5 text-rose-500" />
+                        {institute.location}
+                      </span>
+                      <span aria-hidden="true">•</span>
+                      <span className="inline-flex items-center gap-1.5">
+                        <Award className="h-3.5 w-3.5 text-amber-500" />
+                        {institute.rating > 0
+                          ? `${institute.rating} ${institute.ratingSource ? `${institute.ratingSource} ` : ''}Rating`
+                          : 'Rating not listed'}
+                      </span>
+                      <span aria-hidden="true">•</span>
+                      <span className="inline-flex items-center gap-1">
+                        {institute.feePerAnnum > 0
+                          ? `₹${institute.feePerAnnum.toLocaleString('en-IN')}/year`
+                          : 'Contact college for fees'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                  <Link
+                    to={`/college/${institute.id}`}
+                    className="text-sm font-bold bg-gray-50 text-gray-700 hover:bg-red-50 hover:text-red-600 border border-gray-200 hover:border-red-200 px-4 py-2.5 rounded-xl transition"
+                  >
+                    View Details
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenCounseling(institute)}
+                    className="text-sm font-bold bg-red-600 hover:bg-red-500 text-white px-4 py-2.5 rounded-xl transition cursor-pointer"
+                  >
+                    Apply Now
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      </motion.div>
+    );
+  }
 
   const setSelectedStream = (stream: string | null) => {
     if (stream) {
@@ -1201,12 +1323,48 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
                     maxFee={maxFee}
                     setMaxFee={setMaxFee}
                     onViewCollegeDetail={(inst) => navigate(`/college/${inst.id}`)}
+                    onViewLocality={(locality) => {
+                      const slug = locality.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+                      navigate(`/locality/${slug}`);
+                    }}
                   />
                 </motion.div>
               }
             />
 
             {/* Explore Routes */}
+            <Route
+              path="/locality/:localitySlug"
+              element={
+                <ExploreRoute
+                  institutes={institutes}
+                  loading={loading}
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  instituteTypeFilter={instituteTypeFilter}
+                  setInstituteTypeFilter={setInstituteTypeFilter}
+                  selectedCategory={selectedCategory}
+                  setSelectedCategory={setSelectedCategory}
+                  selectedBoard={selectedBoard}
+                  setSelectedBoard={setSelectedBoard}
+                  selectedLocation={selectedLocation}
+                  setSelectedLocation={setSelectedLocation}
+                  maxFee={maxFee}
+                  setMaxFee={setMaxFee}
+                  showMap={showMap}
+                  setShowMap={setShowMap}
+                  filteredInstitutes={filteredInstitutes}
+                  handleOpenCounseling={handleOpenCounseling}
+                  handleOpenCallback={handleOpenCallback}
+                  handleToggleShortlist={handleToggleShortlist}
+                  shortlistedIds={shortlistedIds}
+                  handleToggleCart={handleToggleCart}
+                  cartIds={cartIds}
+                  navigate={navigate}
+                />
+              }
+            />
+
             <Route
               path="/explore"
               element={
