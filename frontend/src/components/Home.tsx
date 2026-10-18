@@ -42,6 +42,7 @@ interface HomeProps {
   maxFee?: number;
   setMaxFee?: (fee: number) => void;
   onViewCollegeDetail?: (inst: Institute) => void;
+  onViewLocality?: (locality: string) => void;
 }
 
 export default function Home({
@@ -55,7 +56,8 @@ export default function Home({
   setSelectedStream,
   maxFee,
   setMaxFee,
-  onViewCollegeDetail
+  onViewCollegeDetail,
+  onViewLocality
 }: HomeProps) {
   // Search card states (CarDekho style)
   const [searchMode, setSearchMode] = useState<'college' | 'course'>('college');
@@ -298,6 +300,10 @@ export default function Home({
     setSelectedBoard('All');
     setSelectedLocation(locality);
     setSearchQuery('');
+    if (onViewLocality) {
+      onViewLocality(locality);
+      return;
+    }
     setActiveTab('explore');
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
