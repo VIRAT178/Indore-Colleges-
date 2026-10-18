@@ -47,6 +47,16 @@ const STATIC_COLLEGE_IDS = [
   'holkar-science',
   'gujarati-professional',
   'iil-indore',
+  'rishiraj-institute',
+  'gsb-indore',
+  'skitm-indore',
+  'astral-institute',
+  'swami-vivekanand-college-engineering',
+  'indore-management-institute',
+  'vindhya-institute-indore',
+  'kk-vigyan-college',
+  'jain-diwakar-college',
+  'sica-college-indore',
 ];
 
 const SEO_ORIGIN = 'https://indorecolleges.in';
