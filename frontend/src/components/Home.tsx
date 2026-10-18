@@ -495,14 +495,14 @@ export default function Home({
 
   // Locality groups and their matching institute locations
   const LOCALITIES = [
-    { name: 'Vijay Nagar', locations: ['Vijay Nagar'] },
-    { name: 'Scheme No. 54', locations: ['Scheme 54'] },
-    { name: 'Bhawarkua & Navlakha', locations: ['Bhawarkua', 'Navlakha'] },
-    { name: 'Super Corridor', locations: ['Super Corridor'] },
-    { name: 'Rau & Pitampur', locations: ['Rau', 'Pitampur', 'Pigdamber'] },
-    { name: 'Sanwer Road', locations: ['Sanwer Road'] },
-    { name: 'Bypass Road & Manglia', locations: ['Bypass Road', 'Manglia'] },
-    { name: 'Khandwa Road & Takshashila Campus', locations: ['Khandwa Road', 'Takshashila Campus'] }
+  { name: 'Ujjain Road', locations: ['Ujjain Road'] },
+  { name: 'Super Corridor', locations: ['Super Corridor'] },
+  { name: 'Rau', locations: ['Rau'] },
+  { name: 'Khandwa Road', locations: ['Khandwa Road'] },
+  { name: 'BypassRoad', locations: ['Bypass Road'] },
+  { name: 'A.B. Road', locations: ['A.B. Road'] },
+  { name: 'Vijay Nagar & Scheme No. 54', locations: ['Vijay Nagar', 'Scheme 54'] },
+  { name: 'Bhawarkua & Takshashila Campus', locations: ['Bhawarkua', 'Takshashila Campus'] },
   ];
   return (
     <div id="home_view" className="w-full bg-white font-sans overflow-hidden">
