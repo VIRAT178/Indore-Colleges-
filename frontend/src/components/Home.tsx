@@ -27,7 +27,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import Logo, { LogoIcon } from './Logo';
 import StreamSelector from './StreamSelector';
-import { INDORE_INSTITUTES, INDORE_LOCATIONS, CATEGORIES } from '../data/indoreData';
+import { INDORE_INSTITUTES, INDORE_LOCATIONS, INDORE_LOCALITY_GROUPS, CATEGORIES } from '../data/indoreData';
 import { Institute } from '../types';
 
 interface HomeProps {
@@ -493,17 +493,7 @@ export default function Home({
     }
   ];
 
-  // Locality groups and their matching institute locations
-  const LOCALITIES = [
-  { name: 'Ujjain Road', locations: ['Ujjain Road'] },
-  { name: 'Super Corridor', locations: ['Super Corridor'] },
-  { name: 'Rau', locations: ['Rau'] },
-  { name: 'Khandwa Road', locations: ['Khandwa Road'] },
-  { name: 'BypassRoad', locations: ['Bypass Road'] },
-  { name: 'A.B. Road', locations: ['A.B. Road'] },
-  { name: 'Vijay Nagar & Scheme No. 54', locations: ['Vijay Nagar', 'Scheme 54'] },
-  { name: 'Bhawarkua & Takshashila Campus', locations: ['Bhawarkua', 'Takshashila Campus'] },
-  ];
+  const LOCALITIES = INDORE_LOCALITY_GROUPS;
   return (
     <div id="home_view" className="w-full bg-white font-sans overflow-hidden">
       
@@ -1337,16 +1327,13 @@ export default function Home({
 
           {/* Localities Pill Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-            {LOCALITIES.map((loc, idx) => (
-              <motion.div 
-                key={idx}
+            {LOCALITIES.map((loc) => (
+              <motion.button
+                type="button"
+                key={loc.name}
                 whileHover={{ scale: 1.02, y: -2 }}
-                onClick={() => handleLocalityClick(
-                  loc.locations.length === 1
-                    ? loc.locations[0]
-                    : `Areas: ${loc.locations.join('|')}`
-                )}
-                className="group cursor-pointer bg-white border border-gray-100 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-lg hover:border-red-600/30 hover:bg-red-600/5 transition-all flex items-center"
+                onClick={() => handleLocalityClick(loc.name)}
+                className="group cursor-pointer bg-white border border-gray-100 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-lg hover:border-red-600/30 hover:bg-red-600/5 transition-all flex items-center text-left"
               >
                 <div className="flex items-center space-x-3 sm:space-x-3.5 min-w-0">
                   <div className="h-10 w-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all flex-shrink-0">
@@ -1354,9 +1341,10 @@ export default function Home({
                   </div>
                   <div className="min-w-0">
                     <h4 className="text-sm sm:text-base font-bold text-[#0F244C] group-hover:text-red-600 transition font-outfit">{loc.name}</h4>
+                    <span className="text-xs text-gray-500">{loc.collegeIds.length} colleges</span>
                   </div>
                 </div>
-              </motion.div>
+              </motion.button>
             ))}
           </div>
         </div>
