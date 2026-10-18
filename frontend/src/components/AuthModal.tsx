@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, ShieldCheck, User, ArrowRight, Loader2, RefreshCw, X } from 'lucide-react';
+import { Mail, ShieldCheck, User, ArrowRight, Loader2, RefreshCw, X, Phone, BookOpen, MapPin } from 'lucide-react';
 import Logo from './Logo';
 import { UserProfile } from '../types';
 
@@ -13,6 +13,10 @@ interface AuthModalProps {
 export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }: AuthModalProps) {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [courseInterested, setCourseInterested] = useState('');
+  const [twelfthSubject, setTwelfthSubject] = useState('');
+  const [address, setAddress] = useState('');
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState<'details' | 'otp'>('details');
   const [loading, setLoading] = useState(false);
@@ -25,6 +29,10 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
       // Reset state when closed
       setEmail('');
       setName('');
+      setPhone('');
+      setCourseInterested('');
+      setTwelfthSubject('');
+      setAddress('');
       setOtp('');
       setStep('details');
       setError('');
@@ -43,8 +51,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) {
-      setError('Please provide your email address.');
+    if (!name.trim() || !phone.trim() || !email.trim() || !courseInterested.trim() || !twelfthSubject.trim() || !address.trim()) {
+      setError('Please complete all required fields.');
       return;
     }
 
@@ -89,7 +97,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
       const res = await fetch('/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp, name }),
+        body: JSON.stringify({ email, otp, name, phone, courseInterested, twelfthSubject, address }),
       });
 
       const data = await res.json();
@@ -112,24 +120,22 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-      <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col">
+      <div className="relative w-full max-w-md max-h-[94vh] overflow-y-auto bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col">
         {/* Decorative Top Accent */}
         <div className="h-2 bg-gradient-to-r from-red-600 via-rose-600 to-red-500" />
         
         {/* Header */}
-        <div className="p-4 sm:p-6 pb-2 sm:pb-4 flex justify-between items-start">
-          <div>
-            <Logo size="sm" className="mb-2.5" />
-            <h3 className="text-lg sm:text-xl font-bold text-slate-950">
+        <div className="relative px-5 pt-5 sm:px-7 sm:pt-7 pb-3 sm:pb-4 flex flex-col items-center text-center">
+          <Logo size="lg" className="mb-3 justify-center" />
+          <div className="w-full">
+            <h3 className="text-lg sm:text-xl font-bold text-slate-950 text-center">
               {step === 'details' ? 'Account Authentication' : 'Verify Your Identity'}
             </h3>
-            <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
-              {step === 'details' ? 'Access specialized counseling & premium admissions' : 'Enter the code sent to your inbox'}
-            </p>
           </div>
           <button 
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition shrink-0 ml-2"
+            aria-label="Close authentication"
+            className="absolute right-4 top-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition"
           >
             <X className="h-4 w-4" />
           </button>
@@ -156,7 +162,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
           )}
 
           {step === 'details' ? (
-            <form onSubmit={handleSendOtp} className="space-y-4">
+            <form onSubmit={handleSendOtp} className="space-y-3">
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-slate-700">Full Name</label>
                 <div className="relative">
@@ -173,6 +179,22 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
               </div>
 
               <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700">Contact Number</label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                  <input
+                    type="tel"
+                    required
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="Enter your contact number"
+                    autoComplete="tel"
+                    className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
                 <label className="text-xs font-semibold text-slate-700">Email Address</label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
@@ -182,7 +204,51 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMessage }
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
+                    autoComplete="email"
                     className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700">Course Interested In</label>
+                <div className="relative">
+                  <BookOpen className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                  <input
+                    type="text"
+                    required
+                    value={courseInterested}
+                    onChange={(e) => setCourseInterested(e.target.value)}
+                    placeholder="e.g. Engineering, BBA, MBA"
+                    className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700">12th Subject / Stream</label>
+                <input
+                  type="text"
+                  required
+                  value={twelfthSubject}
+                  onChange={(e) => setTwelfthSubject(e.target.value)}
+                  placeholder="e.g. PCM, PCB, Commerce, Arts"
+                  className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700">Address</label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                  <textarea
+                    required
+                    rows={2}
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="Enter your address"
+                    autoComplete="street-address"
+                    className="w-full resize-y pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500"
                   />
                 </div>
               </div>
