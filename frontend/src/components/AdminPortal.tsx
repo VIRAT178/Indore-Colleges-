@@ -375,10 +375,19 @@ export default function AdminPortal() {
     (cb.instituteId || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const filteredUsers = userProfiles.filter(u => 
-    u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    u.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredUsers = userProfiles.filter(u => {
+    const searchableDetails = [
+      u.name,
+      u.email,
+      u.phone,
+      u.courseInterested,
+      u.twelfthSubject,
+      u.address
+    ];
+    return searchableDetails.some(value =>
+      typeof value === 'string' && value.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
@@ -1481,7 +1490,8 @@ export default function AdminPortal() {
                             <thead>
                               <tr className="bg-slate-50 border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
                                 <th className="p-4">User Personal Info</th>
-                                <th className="p-4">Address & Pincode</th>
+                                <th className="p-4">Contact & Academic Interest</th>
+                                <th className="p-4">Address</th>
                                 <th className="p-4">Parent Details</th>
                                 <th className="p-4">Shortlisted IDs</th>
                                 <th className="p-4">Basket Cart IDs</th>
@@ -1495,6 +1505,11 @@ export default function AdminPortal() {
                                   <td className="p-4">
                                     <p className="font-bold text-slate-900">{item.name}</p>
                                     <p className="text-[10px] text-slate-400 font-mono">{item.email}</p>
+                                  </td>
+                                  <td className="p-4">
+                                    <p className="font-semibold">{item.phone || 'Phone not provided'}</p>
+                                    <p className="text-[10px] text-slate-500 mt-1">Course: {item.courseInterested || 'N/A'}</p>
+                                    <p className="text-[10px] text-slate-500">12th: {item.twelfthSubject || 'N/A'}</p>
                                   </td>
                                   <td className="p-4">
                                     <p>{item.address || 'N/A'}</p>
@@ -1536,6 +1551,18 @@ export default function AdminPortal() {
                               </div>
 
                               <div className="grid grid-cols-2 gap-2 text-[11px] pt-2 border-t border-slate-50">
+                                <div>
+                                  <span className="font-bold text-slate-400 uppercase tracking-wider text-[8px] block">Contact Number</span>
+                                  <span className="text-slate-800">{item.phone || 'N/A'}</span>
+                                </div>
+                                <div>
+                                  <span className="font-bold text-slate-400 uppercase tracking-wider text-[8px] block">Course Interested</span>
+                                  <span className="text-slate-800">{item.courseInterested || 'N/A'}</span>
+                                </div>
+                                <div className="col-span-2">
+                                  <span className="font-bold text-slate-400 uppercase tracking-wider text-[8px] block">12th Subject / Stream</span>
+                                  <span className="text-slate-800">{item.twelfthSubject || 'N/A'}</span>
+                                </div>
                                 <div>
                                   <span className="font-bold text-slate-400 uppercase tracking-wider text-[8px] block">Shortlisted Institutes</span>
                                   <span className="px-2 py-0.5 bg-slate-100 text-slate-700 font-bold rounded text-[9px] inline-block mt-0.5">
