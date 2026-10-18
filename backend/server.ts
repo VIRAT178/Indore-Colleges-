@@ -1316,13 +1316,22 @@ async function startServer() {
 
   // 2. Verify OTP & Register/Login User
   app.post('/api/auth/verify-otp', async (req, res) => {
-    const { email, otp, name } = req.body;
-    if (!email || !otp) {
-      return res.status(400).json({ error: 'Email and OTP code are required.' });
+    const { email, otp, name, phone, courseInterested, twelfthSubject, address } = req.body;
+    if (![email, otp, name, phone, courseInterested, twelfthSubject, address].every(
+      (value) => typeof value === 'string' && value.trim()
+    )) {
+      return res.status(400).json({ error: 'All form fields and the OTP code are required.' });
     }
 
     const emailTrimmed = email.trim().toLowerCase();
     const otpStr = otp.trim();
+    const profileDetails = {
+      name: name.trim(),
+      phone: phone.trim(),
+      courseInterested: courseInterested.trim(),
+      twelfthSubject: twelfthSubject.trim(),
+      address: address.trim()
+    };
 
     let verified = false;
 
@@ -1346,14 +1355,13 @@ async function startServer() {
       let user: any = await db.collection('users').findOne({ email: emailTrimmed });
       const initialUserObj = {
         email: emailTrimmed,
-        name: name || emailTrimmed.split('@')[0],
+        ...profileDetails,
         fatherName: '',
         fatherEmail: '',
         motherName: '',
         motherEmail: '',
         childName: '',
         childMotherTongue: '',
-        address: '',
         pincode: '',
         shortlistedIds: [],
         cartIds: [],
@@ -1363,9 +1371,9 @@ async function startServer() {
       if (!user) {
         user = { ...initialUserObj };
         await db.collection('users').insertOne(user);
-      } else if (name && !user.name) {
-        await db.collection('users').updateOne({ email: emailTrimmed }, { $set: { name } });
-        user.name = name;
+      } else {
+        await db.collection('users').updateOne({ email: emailTrimmed }, { $set: profileDetails });
+        user = { ...user, ...profileDetails };
       }
 
       res.json({ success: true, user });
