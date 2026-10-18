@@ -160,6 +160,7 @@ export default function CollegeDetailPage({
   };
 
   const formatFee = (fee: number) => {
+    if (fee <= 0) return 'Contact college';
     if (fee >= 100000) {
       return `₹${(fee / 100000).toFixed(2)} Lakh`;
     }
@@ -226,12 +227,21 @@ export default function CollegeDetailPage({
             </div>
           ) : (
             // Fallback image if video is not supplied or fails to load
-            <img
-              src={institute.image}
-              alt={institute.name}
-              referrerPolicy="no-referrer"
-              className="w-full h-full object-cover object-center"
-            />
+            institute.image ? (
+              <img
+                src={institute.image}
+                alt={institute.name}
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover object-center"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-red-700 to-rose-500 flex flex-col items-center justify-center text-white">
+                <span className="text-5xl font-black tracking-widest">
+                  {institute.name.split(' ').filter(Boolean).map(word => word[0]).join('').slice(0, 3)}
+                </span>
+                <span className="mt-3 text-xs font-bold uppercase tracking-widest text-red-100">Campus image not available</span>
+              </div>
+            )
           )}
         </div>
 
@@ -394,13 +404,25 @@ export default function CollegeDetailPage({
                 <span aria-hidden="true" className="text-slate-300 hidden sm:inline">·</span>
                 <div className="flex items-center space-x-1.5">
                   <Clock className="h-4 w-4 text-rose-400 shrink-0" />
-                  <span>Established in {institute.establishedYear} ({new Date().getFullYear() - institute.establishedYear} yrs of legacy)</span>
+                  <span>{institute.establishedYear ? `Established in ${institute.establishedYear} (${new Date().getFullYear() - institute.establishedYear} yrs of legacy)` : 'Establishment year not listed'}</span>
                 </div>
                 <span aria-hidden="true" className="text-slate-300 hidden sm:inline">·</span>
                 <div className="flex items-center space-x-1.5 text-amber-600 font-bold tabular-nums">
-                  <Star className="h-4 w-4 fill-amber-400 text-amber-400 shrink-0" />
-                  <span>{institute.rating}</span>
-                  <span className="text-slate-500 font-normal">({institute.totalReviews} verified student reviews)</span>
+                  {institute.rating > 0 ? (
+                    <>
+                      <Star className="h-4 w-4 fill-amber-400 text-amber-400 shrink-0" />
+                      <span>{institute.rating}</span>
+                      {(institute.ratingReviewCount && institute.ratingSource) ? (
+                        <span className="text-slate-500 font-normal">({institute.ratingReviewCount} {institute.ratingSource} reviews)</span>
+                      ) : institute.totalReviews > 0 ? (
+                        <span className="text-slate-500 font-normal">({institute.totalReviews} reviews)</span>
+                      ) : institute.ratingSource ? (
+                        <span className="text-slate-500 font-normal">({institute.ratingSource} rating)</span>
+                      ) : null}
+                    </>
+                  ) : (
+                    <span className="text-slate-500 font-normal">No student rating available</span>
+                  )}
                 </div>
               </div>
 
@@ -471,7 +493,7 @@ export default function CollegeDetailPage({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-slate-100 text-xs">
                 <div>
                   <span className="text-slate-400 block text-[11px] font-semibold mb-0.5">Founding Year</span>
-                  <span className="font-bold text-slate-800">{institute.establishedYear}</span>
+                  <span className="font-bold text-slate-800">{institute.establishedYear || 'Not listed'}</span>
                 </div>
                 <div>
                   <span className="text-slate-400 block text-[11px] font-semibold mb-0.5">Campus Location</span>
@@ -485,7 +507,7 @@ export default function CollegeDetailPage({
                   <span className="text-slate-400 block text-[11px] font-semibold mb-0.5">Trust Marker</span>
                   <span className="font-bold text-emerald-700 inline-flex items-center">
                     <CheckCircle2 className="h-3.5 w-3.5 mr-1 text-emerald-600" />
-                    Indore Verified
+                    {institute.isDirectoryVerified === false ? 'Directory Listing' : 'Indore Verified'}
                   </span>
                 </div>
               </div>
@@ -500,7 +522,7 @@ export default function CollegeDetailPage({
                     <span>Academic Courses & Fee Structure</span>
                   </h2>
                   <p className="text-slate-500 text-xs mt-1">
-                    Verified degree paths, annual tuition rates, and specialization programs.
+                    Listed programmes and available fee information; confirm current details with the institution.
                   </p>
                 </div>
 
@@ -748,11 +770,17 @@ export default function CollegeDetailPage({
                         />
                       ) : (
                         <div className="relative w-full h-full">
-                          <img
-                            src={institute.image}
-                            alt={institute.name}
-                            className="w-full h-full object-cover"
-                          />
+                          {institute.image ? (
+                            <img
+                              src={institute.image}
+                              alt={institute.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-red-700 to-rose-500 flex items-center justify-center text-white text-4xl font-black tracking-widest">
+                              {institute.name.split(' ').filter(Boolean).map(word => word[0]).join('').slice(0, 3)}
+                            </div>
+                          )}
                           <div className="absolute inset-0 bg-black/60 flex items-center justify-center p-4 text-center">
                             <span className="text-white text-xs font-semibold">
                               Authority Video Tour loading or can be updated in indoreData.ts
@@ -982,9 +1010,9 @@ export default function CollegeDetailPage({
                   Annual Tuition Fee
                 </span>
                 <div className="flex items-baseline font-black text-slate-900 text-2xl tabular-nums">
-                  <IndianRupee className="h-5 w-5 text-slate-800 self-center mr-0.5" />
+                  {institute.feePerAnnum > 0 && <IndianRupee className="h-5 w-5 text-slate-800 self-center mr-0.5" />}
                   <span>{formatFee(institute.feePerAnnum)}</span>
-                  <span className="text-xs text-slate-400 font-medium ml-1.5">/ academic year</span>
+                  {institute.feePerAnnum > 0 && <span className="text-xs text-slate-400 font-medium ml-1.5">/ academic year</span>}
                 </div>
               </div>
 
