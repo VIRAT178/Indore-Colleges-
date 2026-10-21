@@ -898,18 +898,22 @@ export default function Home({
             };
 
             const googleIds = GOOGLE_LISTS_BY_TAB[activeSearchedTab] || [];
-            const googleColleges = googleIds
+            const googleCollegeMatches = googleIds
               .map(id => INDORE_INSTITUTES.find(inst => inst.id === id))
-              .filter(Boolean)
-              .sort((a, b) => getGoogleRating(b) - getGoogleRating(a))
-              .slice(0, 10) as Institute[];
+              .filter(Boolean) as Institute[];
+            const googleColleges = (activeSearchedTab === 'Engineering'
+              ? googleCollegeMatches
+              : googleCollegeMatches.sort((a, b) => getGoogleRating(b) - getGoogleRating(a))
+            ).slice(0, 10);
 
             const indoreIds = INDORE_LISTS_BY_TAB[activeSearchedTab] || [];
-            const indoreColleges = indoreIds
+            const indoreCollegeMatches = indoreIds
               .map(id => INDORE_INSTITUTES.find(inst => inst.id === id))
-              .filter(Boolean)
-              .sort((a, b) => getIndoreRating(b) - getIndoreRating(a))
-              .slice(0, 10) as Institute[];
+              .filter(Boolean) as Institute[];
+            const indoreColleges = (activeSearchedTab === 'Engineering'
+              ? indoreCollegeMatches
+              : indoreCollegeMatches.sort((a, b) => getIndoreRating(b) - getIndoreRating(a))
+            ).slice(0, 10);
 
             const renderCollegeListItem = (college: Institute, ratingType: 'google' | 'indore', rank: number) => {
               return (
@@ -977,7 +981,7 @@ export default function Home({
                         <span className="inline-block w-[3px] h-[1em] ml-1 rounded-sm bg-[#0F244C] animate-pulse" />
                       </h3>
                       <p className="text-sm sm:text-base text-gray-600 font-medium">
-                        [ Based on the SEO work of each individual institute ]
+                        Based on the SEO work of each individual institute
                       </p>
                     </div>
 
@@ -1011,7 +1015,7 @@ export default function Home({
                         <span className="inline-block w-[3px] h-[1em] ml-1 rounded-sm bg-[#0F244C] animate-pulse" />
                       </h3>
                       <p className="text-sm sm:text-base text-gray-600 font-medium">
-                       [ Based on placements, academics, facilities, and amenities]
+                        Based on placements, academics, facilities, and amenities
                       </p>
                     </div>
 
