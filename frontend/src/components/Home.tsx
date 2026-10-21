@@ -977,7 +977,7 @@ export default function Home({
                         <span className="inline-block w-[3px] h-[1em] ml-1 rounded-sm bg-[#0F244C] animate-pulse" />
                       </h3>
                       <p className="text-sm sm:text-base text-gray-600 font-medium">
-                        Based on the SEO work of each individual institute
+                        [ Based on the SEO work of each individual institute ]
                       </p>
                     </div>
 
@@ -1011,7 +1011,7 @@ export default function Home({
                         <span className="inline-block w-[3px] h-[1em] ml-1 rounded-sm bg-[#0F244C] animate-pulse" />
                       </h3>
                       <p className="text-sm sm:text-base text-gray-600 font-medium">
-                        Based on placements, academics, facilities, and amenities
+                       [ Based on placements, academics, facilities, and amenities]
                       </p>
                     </div>
 
