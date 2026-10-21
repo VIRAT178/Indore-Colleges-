@@ -663,7 +663,7 @@ export default function Home({
           {(() => {
             // Category 01: Top 10 by Google Ratings & Search Reviews
             const GOOGLE_LISTS_BY_TAB: Record<string, string[]> = {
-              'Engineering': ['sgsits', 'iist-indore', 'iet-davv', 'piemr-indore', 'patel-college', 'ips-engineering', 'lncts-indore', 'lnct-bhopal-indore', 'malwa-institute', 'acropolis'],
+              'Engineering': ['iit-indore', 'sgsits', 'iet-davv', 'acropolis', 'iist-indore', 'medi-caps-university', 'ips-engineering', 'pimr', 'malwa-institute', 'skitm-indore'],
               'BBA': ['softvision-college', 'alexia-college', 'gacc-indore', 'renaissance-college', 'pimr', 'radiant-institute', 'ims-davv', 'symbiosis-university', 'medi-caps-university', 'sage-university'],
               'BCA': ['softvision-college', 'sgsits', 'pioneer-institute', 'christian-eminent', 'holkar-science', 'renaissance-college', 'gacc-indore', 'alexia-college', 'apj-kalam-univ', 'sage-university'],
               'MBA': ['jaipuria-indore', 'sgsits', 'ims-davv', 'pimr', 'renaissance-college', 'gujarati-professional', 'iim-indore', 'ips-ibmr', 'nmims-indore', 'medi-caps-university'],
@@ -674,7 +674,7 @@ export default function Home({
 
             // Category 02: Top 10 evaluated by Indore Colleges Academic & Placement Merit
             const INDORE_LISTS_BY_TAB: Record<string, string[]> = {
-              'Engineering': ['iet-davv', 'medi-caps-university', 'acropolis', 'sgsits', 'symbiosis-university', 'svvv-indore', 'iist-indore', 'patel-college', 'ips-engineering', 'malwa-institute'],
+              'Engineering': ['iist-indore', 'acropolis', 'iit-indore', 'medi-caps-university', 'skitm-indore', 'malwa-institute', 'lncts-indore', 'symbiosis-university', 'chameli-devi', 'pimr'],
               'BBA': ['pimr', 'ims-davv', 'symbiosis-university', 'medi-caps-university', 'sage-university', 'renaissance-college', 'softvision-college', 'alexia-college', 'gacc-indore', 'jaipuria-indore'],
               'BCA': ['holkar-science', 'acropolis', 'medi-caps-university', 'softvision-college', 'sage-university', 'pioneer-institute', 'christian-eminent', 'gacc-indore', 'apj-kalam-univ', 'svvv-indore'],
               'MBA': ['iim-indore', 'ims-davv', 'jaipuria-indore', 'nmims-indore', 'pimr', 'ips-ibmr', 'sgsits', 'renaissance-college', 'medi-caps-university', 'symbiosis-university'],
@@ -976,6 +976,9 @@ export default function Home({
                         {googleHeading}
                         <span className="inline-block w-[3px] h-[1em] ml-1 rounded-sm bg-[#0F244C] animate-pulse" />
                       </h3>
+                      <p className="text-sm sm:text-base text-gray-600 font-medium">
+                        Based on the SEO work of each individual institute
+                      </p>
                     </div>
 
                     <div className="space-y-3">
@@ -1007,6 +1010,9 @@ export default function Home({
                         {indoreHeading}
                         <span className="inline-block w-[3px] h-[1em] ml-1 rounded-sm bg-[#0F244C] animate-pulse" />
                       </h3>
+                      <p className="text-sm sm:text-base text-gray-600 font-medium">
+                        Based on placements, academics, facilities, and amenities
+                      </p>
                     </div>
 
                     <div className="space-y-3">
