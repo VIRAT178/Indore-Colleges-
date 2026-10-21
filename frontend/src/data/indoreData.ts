@@ -2,7 +2,6 @@
 import { Institute } from '../types';
 
 export const INDORE_INSTITUTES: Institute[] = [
-  // --- COLLEGES, UNIVERSITIES & TECH INST ---
   {
     id: 'malwa-institute',
     name: 'Malwa Institute of Science & Technology',
@@ -1630,6 +1629,66 @@ export const INDORE_INSTITUTES: Institute[] = [
     ],
     cutoffs: [
       { course: 'MBA Financial Administration', rank: 'CUET PG cutoff score or high ranking in merit list' }
+    ]
+  },
+  {
+    id: 'svim-indore',
+    name: 'Shri Vaishnav Institute of Management (SVIM)',
+    type: 'college',
+    category: 'Management',
+    boardOrAffiliation: 'Management Institute',
+    location: 'Indore',
+    feePerAnnum: 0,
+    rating: 0,
+    totalReviews: 0,
+    image: '/bg2.jpeg',
+    description: 'Shri Vaishnav Institute of Management (SVIM) is a management institute in Indore. Contact the institute directly for current program, admission, and fee information.',
+    facilities: [],
+    establishedYear: 0,
+    coordinates: { lat: 22.7196, lng: 75.8577 },
+    coursesList: [
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: 'Contact institute for current fees' },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: 'Contact institute for current fees' }
+    ]
+  },
+  {
+    id: 'gsimr',
+    name: 'Govindram Seksaria Institute of Management and Research (GSIMR)',
+    type: 'college',
+    category: 'Management',
+    boardOrAffiliation: 'Management Institute',
+    location: 'Indore',
+    feePerAnnum: 0,
+    rating: 0,
+    totalReviews: 0,
+    image: '/bg2.jpeg',
+    description: 'Govindram Seksaria Institute of Management and Research (GSIMR) is a management institute in Indore. Contact the institute directly for current program, admission, and fee information.',
+    facilities: [],
+    establishedYear: 0,
+    coordinates: { lat: 22.7196, lng: 75.8577 },
+    coursesList: [
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: 'Contact institute for current fees' },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: 'Contact institute for current fees' }
+    ]
+  },
+  {
+    id: 'iips-davv',
+    name: 'International Institute of Professional Studies (IIPS - DAVV)',
+    type: 'college',
+    category: 'Management',
+    boardOrAffiliation: 'Devi Ahilya Vishwavidyalaya (DAVV)',
+    location: 'Takshashila Campus',
+    feePerAnnum: 0,
+    rating: 0,
+    totalReviews: 0,
+    image: '/davv.jpg',
+    description: 'The International Institute of Professional Studies (IIPS) is a professional studies institute of Devi Ahilya Vishwavidyalaya (DAVV), Indore. Contact the institute for current program, admission, and fee information.',
+    facilities: [],
+    establishedYear: 0,
+    coordinates: { lat: 22.7129, lng: 75.8729 },
+    coursesList: [
+      { name: 'Integrated Management Programme', duration: '5 Years', fees: 'Contact institute for current fees' },
+      { name: 'Management Programme', duration: 'As per programme', fees: 'Contact institute for current fees' }
     ]
   },
   {
