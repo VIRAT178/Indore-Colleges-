@@ -664,9 +664,9 @@ export default function Home({
             // Category 01: Top 10 by Google Ratings & Search Reviews
             const GOOGLE_LISTS_BY_TAB: Record<string, string[]> = {
               'Engineering': ['iit-indore', 'sgsits', 'iet-davv', 'acropolis', 'iist-indore', 'medi-caps-university', 'ips-engineering', 'pimr', 'malwa-institute', 'skitm-indore'],
-              'BBA': ['softvision-college', 'alexia-college', 'gacc-indore', 'renaissance-college', 'pimr', 'radiant-institute', 'ims-davv', 'symbiosis-university', 'medi-caps-university', 'sage-university'],
+              'BBA': ['iim-indore', 'pimr', 'ims-davv', 'jaipuria-indore', 'nmims-indore', 'ips-ibmr', 'svim-indore', 'symbiosis-university', 'gsimr', 'iips-davv'],
               'BCA': ['softvision-college', 'sgsits', 'pioneer-institute', 'christian-eminent', 'holkar-science', 'renaissance-college', 'gacc-indore', 'alexia-college', 'apj-kalam-univ', 'sage-university'],
-              'MBA': ['jaipuria-indore', 'sgsits', 'ims-davv', 'pimr', 'renaissance-college', 'gujarati-professional', 'iim-indore', 'ips-ibmr', 'nmims-indore', 'medi-caps-university'],
+              'MBA': ['iim-indore', 'pimr', 'ims-davv', 'jaipuria-indore', 'nmims-indore', 'ips-ibmr', 'svim-indore', 'symbiosis-university', 'gsimr', 'iips-davv'],
               'LAW': ['iil-indore', 'nmims-law', 'symbiosis-university', 'pimr', 'renaissance-college', 'oriental-university', 'davv', 'iim-indore', 'sage-university', 'acropolis'],
               'MEDICAL': ['mgm-medical', 'saims', 'index-medical', 'shubhdeep-ayurved', 'sage-university', 'malwa-institute', 'medi-caps-university', 'symbiosis-university', 'acropolis', 'davv'],
               'DESIGN': ['cindrebay-design', 'symbiosis-university', 'svvv-indore', 'renaissance-college', 'acropolis', 'sage-university', 'medi-caps-university', 'pimr', 'softvision-college', 'nmims-stme']
@@ -675,12 +675,18 @@ export default function Home({
             // Category 02: Top 10 evaluated by Indore Colleges Academic & Placement Merit
             const INDORE_LISTS_BY_TAB: Record<string, string[]> = {
               'Engineering': ['iist-indore', 'acropolis', 'iit-indore', 'medi-caps-university', 'skitm-indore', 'malwa-institute', 'lncts-indore', 'symbiosis-university', 'chameli-devi', 'pimr'],
-              'BBA': ['pimr', 'ims-davv', 'symbiosis-university', 'medi-caps-university', 'sage-university', 'renaissance-college', 'softvision-college', 'alexia-college', 'gacc-indore', 'jaipuria-indore'],
+              'BBA': ['iim-indore', 'symbiosis-university', 'nmims-indore', 'pimr', 'malwa-institute', 'acropolis', 'sage-university', 'ims-davv', 'jaipuria-indore', 'ips-ibmr'],
               'BCA': ['holkar-science', 'acropolis', 'medi-caps-university', 'softvision-college', 'sage-university', 'pioneer-institute', 'christian-eminent', 'gacc-indore', 'apj-kalam-univ', 'svvv-indore'],
-              'MBA': ['iim-indore', 'ims-davv', 'jaipuria-indore', 'nmims-indore', 'pimr', 'ips-ibmr', 'sgsits', 'renaissance-college', 'medi-caps-university', 'symbiosis-university'],
+              'MBA': ['iim-indore', 'symbiosis-university', 'nmims-indore', 'pimr', 'malwa-institute', 'acropolis', 'sage-university', 'ims-davv', 'jaipuria-indore', 'ips-ibmr'],
               'LAW': ['iil-indore', 'davv', 'nmims-law', 'symbiosis-university', 'pimr', 'renaissance-college', 'oriental-university', 'iim-indore', 'sage-university', 'acropolis'],
               'MEDICAL': ['mgm-medical', 'saims', 'index-medical', 'shubhdeep-ayurved', 'medi-caps-university', 'sage-university', 'symbiosis-university', 'acropolis', 'davv', 'malwa-institute'],
               'DESIGN': ['symbiosis-university', 'cindrebay-design', 'svvv-indore', 'sage-university', 'renaissance-college', 'acropolis', 'softvision-college', 'medi-caps-university', 'pimr', 'gacc-indore']
+            };
+
+            const COLLEGE_NAME_FALLBACKS: Record<string, string> = {
+              'svim-indore': 'Shri Vaishnav Institute of Management (SVIM)',
+              'gsimr': 'Govindram Seksaria Institute of Management and Research (GSIMR)',
+              'iips-davv': 'International Institute of Professional Studies (IIPS - DAVV)'
             };
 
             // Specific Indore Colleges Rating scores per tab
@@ -899,23 +905,29 @@ export default function Home({
 
             const googleIds = GOOGLE_LISTS_BY_TAB[activeSearchedTab] || [];
             const googleCollegeMatches = googleIds
-              .map(id => INDORE_INSTITUTES.find(inst => inst.id === id))
-              .filter(Boolean) as Institute[];
-            const googleColleges = (activeSearchedTab === 'Engineering'
+              .flatMap(id => {
+                const institute = INDORE_INSTITUTES.find(inst => inst.id === id);
+                const name = institute?.name || COLLEGE_NAME_FALLBACKS[id];
+                return name ? [{ id, name, institute }] : [];
+              });
+            const googleColleges = (activeSearchedTab === 'Engineering' || activeSearchedTab === 'BBA' || activeSearchedTab === 'MBA'
               ? googleCollegeMatches
-              : googleCollegeMatches.sort((a, b) => getGoogleRating(b) - getGoogleRating(a))
+              : googleCollegeMatches.sort((a, b) => (b.institute ? getGoogleRating(b.institute) : 0) - (a.institute ? getGoogleRating(a.institute) : 0))
             ).slice(0, 10);
 
             const indoreIds = INDORE_LISTS_BY_TAB[activeSearchedTab] || [];
             const indoreCollegeMatches = indoreIds
-              .map(id => INDORE_INSTITUTES.find(inst => inst.id === id))
-              .filter(Boolean) as Institute[];
-            const indoreColleges = (activeSearchedTab === 'Engineering'
+              .flatMap(id => {
+                const institute = INDORE_INSTITUTES.find(inst => inst.id === id);
+                const name = institute?.name || COLLEGE_NAME_FALLBACKS[id];
+                return name ? [{ id, name, institute }] : [];
+              });
+            const indoreColleges = (activeSearchedTab === 'Engineering' || activeSearchedTab === 'BBA' || activeSearchedTab === 'MBA'
               ? indoreCollegeMatches
-              : indoreCollegeMatches.sort((a, b) => getIndoreRating(b) - getIndoreRating(a))
+              : indoreCollegeMatches.sort((a, b) => (b.institute ? getIndoreRating(b.institute) : 0) - (a.institute ? getIndoreRating(a.institute) : 0))
             ).slice(0, 10);
 
-            const renderCollegeListItem = (college: Institute, ratingType: 'google' | 'indore', rank: number) => {
+            const renderCollegeListItem = (college: { id: string; name: string; institute?: Institute }, ratingType: 'google' | 'indore', rank: number) => {
               return (
                 <div
                   key={`${ratingType}-${college.id}`}
@@ -925,14 +937,20 @@ export default function Home({
                     Rank #{rank}
                   </div>
                   <span aria-hidden="true" className="shrink-0 text-gray-400">|</span>
-                  <button
-                    type="button"
-                    onClick={() => onViewCollegeDetail?.(college)}
-                    className="min-w-0 flex-1 text-left font-outfit text-sm font-bold leading-snug text-orange-600 transition-colors hover:text-black sm:text-base"
-                    title={college.name}
-                  >
-                    {college.name}
-                  </button>
+                  {college.institute ? (
+                    <button
+                      type="button"
+                      onClick={() => college.institute && onViewCollegeDetail?.(college.institute)}
+                      className="min-w-0 flex-1 text-left font-outfit text-sm font-bold leading-snug text-orange-600 transition-colors hover:text-black sm:text-base"
+                      title={college.name}
+                    >
+                      {college.name}
+                    </button>
+                  ) : (
+                    <span className="min-w-0 flex-1 text-left font-outfit text-sm font-bold leading-snug text-orange-600 sm:text-base">
+                      {college.name}
+                    </span>
+                  )}
                   <span aria-hidden="true" className="shrink-0 text-gray-400">|</span>
                   <button
                     type="button"
@@ -981,7 +999,7 @@ export default function Home({
                         <span className="inline-block w-[3px] h-[1em] ml-1 rounded-sm bg-[#0F244C] animate-pulse" />
                       </h3>
                       <p className="text-sm sm:text-base text-gray-600 font-medium">
-                        Based on the SEO work of each individual institute
+                       [ Based on the SEO work of individual institute ]
                       </p>
                     </div>
 
@@ -1015,7 +1033,7 @@ export default function Home({
                         <span className="inline-block w-[3px] h-[1em] ml-1 rounded-sm bg-[#0F244C] animate-pulse" />
                       </h3>
                       <p className="text-sm sm:text-base text-gray-600 font-medium">
-                        Based on placements, academics, facilities, and amenities
+                       [ Based on placements, academics, facilities, and amenities ]
                       </p>
                     </div>
 
