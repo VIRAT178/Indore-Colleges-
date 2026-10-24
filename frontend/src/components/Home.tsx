@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   Search, 
   MapPin, 
@@ -66,6 +66,25 @@ export default function Home({
   const [selectedBudgetVal, setSelectedBudgetVal] = useState('All');
   const [selectedStreamVal, setSelectedStreamVal] = useState('All');
   const [selectedLocationVal, setSelectedLocationVal] = useState('All');
+  const introVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = introVideoRef.current;
+    if (!video) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        void video.play().catch(() => {
+          // Autoplay may be blocked by browser or device settings.
+        });
+      } else {
+        video.pause();
+      }
+    }, { threshold: 0.25 });
+
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
 
   // CarDekho style Searched Colleges tab state
   const [activeSearchedTab, setActiveSearchedTab] = useState<'Engineering' | 'BBA' | 'BCA' | 'MBA' | 'LAW' | 'MEDICAL' | 'DESIGN'>('Engineering');
@@ -654,9 +673,11 @@ export default function Home({
               </div>
               <div className="overflow-hidden rounded-xl bg-black sm:rounded-2xl md:aspect-[2.4/1]">
                 <video
+                  ref={introVideoRef}
                   className="aspect-video w-full md:h-full md:object-contain"
-                                   src="/intro-video.mp4"
+                  src="/intro-video.mp4"
                   controls
+                  muted
                   playsInline
                   preload="metadata"
                   aria-label="Introduction to Indore Colleges"
