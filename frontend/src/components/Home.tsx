@@ -1,3 +1,295 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { 
+  Search, 
+  MapPin, 
+  Star, 
+  Check, 
+  Send, 
+  ArrowUpRight, 
+  BookOpen, 
+  Users, 
+  PhoneCall, 
+  Compass, 
+  HelpCircle, 
+  Award, 
+  Quote,
+  CheckCircle2,
+  MessageSquare,
+  GraduationCap,
+  Calendar,
+  ChevronRight,
+  TrendingUp,
+  Building,
+  Heart,
+  ExternalLink,
+  Globe,
+  MonitorPlay
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import Logo, { LogoIcon } from './Logo';
+import StreamSelector from './StreamSelector';
+import { INDORE_INSTITUTES, INDORE_LOCATIONS, INDORE_LOCALITY_GROUPS, CATEGORIES } from '../data/indoreData';
+import { Institute } from '../types';
+
+interface HomeProps {
+  setActiveTab: (tab: 'home' | 'explore' | 'register' | 'dashboard' | 'browse-campus' | 'blogs' | 'about' | 'careers' | 'contact' | 'college-portal' | 'admin-panel') => void;
+  setInstituteTypeFilter: (type: 'all' | 'school' | 'college') => void;
+  setSelectedCategory: (cat: string) => void;
+  setSelectedBoard: (board: string) => void;
+  setSelectedLocation: (loc: string) => void;
+  setSearchQuery: (query: string) => void;
+  onOpenCounseling: () => void;
+  setSelectedStream?: (stream: string | null) => void;
+  maxFee?: number;
+  setMaxFee?: (fee: number) => void;
+  onViewCollegeDetail?: (inst: Institute) => void;
+  onViewLocality?: (locality: string) => void;
+}
+
+export default function Home({
+  setActiveTab,
+  setInstituteTypeFilter,
+  setSelectedCategory,
+  setSelectedBoard,
+  setSelectedLocation,
+  setSearchQuery,
+  onOpenCounseling,
+  setSelectedStream,
+  maxFee,
+  setMaxFee,
+  onViewCollegeDetail,
+  onViewLocality
+}: HomeProps) {
+  // Search card states (CarDekho style)
+  const [searchMode, setSearchMode] = useState<'college' | 'course'>('college');
+  const [searchOption, setSearchOption] = useState<'budget' | 'stream'>('budget');
+  const [selectedBudgetVal, setSelectedBudgetVal] = useState('All');
+  const [selectedStreamVal, setSelectedStreamVal] = useState('All');
+  const [selectedLocationVal, setSelectedLocationVal] = useState('All');
+
+  // CarDekho style Searched Colleges tab state
+  const [activeSearchedTab, setActiveSearchedTab] = useState<'Engineering' | 'BBA' | 'BCA' | 'MBA' | 'LAW' | 'MEDICAL' | 'DESIGN'>('Engineering');
+
+  // Hero Background (Keeping only bg2 for now; video will be added later)
+  const heroBackgrounds = [
+    {
+      id: 'bg2',
+      title: 'Modern University & Engineering Grounds',
+      src: '/bg2.jpeg'
+    }
+  ];
+
+  const [currentBgIndex, setCurrentBgIndex] = useState(0);
+
+  const dynamicDisciplines = useMemo(() => [
+    'Engineering',
+    'Management',
+    'Science',
+    'Pharmacy',
+    'Law'
+  ], []);
+
+  const [currentDisciplineIndex, setCurrentDisciplineIndex] = useState(0);
+  const [typedText, setTypedText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const ratingHeadingOptions = useMemo(() => ({
+    google: 'According to Google Rating',
+    indore: 'According to Indore Colleges Rating'
+  }), []);
+
+  const [googleHeading, setGoogleHeading] = useState('');
+  const [indoreHeading, setIndoreHeading] = useState('');
+  const [isGoogleDeleting, setIsGoogleDeleting] = useState(false);
+  const [isIndoreDeleting, setIsIndoreDeleting] = useState(false);
+
+  useEffect(() => {
+    const currentWord = dynamicDisciplines[currentDisciplineIndex];
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (!isDeleting) {
+      if (typedText.length < currentWord.length) {
+        timeout = setTimeout(() => {
+          setTypedText(currentWord.slice(0, typedText.length + 1));
+        }, 90);
+      } else {
+        timeout = setTimeout(() => {
+          setIsDeleting(true);
+        }, 1800);
+      }
+    } else {
+      if (typedText.length > 0) {
+        timeout = setTimeout(() => {
+          setTypedText(currentWord.slice(0, typedText.length - 1));
+        }, 45);
+      } else {
+        setIsDeleting(false);
+        setCurrentDisciplineIndex((prev) => (prev + 1) % dynamicDisciplines.length);
+      }
+    }
+
+    return () => clearTimeout(timeout);
+  }, [typedText, isDeleting, currentDisciplineIndex, dynamicDisciplines]);
+
+  useEffect(() => {
+    const currentText = ratingHeadingOptions.google;
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (!isGoogleDeleting) {
+      if (googleHeading.length < currentText.length) {
+        timeout = setTimeout(() => {
+          setGoogleHeading(currentText.slice(0, googleHeading.length + 1));
+        }, 35);
+      } else {
+        timeout = setTimeout(() => {
+          setIsGoogleDeleting(true);
+        }, 1800);
+      }
+    } else {
+      if (googleHeading.length > 0) {
+        timeout = setTimeout(() => {
+          setGoogleHeading(currentText.slice(0, googleHeading.length - 1));
+        }, 20);
+      } else {
+        setIsGoogleDeleting(false);
+      }
+    }
+
+    return () => clearTimeout(timeout);
+  }, [googleHeading, isGoogleDeleting, ratingHeadingOptions.google]);
+
+  useEffect(() => {
+    const currentText = ratingHeadingOptions.indore;
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (!isIndoreDeleting) {
+      if (indoreHeading.length < currentText.length) {
+        timeout = setTimeout(() => {
+          setIndoreHeading(currentText.slice(0, indoreHeading.length + 1));
+        }, 35);
+      } else {
+        timeout = setTimeout(() => {
+          setIsIndoreDeleting(true);
+        }, 1800);
+      }
+    } else {
+      if (indoreHeading.length > 0) {
+        timeout = setTimeout(() => {
+          setIndoreHeading(currentText.slice(0, indoreHeading.length - 1));
+        }, 20);
+      } else {
+        setIsIndoreDeleting(false);
+      }
+    }
+
+    return () => clearTimeout(timeout);
+  }, [indoreHeading, isIndoreDeleting, ratingHeadingOptions.indore]);
+
+  // Auto-slide transition if multiple backgrounds exist
+  useEffect(() => {
+    if (heroBackgrounds.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentBgIndex((prev) => (prev + 1) % heroBackgrounds.length);
+    }, 7000);
+    return () => clearInterval(timer);
+  }, [heroBackgrounds.length]);
+
+  const handleFeaturedClick = (id: string) => {
+    const matched = INDORE_INSTITUTES.find(inst => inst.id === id);
+    if (matched && onViewCollegeDetail) {
+      onViewCollegeDetail(matched);
+    } else {
+      setSearchQuery('');
+      setInstituteTypeFilter('college');
+      setActiveTab('explore');
+    }
+  };
+
+  const handleFormSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setInstituteTypeFilter('college');
+
+    // Handle stream selection
+    if (selectedStreamVal && selectedStreamVal !== 'All') {
+      setSelectedCategory(selectedStreamVal);
+      if (setSelectedStream) {
+        const catLower = selectedStreamVal.toLowerCase();
+        if (catLower.includes('engineering')) setSelectedStream('engineering');
+        else if (catLower.includes('management')) setSelectedStream('mba');
+        else if (catLower.includes('medical')) setSelectedStream('medical');
+        else if (catLower.includes('design')) setSelectedStream('design');
+        else setSelectedStream(null);
+      }
+    } else {
+      setSelectedCategory('All');
+      if (setSelectedStream) setSelectedStream(null);
+    }
+
+    // Handle location selection
+    if (selectedLocationVal && selectedLocationVal !== 'All') {
+      setSelectedLocation(selectedLocationVal);
+    } else {
+      setSelectedLocation('All');
+    }
+
+    // Handle budget limit
+    if (setMaxFee) {
+      if (selectedBudgetVal === '1lakh') setMaxFee(100000);
+      else if (selectedBudgetVal === '2lakh') setMaxFee(200000);
+      else if (selectedBudgetVal === '5lakh') setMaxFee(500000);
+      else if (selectedBudgetVal === '10lakh') setMaxFee(1000000);
+      else setMaxFee(1500000); // Max fee limit
+    }
+
+    setSearchQuery('');
+    setActiveTab('explore');
+
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
+  // Search input state
+  const [localSearch, setLocalSearch] = useState('');
+  
+  // Schedule a Meeting Form State
+  const [formName, setFormName] = useState('');
+  const [formPhone, setFormPhone] = useState('');
+  const [formEmail, setFormEmail] = useState('');
+  const [formQuery, setFormQuery] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  // Review filter state
+  const [reviewFilter, setReviewFilter] = useState<'all' | 'students' | 'parents'>('all');
+
+  // Action helpers
+  const handleHeroSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!localSearch.trim()) return;
+    setSearchQuery(localSearch);
+    setInstituteTypeFilter('college');
+    setActiveTab('explore');
+    // Scroll to directory
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
+  const handleCategoryClick = (category: string, type: 'school' | 'college' = 'college') => {
+    setInstituteTypeFilter('college');
+    setSelectedCategory(category);
+    setSelectedBoard('All');
+    setSelectedLocation('All');
+    setSearchQuery('');
+    if (setSelectedStream) {
+      const catLower = category.toLowerCase();
+      if (catLower.includes('engineering')) setSelectedStream('engineering');
+      else if (catLower.includes('management')) setSelectedStream('mba');
+      else if (catLower.includes('medical')) setSelectedStream('medical');
+      else if (catLower.includes('design')) setSelectedStream('design');
+    }
+    setActiveTab('explore');
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 100);
