@@ -655,7 +655,7 @@ export default function Home({
               <div className="overflow-hidden rounded-xl bg-black sm:rounded-2xl md:aspect-[2.4/1]">
                 <video
                   className="aspect-video w-full md:h-full md:object-contain"
-                  src={new URL('../../Intro Video.mp4', import.meta.url).href}
+                                   src="/intro-video.mp4"
                   controls
                   playsInline
                   preload="metadata"
