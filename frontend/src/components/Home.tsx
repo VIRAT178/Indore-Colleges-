@@ -1,294 +1,3 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  Search, 
-  MapPin, 
-  Star, 
-  Check, 
-  Send, 
-  ArrowUpRight, 
-  BookOpen, 
-  Users, 
-  PhoneCall, 
-  Compass, 
-  HelpCircle, 
-  Award, 
-  Quote,
-  CheckCircle2,
-  MessageSquare,
-  GraduationCap,
-  Calendar,
-  ChevronRight,
-  TrendingUp,
-  Building,
-  Heart,
-  ExternalLink,
-  Globe
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import Logo, { LogoIcon } from './Logo';
-import StreamSelector from './StreamSelector';
-import { INDORE_INSTITUTES, INDORE_LOCATIONS, INDORE_LOCALITY_GROUPS, CATEGORIES } from '../data/indoreData';
-import { Institute } from '../types';
-
-interface HomeProps {
-  setActiveTab: (tab: 'home' | 'explore' | 'register' | 'dashboard' | 'browse-campus' | 'blogs' | 'about' | 'careers' | 'contact' | 'college-portal' | 'admin-panel') => void;
-  setInstituteTypeFilter: (type: 'all' | 'school' | 'college') => void;
-  setSelectedCategory: (cat: string) => void;
-  setSelectedBoard: (board: string) => void;
-  setSelectedLocation: (loc: string) => void;
-  setSearchQuery: (query: string) => void;
-  onOpenCounseling: () => void;
-  setSelectedStream?: (stream: string | null) => void;
-  maxFee?: number;
-  setMaxFee?: (fee: number) => void;
-  onViewCollegeDetail?: (inst: Institute) => void;
-  onViewLocality?: (locality: string) => void;
-}
-
-export default function Home({
-  setActiveTab,
-  setInstituteTypeFilter,
-  setSelectedCategory,
-  setSelectedBoard,
-  setSelectedLocation,
-  setSearchQuery,
-  onOpenCounseling,
-  setSelectedStream,
-  maxFee,
-  setMaxFee,
-  onViewCollegeDetail,
-  onViewLocality
-}: HomeProps) {
-  // Search card states (CarDekho style)
-  const [searchMode, setSearchMode] = useState<'college' | 'course'>('college');
-  const [searchOption, setSearchOption] = useState<'budget' | 'stream'>('budget');
-  const [selectedBudgetVal, setSelectedBudgetVal] = useState('All');
-  const [selectedStreamVal, setSelectedStreamVal] = useState('All');
-  const [selectedLocationVal, setSelectedLocationVal] = useState('All');
-
-  // CarDekho style Searched Colleges tab state
-  const [activeSearchedTab, setActiveSearchedTab] = useState<'Engineering' | 'BBA' | 'BCA' | 'MBA' | 'LAW' | 'MEDICAL' | 'DESIGN'>('Engineering');
-
-  // Hero Background (Keeping only bg2 for now; video will be added later)
-  const heroBackgrounds = [
-    {
-      id: 'bg2',
-      title: 'Modern University & Engineering Grounds',
-      src: '/bg2.jpeg'
-    }
-  ];
-
-  const [currentBgIndex, setCurrentBgIndex] = useState(0);
-
-  const dynamicDisciplines = useMemo(() => [
-    'Engineering',
-    'Management',
-    'Science',
-    'Pharmacy',
-    'Law'
-  ], []);
-
-  const [currentDisciplineIndex, setCurrentDisciplineIndex] = useState(0);
-  const [typedText, setTypedText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const ratingHeadingOptions = useMemo(() => ({
-    google: 'According to Google Rating',
-    indore: 'According to Indore Colleges Rating'
-  }), []);
-
-  const [googleHeading, setGoogleHeading] = useState('');
-  const [indoreHeading, setIndoreHeading] = useState('');
-  const [isGoogleDeleting, setIsGoogleDeleting] = useState(false);
-  const [isIndoreDeleting, setIsIndoreDeleting] = useState(false);
-
-  useEffect(() => {
-    const currentWord = dynamicDisciplines[currentDisciplineIndex];
-    let timeout: ReturnType<typeof setTimeout>;
-
-    if (!isDeleting) {
-      if (typedText.length < currentWord.length) {
-        timeout = setTimeout(() => {
-          setTypedText(currentWord.slice(0, typedText.length + 1));
-        }, 90);
-      } else {
-        timeout = setTimeout(() => {
-          setIsDeleting(true);
-        }, 1800);
-      }
-    } else {
-      if (typedText.length > 0) {
-        timeout = setTimeout(() => {
-          setTypedText(currentWord.slice(0, typedText.length - 1));
-        }, 45);
-      } else {
-        setIsDeleting(false);
-        setCurrentDisciplineIndex((prev) => (prev + 1) % dynamicDisciplines.length);
-      }
-    }
-
-    return () => clearTimeout(timeout);
-  }, [typedText, isDeleting, currentDisciplineIndex, dynamicDisciplines]);
-
-  useEffect(() => {
-    const currentText = ratingHeadingOptions.google;
-    let timeout: ReturnType<typeof setTimeout>;
-
-    if (!isGoogleDeleting) {
-      if (googleHeading.length < currentText.length) {
-        timeout = setTimeout(() => {
-          setGoogleHeading(currentText.slice(0, googleHeading.length + 1));
-        }, 35);
-      } else {
-        timeout = setTimeout(() => {
-          setIsGoogleDeleting(true);
-        }, 1800);
-      }
-    } else {
-      if (googleHeading.length > 0) {
-        timeout = setTimeout(() => {
-          setGoogleHeading(currentText.slice(0, googleHeading.length - 1));
-        }, 20);
-      } else {
-        setIsGoogleDeleting(false);
-      }
-    }
-
-    return () => clearTimeout(timeout);
-  }, [googleHeading, isGoogleDeleting, ratingHeadingOptions.google]);
-
-  useEffect(() => {
-    const currentText = ratingHeadingOptions.indore;
-    let timeout: ReturnType<typeof setTimeout>;
-
-    if (!isIndoreDeleting) {
-      if (indoreHeading.length < currentText.length) {
-        timeout = setTimeout(() => {
-          setIndoreHeading(currentText.slice(0, indoreHeading.length + 1));
-        }, 35);
-      } else {
-        timeout = setTimeout(() => {
-          setIsIndoreDeleting(true);
-        }, 1800);
-      }
-    } else {
-      if (indoreHeading.length > 0) {
-        timeout = setTimeout(() => {
-          setIndoreHeading(currentText.slice(0, indoreHeading.length - 1));
-        }, 20);
-      } else {
-        setIsIndoreDeleting(false);
-      }
-    }
-
-    return () => clearTimeout(timeout);
-  }, [indoreHeading, isIndoreDeleting, ratingHeadingOptions.indore]);
-
-  // Auto-slide transition if multiple backgrounds exist
-  useEffect(() => {
-    if (heroBackgrounds.length <= 1) return;
-    const timer = setInterval(() => {
-      setCurrentBgIndex((prev) => (prev + 1) % heroBackgrounds.length);
-    }, 7000);
-    return () => clearInterval(timer);
-  }, [heroBackgrounds.length]);
-
-  const handleFeaturedClick = (id: string) => {
-    const matched = INDORE_INSTITUTES.find(inst => inst.id === id);
-    if (matched && onViewCollegeDetail) {
-      onViewCollegeDetail(matched);
-    } else {
-      setSearchQuery('');
-      setInstituteTypeFilter('college');
-      setActiveTab('explore');
-    }
-  };
-
-  const handleFormSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setInstituteTypeFilter('college');
-
-    // Handle stream selection
-    if (selectedStreamVal && selectedStreamVal !== 'All') {
-      setSelectedCategory(selectedStreamVal);
-      if (setSelectedStream) {
-        const catLower = selectedStreamVal.toLowerCase();
-        if (catLower.includes('engineering')) setSelectedStream('engineering');
-        else if (catLower.includes('management')) setSelectedStream('mba');
-        else if (catLower.includes('medical')) setSelectedStream('medical');
-        else if (catLower.includes('design')) setSelectedStream('design');
-        else setSelectedStream(null);
-      }
-    } else {
-      setSelectedCategory('All');
-      if (setSelectedStream) setSelectedStream(null);
-    }
-
-    // Handle location selection
-    if (selectedLocationVal && selectedLocationVal !== 'All') {
-      setSelectedLocation(selectedLocationVal);
-    } else {
-      setSelectedLocation('All');
-    }
-
-    // Handle budget limit
-    if (setMaxFee) {
-      if (selectedBudgetVal === '1lakh') setMaxFee(100000);
-      else if (selectedBudgetVal === '2lakh') setMaxFee(200000);
-      else if (selectedBudgetVal === '5lakh') setMaxFee(500000);
-      else if (selectedBudgetVal === '10lakh') setMaxFee(1000000);
-      else setMaxFee(1500000); // Max fee limit
-    }
-
-    setSearchQuery('');
-    setActiveTab('explore');
-
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 100);
-  };
-
-  // Search input state
-  const [localSearch, setLocalSearch] = useState('');
-  
-  // Schedule a Meeting Form State
-  const [formName, setFormName] = useState('');
-  const [formPhone, setFormPhone] = useState('');
-  const [formEmail, setFormEmail] = useState('');
-  const [formQuery, setFormQuery] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-
-  // Review filter state
-  const [reviewFilter, setReviewFilter] = useState<'all' | 'students' | 'parents'>('all');
-
-  // Action helpers
-  const handleHeroSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!localSearch.trim()) return;
-    setSearchQuery(localSearch);
-    setInstituteTypeFilter('college');
-    setActiveTab('explore');
-    // Scroll to directory
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 100);
-  };
-
-  const handleCategoryClick = (category: string, type: 'school' | 'college' = 'college') => {
-    setInstituteTypeFilter('college');
-    setSelectedCategory(category);
-    setSelectedBoard('All');
-    setSelectedLocation('All');
-    setSearchQuery('');
-    if (setSelectedStream) {
-      const catLower = category.toLowerCase();
-      if (catLower.includes('engineering')) setSelectedStream('engineering');
-      else if (catLower.includes('management')) setSelectedStream('mba');
-      else if (catLower.includes('medical')) setSelectedStream('medical');
-      else if (catLower.includes('design')) setSelectedStream('design');
-    }
-    setActiveTab('explore');
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 100);
@@ -623,6 +332,50 @@ export default function Home({
               <div className="text-[11px] sm:text-xs text-gray-700 font-medium mt-0.5">Free Guidance</div>
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Intro video */}
+      <section className="relative overflow-hidden bg-slate-950 py-14 sm:py-20 md:py-6 lg:py-8">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/35 via-slate-950 to-slate-950" />
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto mb-8 max-w-2xl text-center sm:mb-10 md:mb-4">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 md:mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-orange-300">
+              <MonitorPlay className="h-4 w-4" />
+              Get to know us
+            </div>
+            <h2 className="font-outfit text-3xl font-extrabold tracking-tight text-white sm:text-4xl md:text-3xl">
+              Your journey to the right college starts here
+            </h2>
+          </div>
+
+          <div className="mx-auto max-w-4xl md:max-w-5xl lg:max-w-6xl">
+            <div className="rounded-[1.5rem] border border-slate-700 bg-gradient-to-b from-slate-700 to-slate-900 p-2 shadow-[0_30px_80px_-24px_rgba(0,0,0,0.8)] sm:rounded-[2rem] sm:p-3">
+              <div className="flex h-7 items-center justify-between px-2 sm:h-9 sm:px-3">
+                <div className="flex items-center gap-1.5" aria-hidden="true">
+                  <span className="h-2 w-2 rounded-full bg-red-400 sm:h-2.5 sm:w-2.5" />
+                  <span className="h-2 w-2 rounded-full bg-amber-300 sm:h-2.5 sm:w-2.5" />
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 sm:h-2.5 sm:w-2.5" />
+                </div>
+                <span className="text-[10px] font-medium tracking-wide text-slate-400 sm:text-xs">INDORE COLLEGES</span>
+                <span className="w-8 sm:w-10" aria-hidden="true" />
+              </div>
+              <div className="overflow-hidden rounded-xl bg-black sm:rounded-2xl md:aspect-[2.4/1]">
+                <video
+                  className="aspect-video w-full md:h-full md:object-contain"
+                  src={new URL('../../Intro Video.mp4', import.meta.url).href}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  aria-label="Introduction to Indore Colleges"
+                >
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            </div>
+            <div className="mx-auto h-5 w-1/3 rounded-b-xl bg-gradient-to-b from-slate-700 to-slate-800 sm:h-7" aria-hidden="true" />
+            <div className="mx-auto h-2 w-2/3 rounded-full bg-slate-700 shadow-lg sm:h-3" aria-hidden="true" />
+          </div>
         </div>
       </section>
 
