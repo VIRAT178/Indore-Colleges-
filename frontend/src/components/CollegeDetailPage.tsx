@@ -205,7 +205,14 @@ export default function CollegeDetailPage({
               muted
               playsInline
               className="w-full h-full object-cover object-center transition-opacity duration-700"
-              onError={() => setVideoError(true)}
+              onError={(event) => {
+                const video = event.currentTarget;
+                console.error(
+                  `Failed to load background video for ${institute.name}: ${video.currentSrc}`,
+                  video.error
+                );
+                setVideoError(true);
+              }}
             />
           ) : videoSource.type === 'youtube' && !videoError ? (
             <div className="absolute inset-0 w-full h-full overflow-hidden scale-110">
