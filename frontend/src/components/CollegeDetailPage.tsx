@@ -23,7 +23,9 @@ import {
   Video,
   FileText,
   Compass,
-  CheckCircle2
+  CheckCircle2,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { LogoIcon } from './Logo';
@@ -98,6 +100,7 @@ export default function CollegeDetailPage({
 
   // Background Video states
   const [videoError, setVideoError] = useState(false);
+  const [isBackgroundVideoMuted, setIsBackgroundVideoMuted] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'courses' | 'placements' | 'cutoffs' | 'facilities' | 'faculty' | 'reviews'>('overview');
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -111,6 +114,28 @@ export default function CollegeDetailPage({
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setVideoError(false);
   }, [institute.id]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || videoSource.type !== 'html5' || videoError) return;
+
+    const playWithAudioFallback = async () => {
+      video.muted = false;
+      try {
+        await video.play();
+      } catch {
+        video.muted = true;
+        setIsBackgroundVideoMuted(true);
+        try {
+          await video.play();
+        } catch (error) {
+          console.error(`Could not autoplay the background video for ${institute.name}:`, error);
+        }
+      }
+    };
+
+    void playWithAudioFallback();
+  }, [institute.id, institute.name, videoError, videoSource.src, videoSource.type]);
 
   const fetchReviews = async () => {
     setLoadingReviews(true);
@@ -200,9 +225,8 @@ export default function CollegeDetailPage({
             <video
               ref={videoRef}
               src={videoSource.src}
-              autoPlay
               loop
-              muted
+              muted={isBackgroundVideoMuted}
               playsInline
               className="w-full h-full object-cover object-center transition-opacity duration-700"
               onError={(event) => {
@@ -264,6 +288,24 @@ export default function CollegeDetailPage({
               <ArrowLeft className="h-4 w-4" />
               <span>Back to Colleges Directory</span>
             </button>
+
+            {videoSource.type === 'html5' && !videoError && (
+              <button
+                type="button"
+                onClick={() => {
+                  const video = videoRef.current;
+                  if (!video) return;
+                  const nextMuted = !video.muted;
+                  video.muted = nextMuted;
+                  setIsBackgroundVideoMuted(nextMuted);
+                }}
+                aria-pressed={!isBackgroundVideoMuted}
+                className="ml-auto inline-flex items-center gap-2 rounded-xl border border-white/10 bg-slate-900/60 px-3.5 py-2 text-xs font-semibold text-white/90 shadow-sm backdrop-blur-md transition-colors hover:bg-slate-900/85 hover:text-white"
+              >
+                {isBackgroundVideoMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                <span>{isBackgroundVideoMuted ? 'Turn sound on' : 'Mute video'}</span>
+              </button>
+            )}
 
           </div>
         </div>
