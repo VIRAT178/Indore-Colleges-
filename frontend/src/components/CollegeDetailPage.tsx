@@ -202,7 +202,7 @@ export default function CollegeDetailPage({
               src={videoSource.src}
               autoPlay
               loop
-              muted={false}
+              muted
               playsInline
               className="w-full h-full object-cover object-center transition-opacity duration-700"
               onError={() => setVideoError(true)}
@@ -264,7 +264,7 @@ export default function CollegeDetailPage({
         {/* Hero Bottom Content: College Name */}
         <div className="relative z-20 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 mt-auto">
           <div className="mx-auto max-w-7xl">
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.1] mb-4 text-balance">
+            <h1 className={`${institute.id === 'malwa-institute' ? 'text-2xl sm:text-4xl lg:text-5xl' : 'text-3xl sm:text-5xl lg:text-6xl'} font-extrabold tracking-tight text-white leading-[1.1] mb-4 text-balance`}>
               {institute.name}
             </h1>
           </div>
