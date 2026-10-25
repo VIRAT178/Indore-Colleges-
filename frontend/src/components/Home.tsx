@@ -72,11 +72,23 @@ export default function Home({
     const video = introVideoRef.current;
     if (!video) return;
 
+    const playWithAudioFallback = async () => {
+      video.muted = false;
+      try {
+        await video.play();
+      } catch {
+        video.muted = true;
+        try {
+          await video.play();
+        } catch (error) {
+          console.error('Could not autoplay the home introduction video:', error);
+        }
+      }
+    };
+
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        void video.play().catch(() => {
-          // Autoplay may be blocked by browser or device settings.
-        });
+        void playWithAudioFallback();
       } else {
         video.pause();
       }
@@ -677,10 +689,15 @@ export default function Home({
                   className="aspect-video w-full md:h-full md:object-contain"
                   src="/intro-video.mp4"
                   controls
-                  muted
                   playsInline
                   preload="metadata"
                   aria-label="Introduction to Indore Colleges"
+                  onError={(event) => {
+                    console.error(
+                      `Failed to load the home introduction video: ${event.currentTarget.currentSrc}`,
+                      event.currentTarget.error
+                    );
+                  }}
                 >
                   Your browser does not support the video tag.
                 </video>
