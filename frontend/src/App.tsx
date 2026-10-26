@@ -1502,6 +1502,18 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
                 </motion.div>
               }
             />
+            <Route
+              path="/reviews/:categorySlug/:perspectiveSlug"
+              element={
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 15 }}
+                >
+                  <BlogsPage />
+                </motion.div>
+              }
+            />
 
             {/* Blogs Route (Alias to Reviews & Campus Guides) */}
             <Route
@@ -1518,6 +1530,18 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
             />
             <Route
               path="/blogs/:categorySlug"
+              element={
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 15 }}
+                >
+                  <BlogsPage />
+                </motion.div>
+              }
+            />
+            <Route
+              path="/blogs/:categorySlug/:perspectiveSlug"
               element={
                 <motion.div
                   initial={{ opacity: 0, y: 15 }}
