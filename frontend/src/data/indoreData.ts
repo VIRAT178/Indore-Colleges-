@@ -2869,13 +2869,43 @@ export const INDORE_INSTITUTES: Institute[] = [
     contactPhone: '9669808182, 8871729595, 0731-2974255',
     website: 'https://www.sicacollegeindore.com/',
     isDirectoryVerified: false
+  },
+  {
+    id: 'sri-aurobindo-institute-of-technology',
+    name: 'Sri Aurobindo Institute of Technology (SAIT)',
+    type: 'college',
+    category: 'Engineering',
+    boardOrAffiliation: 'AICTE / RGPV (confirm current affiliation)',
+    location: 'Sanwer Road',
+    feePerAnnum: 0,
+    rating: 0,
+    totalReviews: 0,
+    image: '',
+    description: 'Sri Aurobindo Institute of Technology (SAIT) in Indore offers undergraduate engineering and design programmes, postgraduate engineering programmes, and management programmes. Its official course information includes Computer Science, AI & Machine Learning, Electronics & Communication, Civil, and Mechanical Engineering. Confirm current admissions, approvals, affiliations, and fees directly with the institute.',
+    facilities: [],
+    establishedYear: 0,
+    coordinates: { lat: 22.7750, lng: 75.8450 },
+    website: 'https://www.aurogroup.ac/technology/',
+    approval: 'The official course information describes AICTE-aligned engineering curricula; confirm current programme approvals and affiliations with the institute.',
+    coursesList: [
+      { name: 'Bachelor of Technology (B.Tech) in Computer Science', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Bachelor of Technology (B.Tech) in Computer Science (AI & Machine Learning)', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Bachelor of Technology (B.Tech) in Electronics & Communication Engineering', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Bachelor of Technology (B.Tech) in Civil Engineering', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Bachelor of Technology (B.Tech) in Mechanical Engineering', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Master of Technology (M.Tech)', duration: '2 years', fees: 'Contact institute for current fees' },
+      { name: 'Bachelor of Design (B.Des)', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Master of Business Administration (MBA)', duration: '2 years', fees: 'Contact institute for current fees' },
+      { name: 'Master of Business Administration in Hospital Administration (MBA-HA)', duration: '2 years', fees: 'Contact institute for current fees' }
+    ],
+    isDirectoryVerified: false
   }
 ];
 
 export const INDORE_LOCALITY_GROUPS = [
   {
     name: 'Sanwer / Ujjain Road',
-    collegeIds: ['svvv-indore', 'lncts-indore', 'lnct-bhopal-indore', 'oriental-university', 'malwa-institute', 'rishiraj-institute', 'saims']
+    collegeIds: ['svvv-indore', 'lncts-indore', 'lnct-bhopal-indore', 'oriental-university', 'malwa-institute', 'rishiraj-institute', 'saims', 'sri-aurobindo-institute-of-technology']
   },
   {
     name: 'Bypass Road',
