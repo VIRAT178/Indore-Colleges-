@@ -266,18 +266,20 @@ function getVideosForPerspective(category: CategoryType, perspective: ReviewPers
 export default function ReviewsHierarchyTable() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { categorySlug } = useParams<{ categorySlug?: string }>();
+  const { categorySlug, perspectiveSlug } = useParams<{ categorySlug?: string; perspectiveSlug?: string }>();
   const basePath = location.pathname.startsWith('/reviews') ? '/reviews' : '/blogs';
   const categoryFromRoute = CATEGORIES_LIST.find(
     category => category.id.toLowerCase().replace(/[^a-z0-9]+/g, '-') === categorySlug
   );
+  const perspectiveFromRoute = REVIEW_PERSPECTIVES.find(
+    perspective => perspective.type.toLowerCase().replace(/[^a-z0-9]+/g, '-') === perspectiveSlug
+  );
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>('Technical College');
   const activeCategory = categoryFromRoute?.id ?? selectedCategory;
   const showingPerspectives = Boolean(categoryFromRoute);
-  
-  // When null -> user is on the main Categories & Perspectives page
-  // When set to a ReviewPerspectiveType -> user is redirected to the Videos page for that perspective!
-  const [selectedPerspectiveForVideos, setSelectedPerspectiveForVideos] = useState<ReviewPerspectiveType | null>(null);
+  const selectedPerspectiveForVideos = perspectiveFromRoute?.type ?? null;
+  const activeCategorySlug = activeCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const categoryPath = `${basePath}/${activeCategorySlug}`;
 
   // Local state for interactive notifications & upvotes
   const [notifiedVideos, setNotifiedVideos] = useState<Record<string, boolean>>(() => {
@@ -343,7 +345,11 @@ export default function ReviewsHierarchyTable() {
     ? getVideosForPerspective(activeCategory, selectedPerspectiveForVideos)
     : [];
 
-  if (categorySlug && !categoryFromRoute) {
+  if ((categorySlug && !categoryFromRoute) || (perspectiveSlug && !perspectiveFromRoute)) {
+    return <Navigate to={categorySlug && categoryFromRoute ? categoryPath : basePath} replace />;
+  }
+
+  if (selectedPerspectiveForVideos && !categoryFromRoute) {
     return <Navigate to={basePath} replace />;
   }
 
@@ -450,7 +456,6 @@ export default function ReviewsHierarchyTable() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
               <button
                 onClick={() => {
-                  setSelectedPerspectiveForVideos(null);
                   navigate(basePath, { replace: true });
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-[#F66710] text-white text-xs font-bold transition shadow-xs cursor-pointer self-start"
@@ -476,8 +481,8 @@ export default function ReviewsHierarchyTable() {
                     key={persp.type}
                     type="button"
                     onClick={() => {
-                      // Redirect user to the videos page for this perspective!
-                      setSelectedPerspectiveForVideos(persp.type);
+                      const perspectivePath = persp.type.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                      navigate(`${categoryPath}/${perspectivePath}`);
                     }}
                     className="w-full bg-white rounded-3xl border border-slate-200 hover:border-[#F66710] hover:shadow-lg p-6 sm:p-8 transition-all duration-200 cursor-pointer text-center flex flex-col items-center justify-center gap-3.5 group min-h-[170px]"
                   >
@@ -515,7 +520,7 @@ export default function ReviewsHierarchyTable() {
           {/* Top Bar: Return Button & Breadcrumbs */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
             <button
-              onClick={() => setSelectedPerspectiveForVideos(null)}
+              onClick={() => navigate(categoryPath, { replace: true })}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-[#F66710] text-white text-xs font-bold transition shadow-xs cursor-pointer self-start"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -526,7 +531,6 @@ export default function ReviewsHierarchyTable() {
             <div className="flex items-center gap-2 text-xs text-slate-500 font-semibold flex-wrap">
               <button 
                 onClick={() => {
-                  setSelectedPerspectiveForVideos(null);
                   navigate(basePath, { replace: true });
                 }}
                 className="hover:text-[#F66710] transition cursor-pointer"
@@ -536,8 +540,7 @@ export default function ReviewsHierarchyTable() {
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
               <button 
                 onClick={() => {
-                  setSelectedPerspectiveForVideos(null);
-                  navigate(`${basePath}/${activeCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, { replace: true });
+                  navigate(categoryPath, { replace: true });
                 }}
                 className="hover:text-[#F66710] transition cursor-pointer"
               >
@@ -697,7 +700,7 @@ export default function ReviewsHierarchyTable() {
 
             <button
               onClick={() => {
-                setSelectedPerspectiveForVideos(null);
+                navigate(categoryPath, { replace: true });
               }}
               className="px-4 py-2.5 rounded-xl bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-bold text-xs transition cursor-pointer shrink-0"
             >
