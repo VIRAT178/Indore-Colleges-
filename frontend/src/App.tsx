@@ -2,6 +2,7 @@ import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Home from './components/Home';
+import IntroVideoSection from './components/IntroVideoSection';
 import StreamSelector from './components/StreamSelector';
 import Footer from './components/Footer';
 import InstituteCard from './components/InstituteCard';
@@ -874,6 +875,7 @@ function ExploreRoute({
           </>
         )}
       </section>
+      {!selectedStream && instituteTypeFilter === 'college' && <IntroVideoSection />}
     </motion.div>
   );
 }
