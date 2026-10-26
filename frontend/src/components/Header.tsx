@@ -136,7 +136,6 @@ export default function Header({
     setActiveTab('explore');
     setInstituteTypeFilter('college');
     setSearchQuery(headerSearchInput.trim());
-    window.scrollTo({ top: 400, behavior: 'smooth' });
   };
 
   // References for dropdown closing on click outside
@@ -171,11 +170,6 @@ export default function Header({
     setMaxFee(1500000);
     setActiveDropdown(null);
     setIsMobileMenuOpen(false);
-    
-    // Smooth scroll to exploration directory
-    setTimeout(() => {
-      window.scrollTo({ top: 400, behavior: 'smooth' });
-    }, 100);
   };
 
   // Blogs Data
