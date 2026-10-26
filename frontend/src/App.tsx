@@ -875,7 +875,7 @@ function ExploreRoute({
           </>
         )}
       </section>
-      {!selectedStream && instituteTypeFilter === 'college' && <IntroVideoSection />}
+      {!selectedStream && instituteTypeFilter === 'college' && <IntroVideoSection autoPlayWhenVisible={false} />}
     </motion.div>
   );
 }
