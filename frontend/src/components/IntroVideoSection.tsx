@@ -1,16 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { MonitorPlay } from 'lucide-react';
 
-interface IntroVideoSectionProps {
-  autoPlayWhenVisible?: boolean;
-}
-
-export default function IntroVideoSection({ autoPlayWhenVisible = true }: IntroVideoSectionProps) {
+export default function IntroVideoSection() {
   const introVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (!autoPlayWhenVisible) return;
-
     const video = introVideoRef.current;
     if (!video) return;
 
@@ -38,7 +32,7 @@ export default function IntroVideoSection({ autoPlayWhenVisible = true }: IntroV
 
     observer.observe(video);
     return () => observer.disconnect();
-  }, [autoPlayWhenVisible]);
+  }, []);
 
   return (
     <section className="relative overflow-hidden bg-slate-950 py-14 sm:py-20 md:py-6 lg:py-8">
