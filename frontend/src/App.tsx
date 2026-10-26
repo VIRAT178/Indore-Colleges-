@@ -893,7 +893,7 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
     if (path.startsWith('/explore') || path.startsWith('/college/')) return 'explore';
     if (path === '/register') return 'register';
     if (path === '/dashboard') return 'dashboard';
-    if (path === '/blogs' || path === '/reviews') return 'blogs';
+    if (path.startsWith('/blogs') || path.startsWith('/reviews')) return 'blogs';
     if (path === '/about') return 'about';
     if (path === '/careers') return 'careers';
     if (path === '/contact') return 'contact';
@@ -1490,10 +1490,34 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
                 </motion.div>
               }
             />
+            <Route
+              path="/reviews/:categorySlug"
+              element={
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 15 }}
+                >
+                  <BlogsPage />
+                </motion.div>
+              }
+            />
 
             {/* Blogs Route (Alias to Reviews & Campus Guides) */}
             <Route
               path="/blogs"
+              element={
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 15 }}
+                >
+                  <BlogsPage />
+                </motion.div>
+              }
+            />
+            <Route
+              path="/blogs/:categorySlug"
               element={
                 <motion.div
                   initial={{ opacity: 0, y: 15 }}
