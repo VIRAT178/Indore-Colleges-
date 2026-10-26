@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { INDORE_INSTITUTES } from '../data/indoreData';
 import { 
   GraduationCap, 
@@ -263,8 +264,16 @@ function getVideosForPerspective(category: CategoryType, perspective: ReviewPers
 }
 
 export default function ReviewsHierarchyTable() {
-  const [activeCategory, setActiveCategory] = useState<CategoryType>('Technical College');
-  const [showingPerspectives, setShowingPerspectives] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { categorySlug } = useParams<{ categorySlug?: string }>();
+  const basePath = location.pathname.startsWith('/reviews') ? '/reviews' : '/blogs';
+  const categoryFromRoute = CATEGORIES_LIST.find(
+    category => category.id.toLowerCase().replace(/[^a-z0-9]+/g, '-') === categorySlug
+  );
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType>('Technical College');
+  const activeCategory = categoryFromRoute?.id ?? selectedCategory;
+  const showingPerspectives = Boolean(categoryFromRoute);
   
   // When null -> user is on the main Categories & Perspectives page
   // When set to a ReviewPerspectiveType -> user is redirected to the Videos page for that perspective!
@@ -334,6 +343,10 @@ export default function ReviewsHierarchyTable() {
     ? getVideosForPerspective(activeCategory, selectedPerspectiveForVideos)
     : [];
 
+  if (categorySlug && !categoryFromRoute) {
+    return <Navigate to={basePath} replace />;
+  }
+
   return (
     <div className="w-full py-2">
       {/* Toast Alert */}
@@ -370,7 +383,7 @@ export default function ReviewsHierarchyTable() {
           {!showingPerspectives ? (
           <div>
             <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wider text-slate-900 mb-6 text-center">
-              COLLEGES CATEGORIES
+              CATEGORIES
             </h2>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3.5 md:gap-4">
@@ -383,8 +396,8 @@ export default function ReviewsHierarchyTable() {
                     key={cat.id}
                     type="button"
                     onClick={() => {
-                      setActiveCategory(cat.id);
-                      setShowingPerspectives(true);
+                      setSelectedCategory(cat.id);
+                      navigate(`${basePath}/${cat.id.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`);
                     }}
                     className={`w-full p-3 sm:p-4 md:p-5 rounded-2xl text-center transition-all duration-200 cursor-pointer bg-white border flex flex-col items-center justify-between gap-2 sm:gap-2.5 group min-h-[135px] sm:min-h-[150px] ${
                       isSelected
@@ -436,7 +449,10 @@ export default function ReviewsHierarchyTable() {
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
               <button
-                onClick={() => setShowingPerspectives(false)}
+                onClick={() => {
+                  setSelectedPerspectiveForVideos(null);
+                  navigate(basePath, { replace: true });
+                }}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-[#F66710] text-white text-xs font-bold transition shadow-xs cursor-pointer self-start"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -511,7 +527,7 @@ export default function ReviewsHierarchyTable() {
               <button 
                 onClick={() => {
                   setSelectedPerspectiveForVideos(null);
-                  setShowingPerspectives(false);
+                  navigate(basePath, { replace: true });
                 }}
                 className="hover:text-[#F66710] transition cursor-pointer"
               >
@@ -521,7 +537,7 @@ export default function ReviewsHierarchyTable() {
               <button 
                 onClick={() => {
                   setSelectedPerspectiveForVideos(null);
-                  setShowingPerspectives(true);
+                  navigate(`${basePath}/${activeCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, { replace: true });
                 }}
                 className="hover:text-[#F66710] transition cursor-pointer"
               >
@@ -682,7 +698,6 @@ export default function ReviewsHierarchyTable() {
             <button
               onClick={() => {
                 setSelectedPerspectiveForVideos(null);
-                setShowingPerspectives(true);
               }}
               className="px-4 py-2.5 rounded-xl bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-bold text-xs transition cursor-pointer shrink-0"
             >
