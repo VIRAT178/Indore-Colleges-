@@ -269,7 +269,7 @@ function getVideosForPerspective(category: CategoryType, perspective: ReviewPers
       isLiveAuthorityVideo,
       collegeId: col.id
     };
-  }).filter(video => perspective !== 'Review by Indore Colleges' || Boolean(video.videoUrl));
+  }).filter(video => perspective === 'Review by Indore Colleges' && Boolean(video.videoUrl));
 }
 
 export default function ReviewsHierarchyTable() {
