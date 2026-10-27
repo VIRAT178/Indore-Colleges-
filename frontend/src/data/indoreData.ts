@@ -214,11 +214,8 @@ export const INDORE_INSTITUTES: Institute[] = [
     indoreRating: 4.8,
     totalReviews: 1100,
     image: '/sgsits.jpg',
-    // Background video & College Authority Review video URL
-    // You can replace this with any MP4, WebM, or YouTube video URL.
-    // This video will be used automatically in the SGSITS background video hero AND in the SGSITS College Authority Review section!
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-students-walking-in-a-university-campus-4336-large.mp4',
-    backgroundVideoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-students-walking-in-a-university-campus-4336-large.mp4',
+    videoUrl: '/SGSITS.mp4',
+    backgroundVideoUrl: '/SGSITS.mp4',
     description: 'Shri Govindram Seksaria Institute of Technology and Science (SGSITS Indore), established in 1952, is a premier government-aided autonomous technical institute. Affiliated with RGPV and approved by the UGC and AICTE with a NAAC Grade A accreditation, it is ranked among the finest engineering colleges in Central India, acclaimed for high merit-based intake and strong core/software job placements.',
     facilities: ['Central Library', 'Computer Center', 'Gymnasium', 'Hostels (Separate Boys & Girls)', 'Dispensary', 'CIDI Centre', 'Central Workshop', 'Lush Green Grounds', 'High-speed Wi-Fi'],
     establishedYear: 1952,
@@ -1193,6 +1190,8 @@ export const INDORE_INSTITUTES: Institute[] = [
     indoreRating: 4.7,
     totalReviews: 377,
     image: '/iet-davv.jpg',
+    videoUrl: '/IET%20DAVV.mp4',
+    backgroundVideoUrl: '/IET%20DAVV.mp4',
     description: 'The Institute of Engineering and Technology (IET DAVV), established in 1996, is the premier self-financed engineering school of Devi Ahilya Vishwavidyalaya. Renowned for its highly competitive intake and outstanding campus placement drives, it remains a top choice for technical education in Central India.',
     facilities: ['IET Central Library', 'High-speed Computer Labs', 'Sports Ground', 'Boys & Girls Hostels', 'Auditorium', 'Physics & Chemistry Labs', 'Canteen', 'Wi-Fi Access Points'],
     establishedYear: 1996,
