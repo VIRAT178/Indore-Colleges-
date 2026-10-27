@@ -107,3 +107,4 @@ for (const route of routes) {
 
 await rm(serverBundleDirectory, {recursive: true, force: true});
 console.log(`Prerendered ${routes.length} routes (${routes.length - baseRoutes.length} colleges) to ${outputDirectory}`);
+
