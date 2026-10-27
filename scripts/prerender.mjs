@@ -23,6 +23,15 @@ const baseRoutes = [
   '/explore/law',
   '/explore/medical',
   '/explore/design',
+  '/register',
+  '/dashboard',
+  '/reviews',
+  '/blogs',
+  '/about',
+  '/careers',
+  '/contact',
+  '/college-portal',
+  '/admin-panel',
 ];
 
 function escapeAttribute(value) {

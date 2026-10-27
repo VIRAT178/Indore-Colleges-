@@ -1,8 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Search, 
@@ -16,14 +11,12 @@ import {
   PhoneCall, 
   Compass, 
   HelpCircle, 
-  ShieldCheck, 
   Award, 
   Quote,
   CheckCircle2,
   MessageSquare,
   GraduationCap,
   Calendar,
-  Sparkles,
   ChevronRight,
   TrendingUp,
   Building,
@@ -33,7 +26,9 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Logo, { LogoIcon } from './Logo';
-import { INDORE_INSTITUTES, INDORE_LOCATIONS, CATEGORIES } from '../data/indoreData';
+import IntroVideoSection from './IntroVideoSection';
+import StreamSelector from './StreamSelector';
+import { INDORE_INSTITUTES, INDORE_LOCATIONS, INDORE_LOCALITY_GROUPS, CATEGORIES } from '../data/indoreData';
 import { Institute } from '../types';
 
 interface HomeProps {
@@ -48,6 +43,7 @@ interface HomeProps {
   maxFee?: number;
   setMaxFee?: (fee: number) => void;
   onViewCollegeDetail?: (inst: Institute) => void;
+  onViewLocality?: (locality: string) => void;
 }
 
 export default function Home({
@@ -61,7 +57,8 @@ export default function Home({
   setSelectedStream,
   maxFee,
   setMaxFee,
-  onViewCollegeDetail
+  onViewCollegeDetail,
+  onViewLocality
 }: HomeProps) {
   // Search card states (CarDekho style)
   const [searchMode, setSearchMode] = useState<'college' | 'course'>('college');
@@ -69,7 +66,6 @@ export default function Home({
   const [selectedBudgetVal, setSelectedBudgetVal] = useState('All');
   const [selectedStreamVal, setSelectedStreamVal] = useState('All');
   const [selectedLocationVal, setSelectedLocationVal] = useState('All');
-
   // CarDekho style Searched Colleges tab state
   const [activeSearchedTab, setActiveSearchedTab] = useState<'Engineering' | 'BBA' | 'BCA' | 'MBA' | 'LAW' | 'MEDICAL' | 'DESIGN'>('Engineering');
 
@@ -84,7 +80,6 @@ export default function Home({
 
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
 
-  // Dynamic typing disciplines in hero
   const dynamicDisciplines = useMemo(() => [
     'Engineering',
     'Management',
@@ -96,6 +91,16 @@ export default function Home({
   const [currentDisciplineIndex, setCurrentDisciplineIndex] = useState(0);
   const [typedText, setTypedText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const ratingHeadingOptions = useMemo(() => ({
+    google: 'According to Google Rating',
+    indore: 'According to Indore Colleges Rating'
+  }), []);
+
+  const [googleHeading, setGoogleHeading] = useState('');
+  const [indoreHeading, setIndoreHeading] = useState('');
+  const [isGoogleDeleting, setIsGoogleDeleting] = useState(false);
+  const [isIndoreDeleting, setIsIndoreDeleting] = useState(false);
 
   useEffect(() => {
     const currentWord = dynamicDisciplines[currentDisciplineIndex];
@@ -124,6 +129,60 @@ export default function Home({
 
     return () => clearTimeout(timeout);
   }, [typedText, isDeleting, currentDisciplineIndex, dynamicDisciplines]);
+
+  useEffect(() => {
+    const currentText = ratingHeadingOptions.google;
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (!isGoogleDeleting) {
+      if (googleHeading.length < currentText.length) {
+        timeout = setTimeout(() => {
+          setGoogleHeading(currentText.slice(0, googleHeading.length + 1));
+        }, 35);
+      } else {
+        timeout = setTimeout(() => {
+          setIsGoogleDeleting(true);
+        }, 1800);
+      }
+    } else {
+      if (googleHeading.length > 0) {
+        timeout = setTimeout(() => {
+          setGoogleHeading(currentText.slice(0, googleHeading.length - 1));
+        }, 20);
+      } else {
+        setIsGoogleDeleting(false);
+      }
+    }
+
+    return () => clearTimeout(timeout);
+  }, [googleHeading, isGoogleDeleting, ratingHeadingOptions.google]);
+
+  useEffect(() => {
+    const currentText = ratingHeadingOptions.indore;
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (!isIndoreDeleting) {
+      if (indoreHeading.length < currentText.length) {
+        timeout = setTimeout(() => {
+          setIndoreHeading(currentText.slice(0, indoreHeading.length + 1));
+        }, 35);
+      } else {
+        timeout = setTimeout(() => {
+          setIsIndoreDeleting(true);
+        }, 1800);
+      }
+    } else {
+      if (indoreHeading.length > 0) {
+        timeout = setTimeout(() => {
+          setIndoreHeading(currentText.slice(0, indoreHeading.length - 1));
+        }, 20);
+      } else {
+        setIsIndoreDeleting(false);
+      }
+    }
+
+    return () => clearTimeout(timeout);
+  }, [indoreHeading, isIndoreDeleting, ratingHeadingOptions.indore]);
 
   // Auto-slide transition if multiple backgrounds exist
   useEffect(() => {
@@ -241,6 +300,10 @@ export default function Home({
     setSelectedBoard('All');
     setSelectedLocation(locality);
     setSearchQuery('');
+    if (onViewLocality) {
+      onViewLocality(locality);
+      return;
+    }
     setActiveTab('explore');
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -276,18 +339,6 @@ export default function Home({
       setIsSubmitting(false);
     }
   };
-
-  // Indian Cities Grid Data
-  const CITIES = [
-    { name: 'Mumbai', img: 'https://images.unsplash.com/photo-1566552881560-0be862a7c445?auto=format&fit=crop&w=300&q=80' },
-    { name: 'Delhi', img: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=300&q=80' },
-    { name: 'Bangalore', img: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=300&q=80' },
-    { name: 'Chennai', img: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=300&q=80' },
-    { name: 'Hyderabad', img: 'https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?auto=format&fit=crop&w=300&q=80' },
-    { name: 'Indore', img: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&w=300&q=80', active: true },
-    { name: 'Pune', img: './public/iet-davv.jpg' },
-    { name: 'Kolkata', img: 'https://images.unsplash.com/photo-1558431382-27e303142255?auto=format&fit=crop&w=300&q=80' }
-  ];
 
   // Reviews Data
   interface ReviewItem {
@@ -448,24 +499,13 @@ export default function Home({
     }
   ];
 
-  // Localities list (Indore regional)
-  const LOCALITIES = [
-    { name: 'Vijay Nagar', dist: '1.2 km' },
-    { name: 'Scheme No.54', dist: '1.8 km' },
-    { name: 'Ring Road', dist: '2.5 km' },
-    { name: 'Kanadia Road', dist: '4.2 km' },
-    { name: 'Khajrana Road', dist: '3.9 km' },
-    { name: 'Bicholi Mardana', dist: '5.8 km' },
-    { name: 'Anurag Nagar', dist: '2.1 km' },
-    { name: 'Khandwa Road', dist: '7.4 km' }
-  ];
-
+  const LOCALITIES = INDORE_LOCALITY_GROUPS;
   return (
     <div id="home_view" className="w-full bg-white font-sans overflow-hidden">
       
       {/* 1. HERO BANNER SECTION (INDORE COLLEGES PURPOSE) */}
-      <section className="relative pt-5 pb-10 sm:pt-7 sm:pb-14 md:pt-8 md:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-gray-150 flex flex-col justify-center items-center bg-gray-950">
-        {/* Full-width education portal hero background carousel slider */}
+      <section className="relative pt-5 pb-10 sm:pt-7 sm:pb-14 md:pt-8 md:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-gray-150 flex flex-col justify-center items-center bg-white">
+        {/* Keep the existing carousel on larger screens and use the supplied portrait artwork on mobile. */}
         <div className="absolute inset-0 w-full h-full z-0 overflow-hidden pointer-events-none">
           {heroBackgrounds.map((bg, idx) => {
             const isSelected = idx === currentBgIndex;
@@ -481,14 +521,19 @@ export default function Home({
                   scale: isSelected ? 1 : 1.02
                 }}
                 transition={{ duration: 1.0, ease: [0.4, 0, 0.2, 1] }}
-                className="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.96] contrast-[1.02]"
+                className="absolute inset-0 hidden h-full w-full object-cover object-center md:block"
               />
             );
           })}
-          {/* Subtle overlay: darker at top/bottom for readability, completely transparent in the center so bg image text is crisp */}
-          <div className="absolute inset-0 bg-gradient-to-b from-gray-950/70 via-transparent to-gray-950/75 pointer-events-none" />
-          <div className="absolute -top-24 -right-24 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
+          <div
+            className="absolute inset-x-0 top-0 h-full bg-top bg-no-repeat md:hidden"
+            style={{
+              backgroundImage: "url('/indore-college-mobile-bg.png')",
+              backgroundSize: '100% auto'
+            }}
+          />
+          <div className="absolute -top-24 -right-24 hidden h-96 w-96 rounded-full bg-red-600/10 blur-3xl pointer-events-none md:block" />
+          <div className="absolute -bottom-24 -left-24 hidden h-96 w-96 rounded-full bg-amber-600/10 blur-3xl pointer-events-none md:block" />
         </div>
 
         <div className="mx-auto max-w-5xl w-full relative z-10 text-center flex flex-col items-center justify-center -mt-2 sm:-mt-3 md:-mt-4">
@@ -496,7 +541,7 @@ export default function Home({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-black text-white tracking-tight leading-[1.28] font-outfit max-w-5xl mx-auto text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-black text-black tracking-tight leading-[1.28] font-outfit max-w-5xl mx-auto text-center"
           >
             <span>Find the best colleges in Indore</span>
             <span className="block mt-1 sm:mt-1.5">
@@ -511,8 +556,7 @@ export default function Home({
             </span>
             <span className="mt-2 sm:mt-2.5 text-xl sm:text-3xl md:text-4xl lg:text-[40px] font-extrabold tracking-normal min-h-[44px] sm:min-h-[50px] flex items-center justify-center">
               <span 
-                className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]"
-                style={{ color: 'rgba(246, 103, 16, 1)' }}
+                style={{ color: 'rgba(246, 103, 16, 1)', textShadow: 'none' }}
               >
                 {typedText}
               </span>
@@ -521,40 +565,10 @@ export default function Home({
                 style={{ backgroundColor: 'rgba(246, 103, 16, 1)' }}
               />
             </span>
-
-            {/* Disciplines row with dynamic highlight */}
-            <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 mt-2.5 text-xs sm:text-sm font-bold text-white/80 tracking-wide">
-              {dynamicDisciplines.map((stream, sIdx) => {
-                const isCurrent = dynamicDisciplines[currentDisciplineIndex] === stream;
-                return (
-                  <span key={stream} className="inline-flex items-center gap-2.5">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedCategory(stream);
-                        setActiveTab('explore');
-                      }}
-                      className={`transition-all duration-300 cursor-pointer ${
-                        isCurrent
-                          ? 'font-black underline decoration-2 underline-offset-4 scale-105 drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]'
-                          : 'hover:text-white hover:underline underline-offset-4'
-                      }`}
-                      style={isCurrent ? { color: 'rgba(246, 103, 16, 1)', textDecorationColor: 'rgba(246, 103, 16, 1)' } : undefined}
-                      title={`Browse ${stream} Colleges in Indore`}
-                    >
-                      {stream}
-                    </button>
-                    {sIdx < dynamicDisciplines.length - 1 && (
-                      <span className="text-white/40 font-normal select-none">|</span>
-                    )}
-                  </span>
-                );
-              })}
-            </div>
           </motion.h1>
 
-          {/* Open spacer leaving unobstructed view for the background image text */}
-          <div className="h-20 sm:h-28 md:h-36 lg:h-40 w-full pointer-events-none" aria-hidden="true" />
+          {/* Leave room for the artwork's centered logo on mobile. */}
+          <div className="h-[70vw] w-full pointer-events-none md:h-36 lg:h-40" aria-hidden="true" />
 
           {/* Action Buttons */}
           <motion.div
@@ -597,20 +611,22 @@ export default function Home({
             className="pt-5 mt-5 border-t border-white/20 grid grid-cols-3 gap-4 sm:gap-8 max-w-md w-full mx-auto text-center"
           >
             <div className="text-center">
-              <div className="text-xl sm:text-2xl font-black text-white font-outfit">50+</div>
-              <div className="text-[11px] sm:text-xs text-gray-200 font-medium mt-0.5">Indore Institutes</div>
+              <div className="text-xl sm:text-2xl font-black text-black font-outfit">50+</div>
+              <div className="text-[11px] sm:text-xs text-gray-700 font-medium mt-0.5">Indore Institutes</div>
             </div>
             <div className="text-center">
-              <div className="text-xl sm:text-2xl font-black text-white font-outfit">10,000+</div>
-              <div className="text-[11px] sm:text-xs text-gray-200 font-medium mt-0.5">Students Counselled</div>
+              <div className="text-xl sm:text-2xl font-black text-black font-outfit">10,000+</div>
+              <div className="text-[11px] sm:text-xs text-gray-700 font-medium mt-0.5">Students Counselled</div>
             </div>
             <div className="text-center">
-              <div className="text-xl sm:text-2xl font-black text-white font-outfit">100%</div>
-              <div className="text-[11px] sm:text-xs text-gray-200 font-medium mt-0.5">Free Guidance</div>
+              <div className="text-xl sm:text-2xl font-black text-black font-outfit">100%</div>
+              <div className="text-[11px] sm:text-xs text-gray-700 font-medium mt-0.5">Free Guidance</div>
             </div>
           </motion.div>
         </div>
       </section>
+
+      <IntroVideoSection />
 
       {/* 2. THE MOST SEARCHED COLLEGES SECTION (CARDEKHO-STYLE DYNAMIC TABS) */}
       <section className="py-10 sm:py-12 bg-white border-y border-gray-100">
@@ -618,7 +634,7 @@ export default function Home({
           
           <div className="border-b border-gray-200 pb-4 mb-8 text-center">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight font-outfit mb-4 text-center">
-              The most Searched Colleges
+              Choose Course & Search Best College in Indore
             </h2>
             
             {/* Horizontal Tabs: Engineering, BBA, BCA, MBA, LAW, MEDICAL, DESIGN */}
@@ -647,26 +663,33 @@ export default function Home({
 
           {/* College Cards Grid / Split into Google Rating & Indore Colleges Rating categories */}
           {(() => {
-            // Category 01: Top 6 by Google Ratings & Search Reviews
+            // Category 01: Top 10 by Google Ratings & Search Reviews
             const GOOGLE_LISTS_BY_TAB: Record<string, string[]> = {
-              'Engineering': ['sgsits', 'iist-indore', 'iet-davv', 'piemr-indore', 'patel-college', 'ips-engineering'],
-              'BBA': ['softvision-college', 'alexia-college', 'gacc-indore', 'renaissance-college', 'pimr', 'radiant-institute'],
-              'BCA': ['softvision-college', 'sgsits', 'pioneer-institute', 'christian-eminent', 'holkar-science', 'renaissance-college'],
-              'MBA': ['jaipuria-indore', 'sgsits', 'ims-davv', 'pimr', 'renaissance-college', 'gujarati-professional'],
-              'LAW': ['iil-indore', 'nmims-law', 'symbiosis-university', 'pimr', 'renaissance-college', 'oriental-university'],
-              'MEDICAL': ['mgm-medical', 'saims', 'index-medical', 'shubhdeep-ayurved', 'sage-university', 'malwa-institute'],
-              'DESIGN': ['cindrebay-design', 'symbiosis-university', 'svvv-indore', 'renaissance-college', 'acropolis', 'sage-university']
+              'Engineering': ['sgsits', 'iet-davv', 'acropolis', 'iist-indore', 'medi-caps-university', 'ips-engineering', 'pimr', 'malwa-institute', 'skitm-indore', 'chameli-devi'],
+              'BBA': ['iim-indore', 'pimr', 'ims-davv', 'jaipuria-indore', 'nmims-indore', 'ips-ibmr', 'svim-indore', 'symbiosis-university', 'gsimr', 'iips-davv'],
+              'BCA': ['softvision-college', 'sgsits', 'pioneer-institute', 'christian-eminent', 'holkar-science', 'renaissance-college', 'gacc-indore', 'alexia-college', 'apj-kalam-univ', 'sage-university'],
+              'MBA': ['iim-indore', 'pimr', 'ims-davv', 'jaipuria-indore', 'nmims-indore', 'ips-ibmr', 'svim-indore', 'symbiosis-university', 'gsimr', 'iips-davv'],
+              'LAW': ['iil-indore', 'nmims-law', 'symbiosis-university', 'pimr', 'renaissance-college', 'oriental-university', 'davv', 'iim-indore', 'sage-university', 'acropolis'],
+              'MEDICAL': ['mgm-medical', 'saims', 'index-medical', 'shubhdeep-ayurved', 'sage-university', 'malwa-institute', 'medi-caps-university', 'symbiosis-university', 'acropolis', 'davv'],
+              'DESIGN': ['cindrebay-design', 'symbiosis-university', 'svvv-indore', 'renaissance-college', 'acropolis', 'sage-university', 'medi-caps-university', 'pimr', 'softvision-college', 'nmims-stme']
             };
 
-            // Category 02: Top 6 Evaluated by Indore Colleges Academic & Placement Merit (Distinct from Google Ranking)
+            // Category 02: Top 10 evaluated by Indore Colleges Academic & Placement Merit
             const INDORE_LISTS_BY_TAB: Record<string, string[]> = {
-              'Engineering': ['iet-davv', 'medi-caps-university', 'acropolis', 'sgsits', 'symbiosis-university', 'svvv-indore'],
-              'BBA': ['pimr', 'ims-davv', 'symbiosis-university', 'medi-caps-university', 'sage-university', 'renaissance-college'],
-              'BCA': ['holkar-science', 'acropolis', 'medi-caps-university', 'softvision-college', 'sage-university', 'pioneer-institute'],
-              'MBA': ['iim-indore', 'ims-davv', 'jaipuria-indore', 'nmims-indore', 'pimr', 'ips-ibmr'],
-              'LAW': ['iil-indore', 'davv', 'nmims-law', 'symbiosis-university', 'pimr', 'renaissance-college'],
-              'MEDICAL': ['mgm-medical', 'saims', 'index-medical', 'shubhdeep-ayurved', 'medi-caps-university', 'sage-university'],
-              'DESIGN': ['symbiosis-university', 'cindrebay-design', 'svvv-indore', 'sage-university', 'renaissance-college', 'acropolis']
+              'Engineering': ['iist-indore', 'acropolis', 'medi-caps-university', 'skitm-indore', 'malwa-institute', 'lncts-indore', 'symbiosis-university', 'chameli-devi', 'pimr', 'sri-aurobindo-institute-of-technology'],
+              'BBA': ['iim-indore', 'symbiosis-university', 'nmims-indore', 'pimr', 'malwa-institute', 'acropolis', 'sage-university', 'ims-davv', 'jaipuria-indore', 'ips-ibmr'],
+              'BCA': ['holkar-science', 'acropolis', 'medi-caps-university', 'softvision-college', 'sage-university', 'pioneer-institute', 'christian-eminent', 'gacc-indore', 'apj-kalam-univ', 'svvv-indore'],
+              'MBA': ['iim-indore', 'symbiosis-university', 'nmims-indore', 'pimr', 'malwa-institute', 'acropolis', 'sage-university', 'ims-davv', 'jaipuria-indore', 'ips-ibmr'],
+              'LAW': ['iil-indore', 'davv', 'nmims-law', 'symbiosis-university', 'pimr', 'renaissance-college', 'oriental-university', 'iim-indore', 'sage-university', 'acropolis'],
+              'MEDICAL': ['mgm-medical', 'saims', 'index-medical', 'shubhdeep-ayurved', 'medi-caps-university', 'sage-university', 'symbiosis-university', 'acropolis', 'davv', 'malwa-institute'],
+              'DESIGN': ['symbiosis-university', 'cindrebay-design', 'svvv-indore', 'sage-university', 'renaissance-college', 'acropolis', 'softvision-college', 'medi-caps-university', 'pimr', 'gacc-indore']
+            };
+
+            const COLLEGE_NAME_FALLBACKS: Record<string, string> = {
+              'svim-indore': 'Shri Vaishnav Institute of Management (SVIM)',
+              'gsimr': 'Govindram Seksaria Institute of Management and Research (GSIMR)',
+              'iips-davv': 'International Institute of Professional Studies (IIPS - DAVV)',
+              'sri-aurobindo-institute-of-technology': 'Sri Aurobindo Institute of Technology (SAIT)'
             };
 
             // Specific Indore Colleges Rating scores per tab
@@ -874,20 +897,6 @@ export default function Home({
               return college.rating || 4.1;
             };
 
-            const getGoogleReviewsCount = (college: Institute): string => {
-              if (GOOGLE_COLLEGE_META[college.id]?.reviewsCount) {
-                return GOOGLE_COLLEGE_META[college.id].reviewsCount;
-              }
-              if (college.totalReviews) {
-                return college.totalReviews >= 1000 ? `${(college.totalReviews / 1000).toFixed(1)}K` : `${college.totalReviews}`;
-              }
-              return '500+';
-            };
-
-            const getGoogleQuote = (college: Institute): string | undefined => {
-              return GOOGLE_COLLEGE_META[college.id]?.quote;
-            };
-
             const getIndoreRating = (college: Institute): number => {
               const tabRatings = INDORE_RATINGS_BY_TAB[activeSearchedTab];
               if (tabRatings && tabRatings[college.id] !== undefined) {
@@ -898,100 +907,62 @@ export default function Home({
             };
 
             const googleIds = GOOGLE_LISTS_BY_TAB[activeSearchedTab] || [];
-            const googleColleges = googleIds
-              .map(id => INDORE_INSTITUTES.find(inst => inst.id === id))
-              .filter(Boolean) as Institute[];
+            const googleCollegeMatches = googleIds
+              .flatMap(id => {
+                const institute = INDORE_INSTITUTES.find(inst => inst.id === id);
+                const name = institute?.name || COLLEGE_NAME_FALLBACKS[id];
+                return name ? [{ id, name, institute }] : [];
+              });
+            const googleColleges = (activeSearchedTab === 'Engineering' || activeSearchedTab === 'BBA' || activeSearchedTab === 'MBA'
+              ? googleCollegeMatches
+              : googleCollegeMatches.sort((a, b) => (b.institute ? getGoogleRating(b.institute) : 0) - (a.institute ? getGoogleRating(a.institute) : 0))
+            ).slice(0, 10);
 
             const indoreIds = INDORE_LISTS_BY_TAB[activeSearchedTab] || [];
-            const indoreColleges = indoreIds
-              .map(id => INDORE_INSTITUTES.find(inst => inst.id === id))
-              .filter(Boolean) as Institute[];
+            const indoreCollegeMatches = indoreIds
+              .flatMap(id => {
+                const institute = INDORE_INSTITUTES.find(inst => inst.id === id);
+                const name = institute?.name || COLLEGE_NAME_FALLBACKS[id];
+                return name ? [{ id, name, institute }] : [];
+              });
+            const indoreColleges = (activeSearchedTab === 'Engineering' || activeSearchedTab === 'BBA' || activeSearchedTab === 'MBA'
+              ? indoreCollegeMatches
+              : indoreCollegeMatches.sort((a, b) => (b.institute ? getIndoreRating(b.institute) : 0) - (a.institute ? getIndoreRating(a.institute) : 0))
+            ).slice(0, 10);
 
-            const renderCollegeCard = (college: Institute, ratingType: 'google' | 'indore') => {
-              const ratingVal = ratingType === 'google' ? getGoogleRating(college) : getIndoreRating(college);
-              const displayRating = ratingVal.toFixed(1);
-              const reviewsCount = ratingType === 'google' ? getGoogleReviewsCount(college) : null;
-              const googleQuote = ratingType === 'google' ? getGoogleQuote(college) : undefined;
-
+            const renderCollegeListItem = (college: { id: string; name: string; institute?: Institute }, ratingType: 'google' | 'indore', rank: number) => {
               return (
-                <div 
+                <div
                   key={`${ratingType}-${college.id}`}
-                  className="bg-white rounded-2xl border border-gray-200/80 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden group"
+                  className="flex items-center gap-2 rounded-xl border border-gray-200/80 bg-white px-3 py-3 sm:gap-3 sm:px-3.5 shadow-xs transition-all duration-200 hover:border-red-200 hover:shadow-sm"
                 >
-                  {/* Image Header */}
-                  <div 
-                    onClick={() => onViewCollegeDetail && onViewCollegeDetail(college)}
-                    className="relative aspect-[16/10] bg-gray-50 overflow-hidden cursor-pointer"
+                  <div className="shrink-0 font-outfit text-base font-extrabold leading-none text-[#0F244C] sm:text-lg">
+                    Rank #{rank}
+                  </div>
+                  <span aria-hidden="true" className="shrink-0 text-gray-400">|</span>
+                  {college.institute ? (
+                    <button
+                      type="button"
+                      onClick={() => college.institute && onViewCollegeDetail?.(college.institute)}
+                      className="min-w-0 flex-1 text-left font-outfit text-sm font-bold leading-snug text-orange-600 transition-colors hover:text-black sm:text-base"
+                      title={college.name}
+                    >
+                      {college.name}
+                    </button>
+                  ) : (
+                    <span className="min-w-0 flex-1 text-left font-outfit text-sm font-bold leading-snug text-orange-600 sm:text-base">
+                      {college.name}
+                    </span>
+                  )}
+                  <span aria-hidden="true" className="shrink-0 text-gray-400">|</span>
+                  <button
+                    type="button"
+                    onClick={onOpenCounseling}
+                    aria-label={`Apply now at ${college.name}`}
+                    className="shrink-0 rounded-lg border border-orange-500 px-2 py-2 text-[9px] font-extrabold uppercase tracking-wide text-orange-600 transition-colors hover:bg-orange-500 hover:text-white active:scale-95 sm:px-3 sm:text-[10px]"
                   >
-                    <img 
-                      src={college.image || '/sgsits.jpg'} 
-                      alt={college.name} 
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    {ratingType === 'google' ? (
-                      <div className="absolute top-2.5 right-2.5 bg-white/95 backdrop-blur-xs py-1 px-2.5 rounded-lg text-[11px] font-black text-gray-800 flex items-center gap-1.5 shadow-xs border border-gray-100">
-                        <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24">
-                          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                        </svg>
-                        <span>{displayRating}</span>
-                        {reviewsCount && (
-                          <span className="text-[10px] text-gray-500 font-semibold font-sans">({reviewsCount})</span>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="absolute top-2.5 right-2.5 bg-slate-900/90 backdrop-blur-xs text-white py-1 px-2.5 rounded-lg text-[11px] font-black flex items-center gap-1.5 shadow-xs border border-white/10">
-                        <LogoIcon className="h-3.5 w-3.5 shrink-0" light />
-                        <span>{displayRating}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Body Content */}
-                  <div className="p-3.5 flex-1 flex flex-col justify-between">
-                    <div>
-                      <h3 
-                        onClick={() => onViewCollegeDetail && onViewCollegeDetail(college)}
-                        className="text-xs sm:text-sm font-bold text-gray-900 group-hover:text-red-600 transition-colors line-clamp-2 cursor-pointer font-outfit min-h-[2.25rem]"
-                      >
-                        {college.name}
-                      </h3>
-                      
-                      {/* Fees */}
-                      <p className="text-xs font-extrabold text-gray-800 mt-1.5">
-                        {formatFee(college.feePerAnnum)}
-                        <span className="text-[10px] text-gray-400 font-normal ml-1">Avg. Fees</span>
-                      </p>
-
-                      {/* Small info line */}
-                      <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-gray-500 mt-1 font-medium">
-                        <MapPin className="h-3 w-3 text-gray-400 flex-shrink-0" />
-                        <span className="truncate">{college.location}, Indore</span>
-                      </div>
-
-                      {/* Google Review Snippet Quote */}
-                      {ratingType === 'google' && googleQuote && (
-                        <div className="mt-2 text-[10.5px] text-gray-600 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100 flex items-start gap-1">
-                          <span className="text-blue-500 font-bold shrink-0 leading-none">“</span>
-                          <span className="line-clamp-1 italic text-gray-600 leading-snug">{googleQuote}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Apply Now button */}
-                    <div className="mt-3 pt-2.5 border-t border-gray-100">
-                      <button
-                        type="button"
-                        onClick={onOpenCounseling}
-                        className="w-full border border-red-600 hover:bg-red-600 hover:text-white text-red-600 font-extrabold py-1.5 px-3 rounded-xl text-[11px] tracking-wider uppercase transition-all duration-200 active:scale-95 text-center cursor-pointer"
-                      >
-                        Apply Now
-                      </button>
-                    </div>
-                  </div>
+                    Apply Now
+                  </button>
                 </div>
               );
             };
@@ -1013,9 +984,9 @@ export default function Home({
                   <div className="bg-gray-50/80 p-4 sm:p-6 rounded-3xl border border-gray-200/80 shadow-2xs">
                     {/* Header Banner */}
                     <div className="bg-white border border-gray-200/90 rounded-2xl p-4 sm:p-5 mb-6 shadow-xs text-center flex flex-col items-center justify-center">
-                      <div className="flex items-center justify-center gap-2 mb-1.5">
-                        <div className="h-7 w-7 bg-blue-50 border border-blue-100 rounded-lg flex items-center justify-center shrink-0">
-                          <svg className="h-4 w-4" viewBox="0 0 24 24">
+                      <div className="flex items-center justify-center gap-2 mb-2">
+                        <div className="h-9 w-9 bg-blue-50 border border-blue-100 rounded-lg flex items-center justify-center shrink-0">
+                          <svg className="h-5 w-5" viewBox="0 0 24 24">
                             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
@@ -1026,17 +997,17 @@ export default function Home({
                           CATEGORY 01
                         </span>
                       </div>
-                      <h3 className="text-base sm:text-lg font-bold text-[#0F244C] font-outfit leading-tight tracking-tight">
-                        According to Google Rating
+                      <h3 className="text-[1.7rem] sm:text-[2rem] lg:text-[2.4rem] font-black text-[#0F244C] font-outfit leading-tight tracking-tight min-h-[2.4em] flex items-center justify-center">
+                        {googleHeading}
+                        <span className="inline-block w-[3px] h-[1em] ml-1 rounded-sm bg-[#0F244C] animate-pulse" />
                       </h3>
-                      <p className="text-[12px] text-gray-500 font-medium mt-1">
-                        Top 6 Colleges ranked by public Google Map & Search student reviews
+                      <p className="text-sm sm:text-base text-gray-600 font-medium">
+                       [ Based on the SEO work of individual institute ]
                       </p>
                     </div>
 
-                    {/* 2-Column Grid with 6 Cards */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {googleColleges.map((college) => renderCollegeCard(college, 'google'))}
+                    <div className="space-y-3">
+                      {googleColleges.map((college, index) => renderCollegeListItem(college, 'google', index + 1))}
                     </div>
                   </div>
 
@@ -1054,23 +1025,23 @@ export default function Home({
                   <div className="bg-gray-50/80 p-4 sm:p-6 rounded-3xl border border-gray-200/80 shadow-2xs">
                     {/* Header Banner */}
                     <div className="bg-white border border-gray-200/90 rounded-2xl p-4 sm:p-5 mb-6 shadow-xs text-center flex flex-col items-center justify-center">
-                      <div className="flex items-center justify-center gap-2 mb-1.5">
-                        <LogoIcon className="h-7 w-7 shrink-0" />
+                      <div className="flex items-center justify-center gap-2 mb-2">
+                        <LogoIcon className="h-9 w-9 shrink-0" />
                         <span className="inline-block px-2.5 py-0.5 bg-red-50 text-red-700 border border-red-200 text-[10px] font-black rounded-md uppercase tracking-wider">
                           CATEGORY 02
                         </span>
                       </div>
-                      <h3 className="text-base sm:text-lg font-bold text-[#0F244C] font-outfit leading-tight tracking-tight">
-                        According to Indore Colleges Rating
+                      <h3 className="text-[1.7rem] sm:text-[2rem] lg:text-[2.4rem] font-black text-[#0F244C] font-outfit leading-tight tracking-tight min-h-[2.4em] flex items-center justify-center">
+                        {indoreHeading}
+                        <span className="inline-block w-[3px] h-[1em] ml-1 rounded-sm bg-[#0F244C] animate-pulse" />
                       </h3>
-                      <p className="text-[12px] text-gray-500 font-medium mt-1">
-                        Top 6 Colleges evaluated by Indore Academic Advisory Panel
+                      <p className="text-sm sm:text-base text-gray-600 font-medium">
+                       [ Based on placements, academics, facilities, and amenities ]
                       </p>
                     </div>
 
-                    {/* 2-Column Grid with 6 Cards */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {indoreColleges.map((college) => renderCollegeCard(college, 'indore'))}
+                    <div className="space-y-3">
+                      {indoreColleges.map((college, index) => renderCollegeListItem(college, 'indore', index + 1))}
                     </div>
                   </div>
                 </div>
@@ -1099,127 +1070,10 @@ export default function Home({
         </div>
       </section>
 
-      {/* 3. CATEGORIES SECTION ("Choose your Institute") */}
+      {/* Stream discovery selector */}
       <section className="py-10 sm:py-12 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
-            <div>
-              <div className="inline-flex items-center space-x-2 text-xs font-bold text-red-600 uppercase tracking-wider mb-2">
-                <BookOpen className="h-4 w-4" />
-                <span>Explore Specializations</span>
-              </div>
-              <h2 className="text-3xl font-extrabold tracking-tight text-[#0F244C] font-outfit">
-                Choose your Institute Category
-              </h2>
-              <p className="text-sm text-gray-500 max-w-xl font-normal mt-2">
-                Browse our verified directories of colleges in Indore structured precisely according to stream priorities.
-              </p>
-            </div>
-            <button 
-              onClick={() => handleCategoryClick('Engineering', 'college')}
-              className="mt-6 md:mt-0 text-xs font-bold text-red-600 hover:text-red-700 inline-flex items-center gap-1.5 hover:underline transition self-start"
-            >
-              <span>View All Directories</span>
-              <ArrowUpRight className="h-4 w-4" />
-            </button>
-          </div>
-
-          {/* Categories Grid with visual cards and arrow buttons */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-            {/* Engineering & Tech */}
-            <div 
-              onClick={() => handleCategoryClick('Engineering', 'college')}
-              className="group cursor-pointer bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col h-full"
-            >
-              <div className="h-36 sm:h-40 overflow-hidden relative bg-gray-50">
-                <img 
-                  src='/ims-davv.jpg'
-                  alt="Engineering campus" 
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                />
-                <span className="absolute top-3 right-3 bg-white/95 p-2 rounded-xl shadow-md text-gray-800 transition group-hover:bg-red-600 group-hover:text-white">
-                  <ArrowUpRight className="h-4 w-4" />
-                </span>
-              </div>
-              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-[#0F244C] group-hover:text-red-600 transition font-outfit">Engineering & Science</h3>
-                </div>
-              </div>
-            </div>
-
-            {/* Management */}
-            <div 
-              onClick={() => handleCategoryClick('Management', 'college')}
-              className="group cursor-pointer bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col h-full"
-            >
-              <div className="h-36 sm:h-40 overflow-hidden relative bg-gray-50">
-                <img 
-                  src="/iim-indore.jpg" 
-                  alt="Management class" 
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                />
-                <span className="absolute top-3 right-3 bg-white/95 p-2 rounded-xl shadow-md text-gray-800 transition group-hover:bg-red-600 group-hover:text-white">
-                  <ArrowUpRight className="h-4 w-4" />
-                </span>
-              </div>
-              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-[#0F244C] group-hover:text-red-600 transition font-outfit">Management</h3>
-                </div>
-              </div>
-            </div>
-
-            {/* Medical & Sciences */}
-            <div 
-              onClick={() => handleCategoryClick('Medical', 'college')}
-              className="group cursor-pointer bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col h-full"
-            >
-              <div className="h-36 sm:h-40 overflow-hidden relative bg-gray-50">
-                <img 
-                  src="/saims.jpg" 
-                  alt="Medical lab" 
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                />
-                <span className="absolute top-3 right-3 bg-white/95 p-2 rounded-xl shadow-md text-gray-800 transition group-hover:bg-red-600 group-hover:text-white">
-                  <ArrowUpRight className="h-4 w-4" />
-                </span>
-              </div>
-              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-[#0F244C] group-hover:text-red-600 transition font-outfit">Medical & Dental</h3>
-                </div>
-              </div>
-            </div>
-
-            {/* Design & Creative */}
-            <div 
-              onClick={() => handleCategoryClick('Design', 'college')}
-              className="group cursor-pointer bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col h-full"
-            >
-              <div className="h-36 sm:h-40 overflow-hidden relative bg-gray-50">
-                <img 
-                  src="/ips-ibmr.jpg" 
-                  alt="Design studio" 
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                />
-                <span className="absolute top-3 right-3 bg-white/95 p-2 rounded-xl shadow-md text-gray-800 transition group-hover:bg-red-600 group-hover:text-white">
-                  <ArrowUpRight className="h-4 w-4" />
-                </span>
-              </div>
-              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-[#0F244C] group-hover:text-red-600 transition font-outfit">Design & Arts</h3>
-                </div>
-              </div>
-            </div>
-
-          </div>
+          <StreamSelector onSelectStream={stream => setSelectedStream?.(stream)} />
         </div>
       </section>
 
@@ -1228,8 +1082,8 @@ export default function Home({
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
           {/* Section Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-            <div>
+          <div className="flex flex-col items-center text-center mb-10">
+            <div className="flex flex-col items-center">
               <div className="inline-flex items-center space-x-2 text-xs font-bold text-red-600 uppercase tracking-wider mb-2">
                 <Users className="h-4 w-4" />
                 <span>Verified Indore Testimonials</span>
@@ -1237,26 +1091,6 @@ export default function Home({
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#0F244C] font-outfit mt-1">
                 Student &amp; Parent Reviews
               </h2>
-              <p className="text-xs sm:text-sm text-gray-500 mt-2 max-w-2xl font-normal leading-relaxed">
-                Real feedback from students and parents who discovered transparent fee breakdowns, verified cutoffs, and locked direct admissions across Indore&apos;s leading institutions.
-              </p>
-            </div>
-
-            {/* Overall Rating Pill & Highlights */}
-            <div className="flex items-center gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-gray-200/80 shadow-xs shrink-0">
-              <div className="h-12 w-12 rounded-xl bg-amber-50 border border-amber-200 flex flex-col items-center justify-center">
-                <span className="text-base font-extrabold text-[#0F244C] leading-none">4.9</span>
-                <div className="flex items-center mt-0.5">
-                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                </div>
-              </div>
-              <div className="text-left">
-                <div className="flex items-center space-x-1.5">
-                  <span className="text-xs font-bold text-[#0F244C]">Over 10,000+ Families</span>
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-                </div>
-                <p className="text-[11px] text-gray-500 font-medium mt-0.5">100% Unbiased Indore Academic Advisory</p>
-              </div>
             </div>
           </div>
 
@@ -1374,32 +1208,6 @@ export default function Home({
               ))}
           </div>
 
-          {/* Counseling & Advisory Banner (Replacing Video Card) */}
-          <div className="mt-12 bg-gradient-to-r from-[#0F244C] to-[#1E3A8A] rounded-2xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl border border-white/10">
-            <div className="space-y-1.5 text-center md:text-left">
-              <div className="inline-flex items-center space-x-1.5 bg-white/10 px-2.5 py-1 rounded-full text-[11px] font-semibold text-white/90 mb-1">
-                <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-                <span>Direct Admissions &amp; Counseling Support</span>
-              </div>
-              <h3 className="text-lg sm:text-xl font-bold font-outfit">
-                Need Unbiased College Alignment in Indore?
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-300 max-w-xl font-normal">
-                Speak directly with an Indore academic counselor to compare actual college cutoffs, fee discounts, campus hostels, and genuine placement reports.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3 w-full md:w-auto shrink-0">
-              <button 
-                onClick={onOpenCounseling}
-                className="w-full md:w-auto bg-red-600 hover:bg-red-700 active:scale-95 text-white rounded-xl px-6 py-3.5 text-xs font-bold transition shadow-lg flex items-center justify-center space-x-2 cursor-pointer"
-              >
-                <MessageSquare className="h-4 w-4" />
-                <span>Talk to a Human Advisor</span>
-              </button>
-            </div>
-          </div>
-
         </div>
       </section>
 
@@ -1414,10 +1222,10 @@ export default function Home({
 
             {/* Left Column: Process Information */}
             <div className="lg:col-span-6 space-y-8 relative z-10">
-              <span className="text-[11px] font-bold text-rose-300 uppercase tracking-widest bg-white/5 border border-white/10 px-4.5 py-1.5 rounded-full">
+              <span className="self-center text-[11px] font-bold text-rose-300 uppercase tracking-widest bg-white/5 border border-white/10 px-4.5 py-1.5 rounded-full">
                 Admissions Desk
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight font-outfit leading-tight">
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight font-outfit leading-tight text-center">
                 Schedule a Direct Counseling Meeting
               </h2>
               
@@ -1541,112 +1349,39 @@ export default function Home({
         </div>
       </section>
 
-      {/* 6. NATIONWIDE PRESENCE GRID */}
-      <section className="py-10 sm:py-12 bg-slate-50 border-y border-gray-100">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-12 gap-10 sm:gap-12 items-center">
-            
-            {/* Left Col: Grid of landmark cities */}
-            <div className="lg:col-span-7">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {CITIES.map((city, idx) => (
-                  <div 
-                    key={idx}
-                    onClick={() => city.name === 'Indore' ? handleLocalityClick('All') : {}}
-                    className={`group relative rounded-3xl overflow-hidden aspect-square shadow-sm border ${
-                      city.active 
-                        ? 'border-red-600 cursor-pointer shadow-md' 
-                        : 'border-gray-200 cursor-default opacity-85 hover:opacity-100'
-                    } transition duration-300 bg-white`}
-                  >
-                    <img 
-                      src={city.img} 
-                      alt={city.name} 
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent flex items-end p-4" />
-                    
-                    <div className="absolute bottom-4 left-4 text-white">
-                      <p className="text-xs font-extrabold tracking-tight font-outfit">{city.name}</p>
-                      {city.active && (
-                        <span className="inline-block text-[8px] bg-red-600 text-white font-black uppercase tracking-widest px-2 py-0.5 rounded-md mt-1.5 font-sans">
-                          Active Center
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right Col: Prominent text headline */}
-            <div className="lg:col-span-5 space-y-5">
-              <div className="inline-flex items-center space-x-2 text-xs font-bold text-red-600 uppercase tracking-wider">
-                <Compass className="h-4 w-4" />
-                <span>Nationwide Presence</span>
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#0F244C] leading-tight font-outfit">
-                Our National Outreach
-              </h2>
-              <p className="text-sm text-gray-500 leading-relaxed font-normal">
-                We track and register verified directories of premier institutes across India's largest metropolitan cities. While our technology platform guides families nationwide, our core active counseling desk and physical team are fully deployed in <span className="text-[#0F244C] font-bold">Indore</span>.
-              </p>
-              <div className="pt-4 flex flex-wrap gap-2 text-xs">
-                <button
-                  type="button"
-                  onClick={() => handleLocalityClick('All')}
-                  className="bg-[#0F244C] hover:bg-[#16336a] text-white px-5 py-3.5 rounded-xl text-xs font-bold transition shadow-md flex items-center gap-2 cursor-pointer"
-                >
-                  <span>Explore Indore Directory</span>
-                  <ArrowUpRight className="h-4 w-4 text-sky-400" />
-                </button>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-
-
-
-
       {/* 9. POPULAR LOCALITIES IN INDORE */}
       <section className="py-10 sm:py-12 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <div className="inline-flex items-center space-x-2 text-xs font-bold text-red-600 uppercase tracking-wider mb-2">
-              <MapPin className="h-4 w-4" />
+          <div className="mb-8 text-center">
+            <div className="inline-flex items-center justify-center space-x-2 text-xs font-bold text-red-600 uppercase tracking-wider mb-2">
+              <MapPin className="h-5 w-5" />
               <span>Campus Map Hubs</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F244C] font-outfit">
-              Popular Localities near you in Indore
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F244C] font-outfit text-center">
+              Explore Colleges by Location in Indore
             </h2>
           </div>
 
           {/* Localities Pill Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-            {LOCALITIES.map((loc, idx) => (
-              <motion.div 
-                key={idx}
+            {LOCALITIES.map((loc) => (
+              <motion.button
+                type="button"
+                key={loc.name}
                 whileHover={{ scale: 1.02, y: -2 }}
                 onClick={() => handleLocalityClick(loc.name)}
-                className="group cursor-pointer bg-white border border-gray-100 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-lg hover:border-red-600/30 hover:bg-red-600/5 transition-all flex items-center justify-between"
+                className="group cursor-pointer bg-white border border-gray-100 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-lg hover:border-red-600/30 hover:bg-red-600/5 transition-all flex items-center text-left"
               >
                 <div className="flex items-center space-x-3 sm:space-x-3.5 min-w-0">
-                  <div className="h-9 w-9 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all flex-shrink-0">
+                  <div className="h-10 w-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all flex-shrink-0">
                     <MapPin className="h-4 w-4" />
                   </div>
-                  <div className="truncate">
-                    <h4 className="text-xs sm:text-sm font-bold text-[#0F244C] group-hover:text-red-600 transition font-outfit truncate">{loc.name}</h4>
-                    <p className="text-[10px] text-gray-400 font-medium mt-0.5">Indore Zone</p>
+                  <div className="min-w-0">
+                    <h4 className="text-sm sm:text-base font-bold text-[#0F244C] group-hover:text-red-600 transition font-outfit">{loc.name}</h4>
+                    <span className="text-xs text-gray-500">{loc.collegeIds.length} colleges</span>
                   </div>
                 </div>
-                <span className="text-[10px] font-bold text-gray-400 bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-1 group-hover:bg-red-600/10 group-hover:text-red-600 transition-all flex-shrink-0">
-                  {loc.dist}
-                </span>
-              </motion.div>
+              </motion.button>
             ))}
           </div>
         </div>

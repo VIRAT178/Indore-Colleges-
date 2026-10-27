@@ -10,6 +10,8 @@ export interface Institute {
   rating: number;
   googleRating?: number;
   indoreRating?: number;
+  ratingSource?: string;
+  ratingReviewCount?: number;
   totalReviews: number;
   image: string;
   videoUrl?: string;
@@ -42,6 +44,7 @@ export interface Institute {
   affiliationPrivateName?: string;
   isPartnerRegistered?: boolean;
   status?: string;
+  isDirectoryVerified?: boolean;
   courses?: string[];
   coursesList?: {
     name: string;
@@ -140,6 +143,9 @@ export interface ChatMessage {
 export interface UserProfile {
   email: string;
   name: string;
+  phone?: string;
+  courseInterested?: string;
+  twelfthSubject?: string;
   fatherName?: string;
   fatherEmail?: string;
   motherName?: string;
@@ -228,4 +234,3 @@ export interface PartnerCollege {
   updatedAt?: string;
   lastApprovedAt?: string;
 }
-

@@ -1,8 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState, useEffect } from 'react';
 import Logo from './Logo';
 import { 
@@ -27,6 +22,7 @@ import {
   Search,
   Check,
   X,
+  Trash2,
   ArrowRight,
   Edit3,
   AlertCircle,
@@ -82,12 +78,28 @@ export default function AdminPortal() {
   // Search filter
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Auto load data once logged in
+  const adminApiFetch = (input: RequestInfo | URL, init: RequestInit = {}) => {
+    const headers = new Headers(init.headers);
+    const token = localStorage.getItem('admin_token');
+    if (token) headers.set('Authorization', `Bearer ${token}`);
+    return fetch(input, { ...init, headers });
+  };
+
+  // Restore only sessions that the server still recognizes.
   useEffect(() => {
     const adminToken = localStorage.getItem('admin_token');
-    if (adminToken === 'admin-secret-session-token') {
-      setIsAdminLoggedIn(true);
-    }
+    if (!adminToken) return;
+
+    adminApiFetch('/api/admin/session')
+      .then((res) => {
+        if (res.ok) {
+          setIsAdminLoggedIn(true);
+          return;
+        }
+        if (res.status === 401) localStorage.removeItem('admin_token');
+        throw new Error('Your admin session has expired. Please log in again.');
+      })
+      .catch((err) => setErrorMsg(err instanceof Error ? err.message : 'Unable to verify admin session.'));
   }, []);
 
   useEffect(() => {
@@ -100,27 +112,30 @@ export default function AdminPortal() {
     setLoading(true);
     try {
       const [resPartners, resUpdates, resCounseling, resCallbacks, resUsers] = await Promise.all([
-        fetch('/api/admin/all-registrations'),
-        fetch('/api/admin/update-requests'),
-        fetch('/api/admin/counseling-leads'),
-        fetch('/api/admin/callback-leads'),
-        fetch('/api/admin/user-profiles')
+        adminApiFetch('/api/admin/all-registrations'),
+        adminApiFetch('/api/admin/update-requests'),
+        adminApiFetch('/api/admin/counseling-leads'),
+        adminApiFetch('/api/admin/callback-leads'),
+        adminApiFetch('/api/admin/user-profiles')
       ]);
 
-      const dataPartners = await resPartners.json();
-      const dataUpdates = await resUpdates.json();
-      const dataCounseling = await resCounseling.json();
-      const dataCallbacks = await resCallbacks.json();
-      const dataUsers = await resUsers.json();
+      const responses = [resPartners, resUpdates, resCounseling, resCallbacks, resUsers];
+      const data = await Promise.all(responses.map(async (response) => {
+        if (!response.ok) throw new Error(`Admin data request failed (${response.status}).`);
+        const records: unknown = await response.json();
+        if (!Array.isArray(records)) throw new Error('Admin data response was not a list.');
+        return records;
+      }));
 
-      setPartners(Array.isArray(dataPartners) ? dataPartners : []);
-      setUpdateRequests(Array.isArray(dataUpdates) ? dataUpdates : []);
-      setCounselingLeads(Array.isArray(dataCounseling) ? dataCounseling : []);
-      setCallbackLeads(Array.isArray(dataCallbacks) ? dataCallbacks : []);
-      setUserProfiles(Array.isArray(dataUsers) ? dataUsers : []);
+      setPartners(data[0]);
+      setUpdateRequests(data[1]);
+      setCounselingLeads(data[2]);
+      setCallbackLeads(data[3]);
+      setUserProfiles(data[4]);
 
     } catch (err) {
       console.error("Failed to fetch admin dashboard records:", err);
+      setErrorMsg(err instanceof Error ? err.message : 'Failed to load administrative records.');
     } finally {
       setLoading(false);
     }
@@ -142,6 +157,9 @@ export default function AdminPortal() {
       if (!res.ok) {
         throw new Error(data.error || 'Invalid credentials.');
       }
+      if (typeof data.token !== 'string' || !data.token) {
+        throw new Error('The server did not issue an admin session.');
+      }
 
       localStorage.setItem('admin_token', data.token);
       setIsAdminLoggedIn(true);
@@ -153,17 +171,74 @@ export default function AdminPortal() {
   };
 
   const handleAdminLogout = () => {
+    adminApiFetch('/api/admin/logout', { method: 'POST' })
+      .catch((err) => console.error('Failed to close admin session:', err));
     localStorage.removeItem('admin_token');
     setIsAdminLoggedIn(false);
     setAdminEmail('');
     setAdminPassword('');
   };
 
+  const handleDeleteRecord = async (
+    resource: 'registrations' | 'counseling-leads' | 'callback-leads' | 'user-profiles',
+    id: string,
+    label: string
+  ) => {
+    if (!window.confirm(`Delete ${label}? This action cannot be undone.`)) return;
+
+    setErrorMsg('');
+    setSuccessMsg('');
+    try {
+      const token = localStorage.getItem('admin_token');
+      if (!token) throw new Error('Your admin session has expired. Please log in again.');
+
+      const res = await adminApiFetch(`/api/admin/${resource}/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (res.status === 401) {
+          localStorage.removeItem('admin_token');
+          setIsAdminLoggedIn(false);
+        }
+        throw new Error(data.error || `Failed to delete ${label}.`);
+      }
+
+      if (resource === 'registrations') setPartners(prev => prev.filter(item => item.id !== id));
+      if (resource === 'counseling-leads') setCounselingLeads(prev => prev.filter(item => item.id !== id));
+      if (resource === 'callback-leads') setCallbackLeads(prev => prev.filter(item => item.id !== id));
+      if (resource === 'user-profiles') setUserProfiles(prev => prev.filter(item => item.email !== id));
+
+      setSuccessMsg(`${label} deleted successfully.`);
+      setTimeout(() => setSuccessMsg(''), 5000);
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : `Failed to delete ${label}.`);
+    }
+  };
+
+  const renderDeleteButton = (
+    resource: 'registrations' | 'counseling-leads' | 'callback-leads' | 'user-profiles',
+    id: string,
+    label: string
+  ) => (
+    <button
+      type="button"
+      onClick={() => handleDeleteRecord(resource, id, label)}
+      className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-rose-200 px-2.5 py-1.5 text-[10px] font-bold text-rose-700 transition hover:bg-rose-50"
+      aria-label={`Delete ${label}`}
+      title={`Delete ${label}`}
+    >
+      <Trash2 className="h-3 w-3" />
+      <span>Delete</span>
+    </button>
+  );
+
   const handleUpdatePartnerStatus = async (id: string, status: 'approved' | 'rejected' | 'pending') => {
     setErrorMsg('');
     setSuccessMsg('');
     try {
-      const res = await fetch(`/api/admin/registration-status/${id}`, {
+      const res = await adminApiFetch(`/api/admin/registration-status/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
@@ -191,7 +266,7 @@ export default function AdminPortal() {
     setSuccessMsg('');
     setActionProcessingId(requestId);
     try {
-      const res = await fetch(`/api/admin/update-requests/${requestId}`, {
+      const res = await adminApiFetch(`/api/admin/update-requests/${requestId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -215,7 +290,7 @@ export default function AdminPortal() {
       );
 
       // Re-fetch all partners to reflect live updates
-      const refreshedPartners = await fetch('/api/admin/all-registrations');
+      const refreshedPartners = await adminApiFetch('/api/admin/all-registrations');
       const partnersData = await refreshedPartners.json();
       if (Array.isArray(partnersData)) setPartners(partnersData);
 
@@ -234,7 +309,7 @@ export default function AdminPortal() {
     setSuccessMsg('');
     setActionProcessingId(requestId);
     try {
-      const res = await fetch(`/api/admin/update-requests/${requestId}`, {
+      const res = await adminApiFetch(`/api/admin/update-requests/${requestId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -300,10 +375,19 @@ export default function AdminPortal() {
     (cb.instituteId || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const filteredUsers = userProfiles.filter(u => 
-    u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    u.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredUsers = userProfiles.filter(u => {
+    const searchableDetails = [
+      u.name,
+      u.email,
+      u.phone,
+      u.courseInterested,
+      u.twelfthSubject,
+      u.address
+    ];
+    return searchableDetails.some(value =>
+      typeof value === 'string' && value.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
@@ -1063,6 +1147,7 @@ export default function AdminPortal() {
                                           <X className="h-3 w-3" />
                                           <span>Reject</span>
                                         </button>
+                                        {renderDeleteButton('registrations', item.id, item.name)}
                                       </div>
                                     ) : (
                                       <div className="flex items-center justify-end gap-1.5">
@@ -1084,6 +1169,7 @@ export default function AdminPortal() {
                                         >
                                           Reset
                                         </button>
+                                        {renderDeleteButton('registrations', item.id, item.name)}
                                       </div>
                                     )}
                                   </td>
@@ -1184,6 +1270,7 @@ export default function AdminPortal() {
                                   </div>
                                 )}
                               </div>
+                              {renderDeleteButton('registrations', item.id, item.name)}
                             </div>
                           ))}
                         </div>
@@ -1210,6 +1297,7 @@ export default function AdminPortal() {
                                 <th className="p-4">Date & Slot Preferred</th>
                                 <th className="p-4">Queries / Message</th>
                                 <th className="p-4">Created Time</th>
+                                <th className="p-4 text-right">Actions</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -1237,6 +1325,9 @@ export default function AdminPortal() {
                                   </td>
                                   <td className="p-4 text-slate-400 text-[10px]">
                                     {new Date(item.createdAt).toLocaleString()}
+                                  </td>
+                                  <td className="p-4 text-right">
+                                    {renderDeleteButton('counseling-leads', item.id, 'this counselling lead')}
                                   </td>
                                 </tr>
                               ))}
@@ -1286,6 +1377,7 @@ export default function AdminPortal() {
                                 <span>Submission:</span>
                                 <span className="font-mono">{new Date(item.createdAt).toLocaleString()}</span>
                               </div>
+                              {renderDeleteButton('counseling-leads', item.id, 'this counselling lead')}
                             </div>
                           ))}
                         </div>
@@ -1312,6 +1404,7 @@ export default function AdminPortal() {
                                 <th className="p-4">Target Institution Ref</th>
                                 <th className="p-4">User Message</th>
                                 <th className="p-4">Alert Time</th>
+                                <th className="p-4 text-right">Actions</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -1334,6 +1427,9 @@ export default function AdminPortal() {
                                   </td>
                                   <td className="p-4 text-slate-400 text-[10px]">
                                     {new Date(item.createdAt).toLocaleString()}
+                                  </td>
+                                  <td className="p-4 text-right">
+                                    {renderDeleteButton('callback-leads', item.id, 'this callback lead')}
                                   </td>
                                 </tr>
                               ))}
@@ -1372,6 +1468,7 @@ export default function AdminPortal() {
                                 <span>Alert Time:</span>
                                 <span className="font-mono">{new Date(item.createdAt).toLocaleString()}</span>
                               </div>
+                              {renderDeleteButton('callback-leads', item.id, 'this callback lead')}
                             </div>
                           ))}
                         </div>
@@ -1393,11 +1490,13 @@ export default function AdminPortal() {
                             <thead>
                               <tr className="bg-slate-50 border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
                                 <th className="p-4">User Personal Info</th>
-                                <th className="p-4">Address & Pincode</th>
+                                <th className="p-4">Contact & Academic Interest</th>
+                                <th className="p-4">Address</th>
                                 <th className="p-4">Parent Details</th>
                                 <th className="p-4">Shortlisted IDs</th>
                                 <th className="p-4">Basket Cart IDs</th>
                                 <th className="p-4">Member Since</th>
+                                <th className="p-4 text-right">Actions</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -1406,6 +1505,11 @@ export default function AdminPortal() {
                                   <td className="p-4">
                                     <p className="font-bold text-slate-900">{item.name}</p>
                                     <p className="text-[10px] text-slate-400 font-mono">{item.email}</p>
+                                  </td>
+                                  <td className="p-4">
+                                    <p className="font-semibold">{item.phone || 'Phone not provided'}</p>
+                                    <p className="text-[10px] text-slate-500 mt-1">Course: {item.courseInterested || 'N/A'}</p>
+                                    <p className="text-[10px] text-slate-500">12th: {item.twelfthSubject || 'N/A'}</p>
                                   </td>
                                   <td className="p-4">
                                     <p>{item.address || 'N/A'}</p>
@@ -1428,6 +1532,9 @@ export default function AdminPortal() {
                                   <td className="p-4 text-slate-400 text-[10px]">
                                     {new Date(item.createdAt).toLocaleDateString()}
                                   </td>
+                                  <td className="p-4 text-right">
+                                    {renderDeleteButton('user-profiles', item.email, `the user profile for ${item.email}`)}
+                                  </td>
                                 </tr>
                               ))}
                             </tbody>
@@ -1444,6 +1551,18 @@ export default function AdminPortal() {
                               </div>
 
                               <div className="grid grid-cols-2 gap-2 text-[11px] pt-2 border-t border-slate-50">
+                                <div>
+                                  <span className="font-bold text-slate-400 uppercase tracking-wider text-[8px] block">Contact Number</span>
+                                  <span className="text-slate-800">{item.phone || 'N/A'}</span>
+                                </div>
+                                <div>
+                                  <span className="font-bold text-slate-400 uppercase tracking-wider text-[8px] block">Course Interested</span>
+                                  <span className="text-slate-800">{item.courseInterested || 'N/A'}</span>
+                                </div>
+                                <div className="col-span-2">
+                                  <span className="font-bold text-slate-400 uppercase tracking-wider text-[8px] block">12th Subject / Stream</span>
+                                  <span className="text-slate-800">{item.twelfthSubject || 'N/A'}</span>
+                                </div>
                                 <div>
                                   <span className="font-bold text-slate-400 uppercase tracking-wider text-[8px] block">Shortlisted Institutes</span>
                                   <span className="px-2 py-0.5 bg-slate-100 text-slate-700 font-bold rounded text-[9px] inline-block mt-0.5">
@@ -1476,6 +1595,7 @@ export default function AdminPortal() {
                                 <span>Platform Enrolled:</span>
                                 <span className="font-mono">{new Date(item.createdAt).toLocaleDateString()}</span>
                               </div>
+                              {renderDeleteButton('user-profiles', item.email, `the user profile for ${item.email}`)}
                             </div>
                           ))}
                         </div>

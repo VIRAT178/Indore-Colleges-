@@ -2,7 +2,6 @@
 import { Institute } from '../types';
 
 export const INDORE_INSTITUTES: Institute[] = [
-  // --- COLLEGES, UNIVERSITIES & TECH INST ---
   {
     id: 'malwa-institute',
     name: 'Malwa Institute of Science & Technology',
@@ -16,8 +15,8 @@ export const INDORE_INSTITUTES: Institute[] = [
     indoreRating: 3.9,
     totalReviews: 24,
     image: '/malwa_institute_campus.jpg',
-    videoUrl: 'https://www.youtube.com/watch?v=dJenbzi3TJs',
-    backgroundVideoUrl: 'https://www.youtube.com/watch?v=dJenbzi3TJs',
+    videoUrl: '/malwa-institute-campus.mp4',
+    backgroundVideoUrl: '/malwa-institute-campus.mp4',
     description: 'Malwa Institute of Science and Technology (MIST Indore) is a premier engineering and business administration institute offering Undergraduate, Postgraduate, and Diploma courses in various specializations. Possessing world-class in-house facilities like massive auditoriums, an amphitheater, and its own fleet of free buses, the college grooms students to match modern corporate cultures.',
     facilities: ['Library', 'Laboratory', 'Cafeteria', 'Sports Arena', 'Medical Center', 'Hostels', 'Auditorium', 'Advanced Computer Labs', 'Modern Classrooms'],
     establishedYear: 2007,
@@ -79,8 +78,8 @@ export const INDORE_INSTITUTES: Institute[] = [
     totalReviews: 186,
     image: '/iit-indore.jpg',
     // Background video URL (Put your MP4, WebM, or YouTube video URL here)
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-students-walking-in-a-university-campus-4336-large.mp4',
-    backgroundVideoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-students-walking-in-a-university-campus-4336-large.mp4',
+    videoUrl: '/intro-video-mgi.mp4',
+    backgroundVideoUrl: '/intro-video-mgi.mp4',
     description: 'Indian Institute of Technology Indore (IIT Indore), established in 2009, is an autonomous public university of National Importance located on a 501.42-acre state-of-the-art campus in Simrol. Highly ranked nationally and globally, the institute is prominent for elite research, strong multi-disciplinary engineering programs, first-class single occupancy hosteling configurations, and leading technology transfer facilities.',
     facilities: ['Advanced Research Labs', 'Supercomputer Facility', 'Single Occupancy Hostels', 'Sports Complex', '24/7 Library', 'Start-up Incubator', 'Central Workshop', 'Health Centre'],
     establishedYear: 2009,
@@ -1633,6 +1632,66 @@ export const INDORE_INSTITUTES: Institute[] = [
     ]
   },
   {
+    id: 'svim-indore',
+    name: 'Shri Vaishnav Institute of Management (SVIM)',
+    type: 'college',
+    category: 'Management',
+    boardOrAffiliation: 'Management Institute',
+    location: 'Indore',
+    feePerAnnum: 0,
+    rating: 0,
+    totalReviews: 0,
+    image: '/bg2.jpeg',
+    description: 'Shri Vaishnav Institute of Management (SVIM) is a management institute in Indore. Contact the institute directly for current program, admission, and fee information.',
+    facilities: [],
+    establishedYear: 0,
+    coordinates: { lat: 22.7196, lng: 75.8577 },
+    coursesList: [
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: 'Contact institute for current fees' },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: 'Contact institute for current fees' }
+    ]
+  },
+  {
+    id: 'gsimr',
+    name: 'Govindram Seksaria Institute of Management and Research (GSIMR)',
+    type: 'college',
+    category: 'Management',
+    boardOrAffiliation: 'Management Institute',
+    location: 'Indore',
+    feePerAnnum: 0,
+    rating: 0,
+    totalReviews: 0,
+    image: '/bg2.jpeg',
+    description: 'Govindram Seksaria Institute of Management and Research (GSIMR) is a management institute in Indore. Contact the institute directly for current program, admission, and fee information.',
+    facilities: [],
+    establishedYear: 0,
+    coordinates: { lat: 22.7196, lng: 75.8577 },
+    coursesList: [
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: 'Contact institute for current fees' },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: 'Contact institute for current fees' }
+    ]
+  },
+  {
+    id: 'iips-davv',
+    name: 'International Institute of Professional Studies (IIPS - DAVV)',
+    type: 'college',
+    category: 'Management',
+    boardOrAffiliation: 'Devi Ahilya Vishwavidyalaya (DAVV)',
+    location: 'Takshashila Campus',
+    feePerAnnum: 0,
+    rating: 0,
+    totalReviews: 0,
+    image: '/davv.jpg',
+    description: 'The International Institute of Professional Studies (IIPS) is a professional studies institute of Devi Ahilya Vishwavidyalaya (DAVV), Indore. Contact the institute for current program, admission, and fee information.',
+    facilities: [],
+    establishedYear: 0,
+    coordinates: { lat: 22.7129, lng: 75.8729 },
+    coursesList: [
+      { name: 'Integrated Management Programme', duration: '5 Years', fees: 'Contact institute for current fees' },
+      { name: 'Management Programme', duration: 'As per programme', fees: 'Contact institute for current fees' }
+    ]
+  },
+  {
     id: 'jaipuria-indore',
     name: 'Jaipuria Institute of Management',
     type: 'college',
@@ -2577,10 +2636,293 @@ export const INDORE_INSTITUTES: Institute[] = [
     cutoffs: [
       { course: 'BA LLB (Hons)', rank: 'IILET rank / CLAT Score cutoff' }
     ]
+  },
+  {
+    id: 'rishiraj-institute',
+    name: 'Rishi Raj Institute of Technology',
+    type: 'college',
+    category: 'Engineering',
+    boardOrAffiliation: 'Affiliation details to be confirmed',
+    location: 'Sanwer Road',
+    feePerAnnum: 0,
+    rating: 0,
+    totalReviews: 0,
+    image: '',
+    description: 'Rishiraj Institute of Technology, established in 2002, offers engineering, management, and pharmacy education in Indore. Its B.E. programmes are affiliated with RGPV and its MBA programme with DAVV. Confirm current admission requirements and fee schedules directly with the institute.',
+    facilities: ['Engineering laboratories', 'Library', 'Playground'],
+    establishedYear: 2002,
+    coordinates: { lat: 22.79, lng: 75.84 },
+    approval: 'AICTE-approved programmes; B.E. affiliated with RGPV and MBA affiliated with DAVV (as listed by the provided source)',
+    selectionCriteria: 'The provided listing states 10+2 or equivalent with Mathematics as the minimum eligibility. Confirm current criteria with the institute.',
+    coursesList: [
+      { name: 'B.E./B.Tech', duration: '4 years', fees: 'Shiksha-listed total tuition: ₹1.74–2.32 lakh' },
+      { name: 'M.E./M.Tech', duration: '2 years', fees: 'Shiksha-listed total tuition: ₹1.2 lakh' },
+      { name: 'Master of Business Administration (MBA)', duration: '2 years', fees: 'Shiksha-listed total tuition: ₹75,000' },
+      { name: 'Pharmacy programmes', duration: 'Confirm with institute', fees: 'Contact institute for current fees' }
+    ],
+    isDirectoryVerified: false
+  },
+  {
+    id: 'gsb-indore',
+    name: 'Graduate School of Business College',
+    type: 'college',
+    category: 'Management',
+    boardOrAffiliation: 'Affiliated with DAVV (as reported by Shiksha)',
+    location: 'Bypass Road',
+    feePerAnnum: 0,
+    rating: 4.2,
+    ratingSource: 'Shiksha',
+    totalReviews: 0,
+    image: '',
+    description: 'Graduate School of Business is listed in the Bypass Road area of Indore. Shiksha reports the institute was established in 2010, is affiliated with DAVV, and offers MBA, BCA, BBA, BA, and B.Com programmes. Published fee figures vary by course and source; confirm current admissions and fees directly with the college.',
+    facilities: [],
+    establishedYear: 2010,
+    coordinates: { lat: 22.75, lng: 75.89 },
+    website: 'https://gsbl.in/',
+    coursesList: [
+      { name: 'Master of Business Administration (MBA)', duration: 'Confirm with college', fees: 'Contact college for current fees' },
+      { name: 'Bachelor of Computer Applications (BCA)', duration: 'Confirm with college', fees: 'Contact college for current fees' },
+      { name: 'Bachelor of Business Administration (BBA)', duration: 'Confirm with college', fees: 'Contact college for current fees' },
+      { name: 'Bachelor of Arts (BA)', duration: 'Confirm with college', fees: 'Contact college for current fees' },
+      { name: 'Bachelor of Commerce (B.Com)', duration: 'Confirm with college', fees: 'Contact college for current fees' }
+    ],
+    isDirectoryVerified: false
+  },
+  {
+    id: 'skitm-indore',
+    name: 'Shivajirao Kadam Institute of Technology & Management',
+    type: 'college',
+    category: 'Engineering',
+    boardOrAffiliation: 'Affiliation details to be confirmed',
+    location: 'Bypass Road',
+    feePerAnnum: 0,
+    rating: 3.6,
+    ratingSource: 'Shiksha',
+    ratingReviewCount: 111,
+    totalReviews: 0,
+    image: '',
+    description: 'Shivajirao Kadam Institute of Technology & Management is listed in the Bypass Road area of Indore. Shiksha lists MBA/PGDM and engineering courses, including B.Tech in Computer Science and Engineering, and reports a 3.6/5 rating from 111 user reviews. Its fee listings range from ₹45,000 to ₹3,00,000 in total tuition; confirm course-specific current fees with the institute.',
+    facilities: [],
+    establishedYear: 0,
+    coordinates: { lat: 22.75, lng: 75.89 },
+    website: 'https://www.skitm.in/',
+    coursesList: [
+      { name: 'B.Tech in Computer Science and Engineering', duration: '4 years', fees: 'Shiksha-listed total tuition: ₹1,20,000' },
+      { name: 'MBA/PGDM', duration: '2 years', fees: 'Shiksha lists tuition from ₹45,000; confirm course-specific fee basis' }
+    ],
+    isDirectoryVerified: false
+  },
+  {
+    id: 'astral-institute',
+    name: 'Astral Institute of Technology and Research',
+    type: 'college',
+    category: 'Engineering',
+    boardOrAffiliation: 'Affiliation details to be confirmed',
+    location: 'Bypass Road',
+    feePerAnnum: 0,
+    rating: 3.3,
+    ratingSource: 'Shiksha',
+    ratingReviewCount: 11,
+    totalReviews: 0,
+    image: '',
+    description: 'Astral Institute of Technology and Research identifies its programmes in engineering, management, and MCA on its website. Shiksha reports a 3.3/5 rating from 11 user reviews and a total fee of ₹49,000 for one course, without identifying that course in the search snippet. Confirm current programme availability and fee schedules directly with the institute.',
+    facilities: [],
+    establishedYear: 0,
+    coordinates: { lat: 22.75, lng: 75.89 },
+    contactPhone: '+91-9229-20-5555',
+    website: 'https://astral.ac.in/',
+    coursesList: [
+      { name: 'Engineering programmes', duration: 'Confirm with college', fees: 'Contact college for current fees' },
+      { name: 'Management programmes', duration: 'Confirm with college', fees: 'Contact college for current fees' },
+      { name: 'MCA', duration: 'Confirm with college', fees: 'Contact college for current fees' }
+    ],
+    isDirectoryVerified: false
+  },
+  {
+    id: 'swami-vivekanand-college-engineering',
+    name: 'Swami Vivekanand College of Engineering',
+    type: 'college',
+    category: 'Engineering',
+    boardOrAffiliation: 'Affiliation details to be confirmed',
+    location: 'Khandwa Road',
+    feePerAnnum: 0,
+    rating: 0,
+    totalReviews: 0,
+    image: '',
+    description: 'Swami Vivekanand College of Engineering provides engineering programmes in Indore. Its website lists B.Tech, Diploma, M.E./M.Tech, and MBA fee information; confirm current fees and admissions directly with the college.',
+    facilities: [],
+    establishedYear: 0,
+    coordinates: { lat: 22.70, lng: 75.87 },
+    contactEmail: 'info@svceindore.ac.in',
+    contactPhone: '07324-405000',
+    website: 'https://svce.vivekanandgroup.com/',
+    coursesList: [
+      { name: 'Bachelor of Technology (B.Tech)', duration: 'Confirm with college', fees: 'Contact college for current fees' },
+      { name: 'Diploma', duration: 'Confirm with college', fees: 'Contact college for current fees' },
+      { name: 'M.E./M.Tech', duration: 'Confirm with college', fees: 'Contact college for current fees' },
+      { name: 'Master of Business Administration (MBA)', duration: 'Confirm with college', fees: 'Contact college for current fees' }
+    ],
+    isDirectoryVerified: false
+  },
+  {
+    id: 'indore-management-institute',
+    name: 'Indore Management Institute and Research Centre',
+    type: 'college',
+    category: 'Management',
+    boardOrAffiliation: 'Affiliation details to be confirmed',
+    location: 'Khandwa Road',
+    feePerAnnum: 0,
+    rating: 3.9,
+    ratingSource: 'Shiksha',
+    ratingReviewCount: 4,
+    totalReviews: 0,
+    image: '',
+    description: 'Shiksha identifies this institute as Indore Management Institute and Research Centre, lists 10 courses, and reports a 3.9/5 rating from 4 user reviews. Its listed fees range from ₹30,000 to ₹1,45,000 across courses; confirm the current course catalogue, institute identity, and fees directly with the college.',
+    facilities: [],
+    establishedYear: 0,
+    coordinates: { lat: 22.70, lng: 75.87 },
+    coursesList: [
+      { name: 'Course catalogue (10 courses listed by Shiksha)', duration: 'Varies by programme', fees: 'Reported range: ₹30,000–₹1,45,000; confirm current fees' }
+    ],
+    isDirectoryVerified: false
+  },
+  {
+    id: 'vindhya-institute-indore',
+    name: 'Vindhya Institute of Technology & Science',
+    type: 'college',
+    category: 'Engineering',
+    boardOrAffiliation: 'Affiliation details to be confirmed',
+    location: 'Khandwa Road',
+    feePerAnnum: 0,
+    rating: 3.4,
+    ratingSource: 'Shiksha',
+    ratingReviewCount: 25,
+    totalReviews: 0,
+    image: '',
+    description: 'Vindhya Institute of Technology & Science (VITS Indore) is listed in the Khandwa Road area. Shiksha reports a 3.4/5 rating from 25 user reviews and lists engineering, MBA, and postgraduate engineering programmes. The listed total tuition fees differ by programme; confirm current admissions and fees with the institute.',
+    facilities: [],
+    establishedYear: 0,
+    coordinates: { lat: 22.70, lng: 75.87 },
+    coursesList: [
+      { name: 'B.E./B.Tech (6 courses listed)', duration: 'Confirm with college', fees: 'Shiksha-listed total tuition: ₹96,000' },
+      { name: 'MBA/PGDM', duration: 'Confirm with college', fees: 'Shiksha-listed total tuition: ₹39,000' },
+      { name: 'M.E./M.Tech (3 courses listed)', duration: 'Confirm with college', fees: 'Shiksha-listed total tuition: ₹62,000' }
+    ],
+    isDirectoryVerified: false
+  },
+  {
+    id: 'kk-vigyan-college',
+    name: 'K.K. Vigyan Avan Vyavasaik Adhyayan Mahavidyalaya',
+    type: 'college',
+    category: 'Arts & Science',
+    boardOrAffiliation: 'Affiliation details to be confirmed',
+    location: 'Vijay Nagar',
+    feePerAnnum: 0,
+    rating: 0,
+    totalReviews: 0,
+    image: '',
+    description: 'K.K. Vigyan Avan Vyavasaik Adhyayan Mahavidyalaya is listed in Vijay Nagar, Indore. Its college website identifies the institution under this name; confirm current courses, affiliations, fees, and admissions directly with the college.',
+    facilities: [],
+    establishedYear: 0,
+    coordinates: { lat: 22.75, lng: 75.89 },
+    website: 'https://kkcolleges.in/',
+    isDirectoryVerified: false
+  },
+  {
+    id: 'jain-diwakar-college',
+    name: 'Shri Jain Diwakar College',
+    type: 'college',
+    category: 'Arts & Science',
+    boardOrAffiliation: 'Affiliation details to be confirmed',
+    location: 'Sahu Khedi',
+    feePerAnnum: 0,
+    rating: 4.0,
+    ratingSource: 'Shiksha',
+    ratingReviewCount: 3,
+    totalReviews: 0,
+    image: '',
+    description: 'Shri Jain Diwakar College is listed in Sahu Khedi, Indore. A third-party college profile describes its teaching facilities, language lab, e-library, and student placement support. Shiksha lists 10 courses, including B.Ed and MBA/PGDM, and reports a 4.0/5 rating from 3 user reviews. Confirm current courses, approvals, and fees directly with the college.',
+    facilities: ['Laboratories', 'Language laboratory', 'E-library', 'Classrooms'],
+    establishedYear: 0,
+    coordinates: { lat: 22.75, lng: 75.89 },
+    coursesList: [
+      { name: 'B.Ed (1 course listed)', duration: 'Confirm with college', fees: 'Shiksha-listed total tuition: ₹80,000' },
+      { name: 'MBA/PGDM (4 courses listed)', duration: 'Confirm with college', fees: 'Shiksha-listed fee range: ₹39,000–₹78,000' }
+    ],
+    isDirectoryVerified: false
+  },
+  {
+    id: 'sica-college-indore',
+    name: 'SICA College',
+    type: 'college',
+    category: 'Arts & Science',
+    boardOrAffiliation: 'Affiliation details to be confirmed',
+    location: 'Vijay Nagar',
+    feePerAnnum: 0,
+    rating: 0,
+    totalReviews: 0,
+    image: '',
+    description: 'SICA College is listed in Indore. Its college website advertises admissions for the 2026-27 session. Confirm current course offerings, campus location, approvals, and fees directly with the college.',
+    facilities: [],
+    establishedYear: 0,
+    coordinates: { lat: 22.75, lng: 75.89 },
+    contactPhone: '9669808182, 8871729595, 0731-2974255',
+    website: 'https://www.sicacollegeindore.com/',
+    isDirectoryVerified: false
+  },
+  {
+    id: 'sri-aurobindo-institute-of-technology',
+    name: 'Sri Aurobindo Institute of Technology (SAIT)',
+    type: 'college',
+    category: 'Engineering',
+    boardOrAffiliation: 'AICTE / RGPV (confirm current affiliation)',
+    location: 'Sanwer Road',
+    feePerAnnum: 0,
+    rating: 0,
+    totalReviews: 0,
+    image: '',
+    description: 'Sri Aurobindo Institute of Technology (SAIT) in Indore offers undergraduate engineering and design programmes, postgraduate engineering programmes, and management programmes. Its official course information includes Computer Science, AI & Machine Learning, Electronics & Communication, Civil, and Mechanical Engineering. Confirm current admissions, approvals, affiliations, and fees directly with the institute.',
+    facilities: [],
+    establishedYear: 0,
+    coordinates: { lat: 22.7750, lng: 75.8450 },
+    website: 'https://www.aurogroup.ac/technology/',
+    approval: 'The official course information describes AICTE-aligned engineering curricula; confirm current programme approvals and affiliations with the institute.',
+    coursesList: [
+      { name: 'Bachelor of Technology (B.Tech) in Computer Science', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Bachelor of Technology (B.Tech) in Computer Science (AI & Machine Learning)', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Bachelor of Technology (B.Tech) in Electronics & Communication Engineering', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Bachelor of Technology (B.Tech) in Civil Engineering', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Bachelor of Technology (B.Tech) in Mechanical Engineering', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Master of Technology (M.Tech)', duration: '2 years', fees: 'Contact institute for current fees' },
+      { name: 'Bachelor of Design (B.Des)', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Master of Business Administration (MBA)', duration: '2 years', fees: 'Contact institute for current fees' },
+      { name: 'Master of Business Administration in Hospital Administration (MBA-HA)', duration: '2 years', fees: 'Contact institute for current fees' }
+    ],
+    isDirectoryVerified: false
+  }
+];
+
+export const INDORE_LOCALITY_GROUPS = [
+  {
+    name: 'Sanwer / Ujjain Road',
+    collegeIds: ['svvv-indore', 'lncts-indore', 'lnct-bhopal-indore', 'oriental-university', 'malwa-institute', 'rishiraj-institute', 'saims', 'sri-aurobindo-institute-of-technology']
+  },
+  {
+    name: 'Bypass Road',
+    collegeIds: ['acropolis', 'mit-indore', 'apj-kalam-univ', 'gsb-indore', 'skitm-indore', 'sage-university', 'astral-institute', 'medi-caps-university']
+  },
+  {
+    name: 'Khandwa Road',
+    collegeIds: ['iet-davv', 'davv', 'chameli-devi', 'swami-vivekanand-college-engineering', 'indore-management-institute', 'ims-davv', 'vindhya-institute-indore']
+  },
+  {
+    name: 'Indore City',
+    collegeIds: ['piemr-indore', 'gujarati-professional', 'softvision-college', 'kk-vigyan-college', 'jain-diwakar-college', 'sica-college-indore']
   }
 ];
 
 export const INDORE_LOCATIONS = [
+  ...INDORE_LOCALITY_GROUPS.map(group => group.name),
   'Residency Area',
   'Jhalaria (Bypass)',
   'A.B. Road',

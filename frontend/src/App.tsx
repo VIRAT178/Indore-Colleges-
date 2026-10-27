@@ -1,12 +1,9 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Home from './components/Home';
+import IntroVideoSection from './components/IntroVideoSection';
+import StreamSelector from './components/StreamSelector';
 import Footer from './components/Footer';
 import InstituteCard from './components/InstituteCard';
 import SidebarCounseling from './components/SidebarCounseling';
@@ -27,7 +24,7 @@ import AdminPortal from './components/AdminPortal';
 import { Institute, SearchFilters, UserProfile } from './types';
 import { Search, MapPin, Award, IndianRupee, HelpCircle, PhoneCall, Check, X, Compass, ChevronRight, HelpCircle as HelpIcon, Cpu, Briefcase, Laptop, Scale, HeartPulse, Palette, TrendingUp, ChevronLeft, Sparkles, GraduationCap } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { INDORE_LOCATIONS, CATEGORIES, BOARDS } from './data/indoreData';
+import { INDORE_INSTITUTES, INDORE_LOCATIONS, INDORE_LOCALITY_GROUPS, CATEGORIES, BOARDS } from './data/indoreData';
 
 export function getInstituteZone(locationStr: string): string {
   const loc = (locationStr || '').toLowerCase();
@@ -298,9 +295,14 @@ export function getPageSeo(pathname: string, institutes: Institute[]): PageSeo |
 function ScrollToTopAndSEO({ institutes }: { institutes: Institute[] }) {
   const { pathname } = useLocation();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    window.history.scrollRestoration = 'manual';
     window.scrollTo(0, 0);
+    const frame = window.requestAnimationFrame(() => window.scrollTo(0, 0));
+    return () => window.cancelAnimationFrame(frame);
+  }, [pathname]);
 
+  useEffect(() => {
     const seo = getPageSeo(pathname, institutes);
     if (!seo) {
       removeCollegeJsonLd();
@@ -336,6 +338,7 @@ function ScrollToTopAndSEO({ institutes }: { institutes: Institute[] }) {
 
 function CollegeDetailRoute({
   institutes,
+  institutesLoaded,
   onScheduleCounseling,
   shortlistedIds,
   handleToggleShortlist,
@@ -343,6 +346,7 @@ function CollegeDetailRoute({
   handleToggleCart
 }: {
   institutes: Institute[];
+  institutesLoaded: boolean;
   onScheduleCounseling: (inst: Institute) => void;
   shortlistedIds: string[];
   handleToggleShortlist: (id: string) => void;
@@ -351,9 +355,9 @@ function CollegeDetailRoute({
 }) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const college = institutes.find(i => i.id === id);
+  const college = institutes.find(i => i.id === id) || INDORE_INSTITUTES.find(i => i.id === id);
 
-  if (!college && institutes.length > 0) {
+  if (!college && institutesLoaded && institutes.length > 0) {
     return <Navigate to="/explore" replace />;
   }
 
@@ -412,8 +416,128 @@ function ExploreRoute({
   cartIds,
   navigate
 }: any) {
-  const { streamParam } = useParams<{ streamParam?: string }>();
+  const { streamParam, localitySlug } = useParams<{ streamParam?: string; localitySlug?: string }>();
   const selectedStream = streamParam || null;
+  const selectedLocality = localitySlug
+    ? INDORE_LOCALITY_GROUPS.find(group =>
+      group.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') === localitySlug
+    )
+    : null;
+
+  if (localitySlug && !selectedLocality) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (selectedLocality) {
+    const localityInstitutes = selectedLocality.collegeIds
+      .map((id: string) => institutes.find((institute: Institute) => institute.id === id)
+        || INDORE_INSTITUTES.find(institute => institute.id === id))
+      .filter((institute: Institute | undefined): institute is Institute => Boolean(institute));
+
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        key={`locality-${localitySlug}`}
+      >
+        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 sm:p-6 rounded-2xl border border-gray-200/60 shadow-xs">
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => navigate('/')}
+                className="p-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl text-gray-700 transition flex items-center justify-center cursor-pointer"
+                aria-label="Back to home"
+              >
+                <ChevronLeft className="h-5 w-5 stroke-[2.5]" />
+              </button>
+              <div>
+                <h1 className="text-xl sm:text-2xl font-black text-gray-900">{selectedLocality.name}</h1>
+                <p className="text-sm text-gray-500 mt-1">
+                  {localityInstitutes.length} colleges in this location
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className="text-sm font-bold text-red-600 hover:text-red-500 transition bg-red-50/50 hover:bg-red-50 px-4 py-2.5 rounded-xl cursor-pointer"
+            >
+              Explore Other Locations
+            </button>
+          </div>
+
+          <div className="bg-white rounded-3xl border border-gray-200/60 shadow-sm overflow-hidden divide-y divide-gray-150">
+            {localityInstitutes.map((institute, index) => (
+              <motion.div
+                key={institute.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.04 }}
+                className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-red-50/5 transition duration-150"
+              >
+                <div className="flex items-start sm:items-center gap-4 min-w-0">
+                  <div className={`h-11 w-11 rounded-xl flex items-center justify-center font-black text-sm shrink-0 border ${
+                    index === 0 ? 'bg-amber-500/10 text-amber-600 border-amber-200' :
+                    index === 1 ? 'bg-slate-400/10 text-slate-600 border-slate-200' :
+                    index === 2 ? 'bg-amber-700/10 text-amber-800 border-amber-300' :
+                    'bg-gray-50 text-gray-500 border-gray-200'
+                  }`}>
+                    #{index + 1}
+                  </div>
+
+                  <div className="space-y-1 min-w-0">
+                    <Link
+                      to={`/college/${institute.id}`}
+                      className="font-extrabold text-base sm:text-lg text-gray-900 hover:text-red-600 hover:underline transition decoration-2 decoration-red-500/30"
+                    >
+                      {institute.name}
+                    </Link>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-gray-400 font-bold">
+                      <span className="inline-flex items-center gap-1.5">
+                        <MapPin className="h-3.5 w-3.5 text-rose-500" />
+                        {institute.location}
+                      </span>
+                      <span aria-hidden="true">•</span>
+                      <span className="inline-flex items-center gap-1.5">
+                        <Award className="h-3.5 w-3.5 text-amber-500" />
+                        {institute.rating > 0
+                          ? `${institute.rating} ${institute.ratingSource ? `${institute.ratingSource} ` : ''}Rating`
+                          : 'Rating not listed'}
+                      </span>
+                      <span aria-hidden="true">•</span>
+                      <span className="inline-flex items-center gap-1">
+                        {institute.feePerAnnum > 0
+                          ? `₹${institute.feePerAnnum.toLocaleString('en-IN')}/year`
+                          : 'Contact college for fees'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                  <Link
+                    to={`/college/${institute.id}`}
+                    className="text-sm font-bold bg-gray-50 text-gray-700 hover:bg-red-50 hover:text-red-600 border border-gray-200 hover:border-red-200 px-4 py-2.5 rounded-xl transition"
+                  >
+                    View Details
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenCounseling(institute)}
+                    className="text-sm font-bold bg-red-600 hover:bg-red-500 text-white px-4 py-2.5 rounded-xl transition cursor-pointer"
+                  >
+                    Apply Now
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      </motion.div>
+    );
+  }
 
   const setSelectedStream = (stream: string | null) => {
     if (stream) {
@@ -434,87 +558,7 @@ function ExploreRoute({
         {instituteTypeFilter === 'college' && (
           <div className="w-full">
             {!selectedStream ? (
-              <div className="bg-gradient-to-tr from-red-500/10 via-amber-500/5 to-rose-500/10 rounded-3xl p-8 sm:p-12 shadow-md relative overflow-hidden mb-12 border border-red-100/50">
-                <motion.div 
-                  animate={{ 
-                    scale: [1, 1.15, 1],
-                    x: [0, 30, 0],
-                    y: [0, -20, 0]
-                  }}
-                  transition={{ 
-                    duration: 12, 
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                  className="absolute -top-10 -right-10 w-96 h-96 bg-red-400/20 rounded-full blur-3xl pointer-events-none" 
-                />
-                <motion.div 
-                  animate={{ 
-                    scale: [1, 1.25, 1],
-                    x: [0, -30, 0],
-                    y: [0, 30, 0]
-                  }}
-                  transition={{ 
-                    duration: 15, 
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 1
-                  }}
-                  className="absolute -bottom-10 -left-10 w-96 h-96 bg-amber-400/20 rounded-full blur-3xl pointer-events-none" 
-                />
-                
-                <div className="relative text-center max-w-3xl mx-auto mb-10">
-                   <motion.span
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-red-50 border border-red-100 text-red-600 rounded-full text-xs font-bold uppercase tracking-wider mb-4 shadow-3xs"
-                  >
-                    <Sparkles className="h-3.5 w-3.5 text-red-500 animate-spin" style={{ animationDuration: '4s' }} />
-                    Discover Indore's Finest
-                  </motion.span>
-                  <motion.h2
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="text-4xl sm:text-5xl font-black tracking-tight leading-none text-gray-900"
-                  >
-                    Are you looking for?
-                  </motion.h2>
-                  <p className="text-sm sm:text-base text-gray-600 mt-4 max-w-xl mx-auto font-semibold leading-loose space-y-2 sm:space-y-0">
-                    Explore <span className="px-2.5 py-1 rounded-lg bg-red-50 text-red-600 border border-red-100 font-extrabold inline-block transition hover:scale-105 duration-200">Top Educational Streams</span> and get <span className="px-2.5 py-1 rounded-lg bg-red-50 text-red-600 border border-red-100 font-extrabold inline-block transition hover:scale-105 duration-200">Tailored Recommendations</span> for Indore's <span className="px-2.5 py-1 rounded-lg bg-red-50 text-red-600 border border-red-100 font-extrabold inline-block transition hover:scale-105 duration-200">Best Colleges</span>.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
-                  {[
-                    { id: 'engineering', name: 'Engineering' },
-                    { id: 'bba', name: 'BBA' },
-                    { id: 'bca', name: 'BCA' },
-                    { id: 'mba', name: 'MBA' },
-                    { id: 'law', name: 'Law' },
-                    { id: 'medical', name: 'Medical' },
-                    { id: 'design', name: 'Design' },
-                  ].map((stream, idx) => {
-                    return (
-                      <motion.button
-                        id={`stream-box-${stream.id}`}
-                        key={stream.id}
-                        whileHover={{ scale: 1.05, y: -4 }}
-                        whileTap={{ scale: 0.95 }}
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: idx * 0.04 }}
-                        onClick={() => setSelectedStream(stream.id)}
-                        className="flex items-center justify-center p-6 bg-white border border-gray-100 hover:bg-red-50/30 hover:border-red-200 rounded-2xl transition cursor-pointer text-center group h-28 shadow-xs hover:shadow-md"
-                      >
-                        <span className="text-sm font-extrabold tracking-wider uppercase text-gray-800 group-hover:text-red-600 transition duration-200">
-                          {stream.name}
-                        </span>
-                      </motion.button>
-                    );
-                  })}
-                </div>
-              </div>
+              <StreamSelector onSelectStream={stream => setSelectedStream(stream)} />
             ) : (
               <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-200/60 shadow-xs">
@@ -831,6 +875,7 @@ function ExploreRoute({
           </>
         )}
       </section>
+      {!selectedStream && instituteTypeFilter === 'college' && <IntroVideoSection />}
     </motion.div>
   );
 }
@@ -841,13 +886,14 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
 
   const [institutes, setInstitutes] = useState<Institute[]>(initialInstitutes);
   const [loading, setLoading] = useState(initialInstitutes.length === 0);
+  const [institutesLoaded, setInstitutesLoaded] = useState(false);
 
   // Derive activeTab from current route path
   const getActiveTabFromPath = (path: string): 'home' | 'explore' | 'register' | 'dashboard' | 'blogs' | 'about' | 'careers' | 'contact' | 'college-portal' | 'admin-panel' => {
     if (path.startsWith('/explore') || path.startsWith('/college/')) return 'explore';
     if (path === '/register') return 'register';
     if (path === '/dashboard') return 'dashboard';
-    if (path === '/blogs' || path === '/reviews') return 'blogs';
+    if (path.startsWith('/blogs') || path.startsWith('/reviews')) return 'blogs';
     if (path === '/about') return 'about';
     if (path === '/careers') return 'careers';
     if (path === '/contact') return 'contact';
@@ -1096,13 +1142,14 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
     setLoading(initialInstitutes.length === 0);
     try {
       const res = await fetch('/api/institutes');
-      if (res.ok) {
-        const data = await res.json();
-        setInstitutes(data);
-      }
+      if (!res.ok) throw new Error(`Institute API returned ${res.status}`);
+      const data: unknown = await res.json();
+      if (!Array.isArray(data)) throw new Error('Institute API returned invalid data');
+      setInstitutes(data);
     } catch (err) {
       console.error('Error fetching Indore institutes:', err);
     } finally {
+      setInstitutesLoaded(true);
       setLoading(false);
     }
   };
@@ -1199,6 +1246,15 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
       if (selectedLocation.startsWith('Zone: ')) {
         const targetZone = selectedLocation.replace('Zone: ', '').toLowerCase();
         if (getInstituteZone(inst.location) !== targetZone) return false;
+      } else if (selectedLocation.startsWith('Areas: ')) {
+        const targetAreas = selectedLocation
+          .replace('Areas: ', '')
+          .split('|')
+          .map(area => area.toLowerCase());
+        if (!targetAreas.some(area => inst.location.toLowerCase().includes(area))) return false;
+      } else if (INDORE_LOCALITY_GROUPS.some(group => group.name === selectedLocation)) {
+        const selectedGroup = INDORE_LOCALITY_GROUPS.find(group => group.name === selectedLocation);
+        if (!selectedGroup?.collegeIds.includes(inst.id)) return false;
       } else if (inst.location !== selectedLocation) {
         return false;
       }
@@ -1269,12 +1325,48 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
                     maxFee={maxFee}
                     setMaxFee={setMaxFee}
                     onViewCollegeDetail={(inst) => navigate(`/college/${inst.id}`)}
+                    onViewLocality={(locality) => {
+                      const slug = locality.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+                      navigate(`/locality/${slug}`);
+                    }}
                   />
                 </motion.div>
               }
             />
 
             {/* Explore Routes */}
+            <Route
+              path="/locality/:localitySlug"
+              element={
+                <ExploreRoute
+                  institutes={institutes}
+                  loading={loading}
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  instituteTypeFilter={instituteTypeFilter}
+                  setInstituteTypeFilter={setInstituteTypeFilter}
+                  selectedCategory={selectedCategory}
+                  setSelectedCategory={setSelectedCategory}
+                  selectedBoard={selectedBoard}
+                  setSelectedBoard={setSelectedBoard}
+                  selectedLocation={selectedLocation}
+                  setSelectedLocation={setSelectedLocation}
+                  maxFee={maxFee}
+                  setMaxFee={setMaxFee}
+                  showMap={showMap}
+                  setShowMap={setShowMap}
+                  filteredInstitutes={filteredInstitutes}
+                  handleOpenCounseling={handleOpenCounseling}
+                  handleOpenCallback={handleOpenCallback}
+                  handleToggleShortlist={handleToggleShortlist}
+                  shortlistedIds={shortlistedIds}
+                  handleToggleCart={handleToggleCart}
+                  cartIds={cartIds}
+                  navigate={navigate}
+                />
+              }
+            />
+
             <Route
               path="/explore"
               element={
@@ -1345,6 +1437,7 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
               element={
                 <CollegeDetailRoute
                   institutes={institutes}
+                  institutesLoaded={institutesLoaded}
                   onScheduleCounseling={handleOpenCounseling}
                   shortlistedIds={shortlistedIds}
                   handleToggleShortlist={handleToggleShortlist}
@@ -1397,10 +1490,58 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
                 </motion.div>
               }
             />
+            <Route
+              path="/reviews/:categorySlug"
+              element={
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 15 }}
+                >
+                  <BlogsPage />
+                </motion.div>
+              }
+            />
+            <Route
+              path="/reviews/:categorySlug/:perspectiveSlug"
+              element={
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 15 }}
+                >
+                  <BlogsPage />
+                </motion.div>
+              }
+            />
 
             {/* Blogs Route (Alias to Reviews & Campus Guides) */}
             <Route
               path="/blogs"
+              element={
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 15 }}
+                >
+                  <BlogsPage />
+                </motion.div>
+              }
+            />
+            <Route
+              path="/blogs/:categorySlug"
+              element={
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 15 }}
+                >
+                  <BlogsPage />
+                </motion.div>
+              }
+            />
+            <Route
+              path="/blogs/:categorySlug/:perspectiveSlug"
               element={
                 <motion.div
                   initial={{ opacity: 0, y: 15 }}

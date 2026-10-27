@@ -1,7 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
@@ -140,7 +136,6 @@ export default function Header({
     setActiveTab('explore');
     setInstituteTypeFilter('college');
     setSearchQuery(headerSearchInput.trim());
-    window.scrollTo({ top: 400, behavior: 'smooth' });
   };
 
   // References for dropdown closing on click outside
@@ -175,11 +170,6 @@ export default function Header({
     setMaxFee(1500000);
     setActiveDropdown(null);
     setIsMobileMenuOpen(false);
-    
-    // Smooth scroll to exploration directory
-    setTimeout(() => {
-      window.scrollTo({ top: 400, behavior: 'smooth' });
-    }, 100);
   };
 
   // Blogs Data
@@ -302,9 +292,9 @@ export default function Header({
             {[
               { id: 'home', label: 'Home' },
               { id: 'explore', label: 'Colleges & Universities', type: 'college' },
-              { id: 'register', label: 'Direct Apply', badge: 'HOT' },
               { id: 'blogs', label: 'Reviews', badge: 'VERIFIED' },
-              { id: 'college-portal', label: 'College Portal' }
+              { id: 'register', label: 'Direct Apply', badge: 'HOT' },
+              { id: 'college-portal', label: 'College Signup' }
             ].map((item) => {
               const isActive = item.type 
                 ? (activeTab === 'explore' && instituteTypeFilter === 'college')
@@ -412,10 +402,10 @@ export default function Header({
                 <button
                   onClick={onOpenAuth}
                   className="px-4 py-1.5 sm:py-2 bg-slate-950 hover:bg-slate-800 text-white text-[14.5px] xl:text-[15.5px] font-bold rounded-full transition flex items-center space-x-2 shadow-sm"
-                  title="Log In"
+                  title="Student Login"
                 >
                   <User className="h-5 w-5 sm:h-5.5 sm:w-5.5 stroke-[2.2]" />
-                  <span className="hidden sm:inline">Log In</span>
+                  <span className="hidden sm:inline">Student Login</span>
                 </button>
               )}
 
@@ -752,17 +742,6 @@ export default function Header({
                   </Link>
                 </div>
 
-                {/* Direct Apply trigger */}
-                <button
-                  onClick={() => {
-                    setActiveTab('register');
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="block text-left py-1 text-sm w-full border-b border-gray-100 pb-3 text-gray-900"
-                >
-                  Direct Apply
-                </button>
-
                 {/* Reviews trigger */}
                 <Link
                   to="/blogs"
@@ -780,7 +759,18 @@ export default function Header({
                   </span>
                 </Link>
 
-                {/* College Portal trigger */}
+                {/* Direct Apply trigger */}
+                <button
+                  onClick={() => {
+                    setActiveTab('register');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="block text-left py-1 text-sm w-full border-b border-gray-100 pb-3 text-gray-900"
+                >
+                  Direct Apply
+                </button>
+
+                {/* College Signup trigger */}
                 <button
                   onClick={() => {
                     setActiveTab('college-portal');
@@ -790,7 +780,7 @@ export default function Header({
                     activeTab === 'college-portal' ? 'text-red-600 font-extrabold' : 'text-gray-900'
                   }`}
                 >
-                  College Portal
+                  College Signup
                 </button>
 
                 {/* About Us trigger */}

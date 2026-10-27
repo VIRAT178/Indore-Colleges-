@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Institute, Review } from '../types';
 import { 
   ArrowLeft, 
@@ -18,21 +18,15 @@ import {
   Clock, 
   ShieldCheck, 
   Bookmark,
-  Volume2,
-  VolumeX,
-  Play,
-  Pause,
-  Maximize2,
-  Share2,
   ExternalLink,
   GraduationCap,
   Video,
   FileText,
-  X,
   Compass,
   CheckCircle2
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
 import { LogoIcon } from './Logo';
 
 interface CollegeDetailPageProps {
@@ -103,25 +97,13 @@ export default function CollegeDetailPage({
   const [submittingReview, setSubmittingReview] = useState(false);
   const [reviewSuccess, setReviewSuccess] = useState(false);
 
-  // Background Video states
-  const [isMuted, setIsMuted] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [videoError, setVideoError] = useState(false);
-  const [showFullVideoModal, setShowFullVideoModal] = useState(false);
-  const [copiedLink, setCopiedLink] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'courses' | 'placements' | 'cutoffs' | 'facilities' | 'faculty' | 'reviews'>('overview');
 
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-
-  // Prefer videoUrl, fallback to backgroundVideoUrl
-  const activeVideoUrl = institute.videoUrl || institute.backgroundVideoUrl;
-  const videoSource = parseVideoSource(activeVideoUrl);
+  const reviewVideoSource = parseVideoSource(institute.videoUrl || institute.backgroundVideoUrl);
 
   useEffect(() => {
     fetchReviews();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    setVideoError(false);
-    setIsPlaying(true);
   }, [institute.id]);
 
   const fetchReviews = async () => {
@@ -171,36 +153,8 @@ export default function CollegeDetailPage({
     }
   };
 
-  const togglePlayPause = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        videoRef.current.play();
-        setIsPlaying(true);
-      }
-    } else {
-      setIsPlaying(!isPlaying);
-    }
-  };
-
-  const toggleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-    }
-    setIsMuted(!isMuted);
-  };
-
-  const handleShare = () => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href);
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 2500);
-    }
-  };
-
   const formatFee = (fee: number) => {
+    if (fee <= 0) return 'Contact college';
     if (fee >= 100000) {
       return `₹${(fee / 100000).toFixed(2)} Lakh`;
     }
@@ -230,61 +184,30 @@ export default function CollegeDetailPage({
       className="bg-slate-50 min-h-screen text-slate-900 pb-24"
     >
       {/* ========================================================================= */}
-      {/* 1. CINEMATIC HERO SECTION WITH BACKGROUND VIDEO */}
+      {/* 1. COLLEGE HERO SECTION */}
       {/* ========================================================================= */}
-      <div className="relative bg-slate-950 text-white overflow-hidden min-h-[580px] lg:h-[82vh] flex flex-col justify-between">
-        
-        {/* Background Media Container */}
+      <div className="relative bg-slate-950 text-white overflow-hidden min-h-[380px] lg:h-[60vh] lg:min-h-[440px] flex flex-col justify-between">
         <div className="absolute inset-0 w-full h-full overflow-hidden select-none pointer-events-none">
-          {videoSource.type === 'html5' && !videoError ? (
-            <video
-              ref={videoRef}
-              src={videoSource.src}
-              autoPlay
-              loop
-              muted={isMuted}
-              playsInline
-              className="w-full h-full object-cover object-center filter brightness-90 transition-opacity duration-700"
-              onPlay={() => setIsPlaying(true)}
-              onPause={() => setIsPlaying(false)}
-              onError={() => setVideoError(true)}
-            />
-          ) : videoSource.type === 'youtube' && !videoError ? (
-            <div className="absolute inset-0 w-full h-full overflow-hidden scale-110">
-              <iframe
-                src={`${videoSource.src}?autoplay=1&mute=${isMuted ? 1 : 0}&loop=1&playlist=${videoSource.videoId}&controls=0&showinfo=0&autohide=1&modestbranding=1&playsinline=1&rel=0&iv_load_policy=3&enablejsapi=1`}
-                title={`${institute.name} Campus Video`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                className="w-full h-full object-cover pointer-events-none opacity-80"
-              />
-            </div>
-          ) : videoSource.type === 'vimeo' && !videoError ? (
-            <div className="absolute inset-0 w-full h-full overflow-hidden scale-110">
-              <iframe
-                src={`${videoSource.src}?autoplay=1&loop=1&muted=${isMuted ? 1 : 0}&background=1`}
-                title={`${institute.name} Campus Video`}
-                allow="autoplay; fullscreen"
-                className="w-full h-full object-cover pointer-events-none opacity-80"
-              />
-            </div>
-          ) : (
-            // Fallback image if video is not supplied or fails to load
+          {institute.image ? (
             <img
               src={institute.image}
               alt={institute.name}
               referrerPolicy="no-referrer"
-              className="w-full h-full object-cover object-center filter brightness-85"
+              className="w-full h-full object-cover object-center"
             />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-red-700 to-rose-500 flex flex-col items-center justify-center text-white">
+              <span className="text-5xl font-black tracking-widest">
+                {institute.name.split(' ').filter(Boolean).map(word => word[0]).join('').slice(0, 3)}
+              </span>
+              <span className="mt-3 text-xs font-bold uppercase tracking-widest text-red-100">Campus image not available</span>
+            </div>
           )}
-
-          {/* Multi-stage Contrast Scrim for WCAG AA readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/40" />
-          <div className="absolute inset-0 bg-radial from-transparent via-slate-950/30 to-slate-950/75 pointer-events-none" />
         </div>
 
-        {/* Top Floating Bar: Navigation & Video Controls */}
+        {/* Top Floating Bar: Navigation */}
         <div className="relative z-20 pt-6 px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl flex items-center justify-between gap-4">
+          <div className="mx-auto max-w-7xl flex items-center gap-4">
             
             {/* Back Button */}
             <button
@@ -295,169 +218,15 @@ export default function CollegeDetailPage({
               <span>Back to Colleges Directory</span>
             </button>
 
-            {/* Video Controls & Badges */}
-            <div className="flex items-center space-x-2">
-              {/* Video Indicator */}
-              {videoSource.type !== 'none' && !videoError && (
-                <div className="hidden sm:inline-flex items-center space-x-2 text-[11px] font-semibold text-emerald-300 bg-slate-900/70 backdrop-blur-md px-3 py-1.5 rounded-xl border border-emerald-500/20">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                  </span>
-                  <span>Campus Video Active</span>
-                </div>
-              )}
-
-              {/* Audio Toggle (Mute / Unmute) */}
-              {videoSource.type !== 'none' && !videoError && (
-                <button
-                  onClick={toggleMute}
-                  title={isMuted ? 'Unmute video audio' : 'Mute video audio'}
-                  className="p-2 text-white/90 hover:text-white bg-slate-900/60 hover:bg-slate-900/85 backdrop-blur-md rounded-xl border border-white/10 transition-colors cursor-pointer"
-                >
-                  {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4 text-emerald-400" />}
-                </button>
-              )}
-
-              {/* Play / Pause Toggle (for HTML5) */}
-              {videoSource.type === 'html5' && !videoError && (
-                <button
-                  onClick={togglePlayPause}
-                  title={isPlaying ? 'Pause background video' : 'Play background video'}
-                  className="p-2 text-white/90 hover:text-white bg-slate-900/60 hover:bg-slate-900/85 backdrop-blur-md rounded-xl border border-white/10 transition-colors cursor-pointer"
-                >
-                  {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 text-emerald-400" />}
-                </button>
-              )}
-
-              {/* Theater / Fullscreen Tour Modal */}
-              {videoSource.type !== 'none' && !videoError && (
-                <button
-                  onClick={() => setShowFullVideoModal(true)}
-                  title="Watch campus tour in full theater modal"
-                  className="inline-flex items-center space-x-1.5 text-xs font-semibold text-white/90 hover:text-white bg-slate-900/60 hover:bg-slate-900/85 backdrop-blur-md px-3 py-2 rounded-xl border border-white/10 transition-colors cursor-pointer"
-                >
-                  <Maximize2 className="h-3.5 w-3.5" />
-                  <span className="hidden md:inline">Theater View</span>
-                </button>
-              )}
-
-              {/* Share Button */}
-              <button
-                onClick={handleShare}
-                title="Copy college link"
-                className="p-2 text-white/90 hover:text-white bg-slate-900/60 hover:bg-slate-900/85 backdrop-blur-md rounded-xl border border-white/10 transition-colors cursor-pointer relative"
-              >
-                <Share2 className="h-4 w-4" />
-                {copiedLink && (
-                  <span className="absolute -bottom-8 right-0 text-[10px] font-bold text-white bg-slate-900 px-2 py-0.5 rounded shadow-lg whitespace-nowrap">
-                    Link Copied!
-                  </span>
-                )}
-              </button>
-            </div>
-
           </div>
         </div>
 
-        {/* Hero Bottom Content: College Titles, Highlights & Primary CTAs */}
+        {/* Hero Bottom Content: College Name */}
         <div className="relative z-20 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 mt-auto">
           <div className="mx-auto max-w-7xl">
-            
-            {/* Unboxed Metadata Kicker (Anti-Pill discipline) */}
-            <div className="flex items-center flex-wrap gap-x-2 gap-y-1 text-xs text-amber-300 font-semibold mb-3 tracking-wide">
-              <span>{institute.category} Stream</span>
-              <span aria-hidden="true" className="text-white/40">·</span>
-              <span>Affiliated: {institute.boardOrAffiliation}</span>
-              {institute.approval && (
-                <>
-                  <span aria-hidden="true" className="text-white/40">·</span>
-                  <span className="text-slate-300">{institute.approval}</span>
-                </>
-              )}
-            </div>
-
-            {/* College Name Headline */}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.1] mb-4 text-balance">
+            <h1 className={`${institute.id === 'malwa-institute' ? 'text-2xl sm:text-4xl lg:text-5xl' : 'text-3xl sm:text-5xl lg:text-6xl'} font-extrabold tracking-tight text-white leading-[1.1] mb-4 text-balance`}>
               {institute.name}
             </h1>
-
-            {/* Quick Meta Row */}
-            <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs sm:text-sm text-slate-300 mb-8">
-              <div className="flex items-center space-x-1.5">
-                <MapPin className="h-4 w-4 text-rose-500 shrink-0" />
-                <span>{institute.location}, Indore, MP</span>
-              </div>
-              <span aria-hidden="true" className="text-white/40 hidden sm:inline">·</span>
-              <div className="flex items-center space-x-1.5">
-                <Clock className="h-4 w-4 text-rose-400 shrink-0" />
-                <span>Established in {institute.establishedYear} ({new Date().getFullYear() - institute.establishedYear} yrs of legacy)</span>
-              </div>
-              <span aria-hidden="true" className="text-white/40 hidden sm:inline">·</span>
-              <div className="flex items-center space-x-1.5 text-amber-400 font-bold tabular-nums">
-                <Star className="h-4 w-4 fill-amber-400 text-amber-400 shrink-0" />
-                <span>{institute.rating}</span>
-                <span className="text-slate-400 font-normal">({institute.totalReviews} verified student reviews)</span>
-              </div>
-            </div>
-
-            {/* Hero Quick Action Bar */}
-            <div className="flex flex-wrap items-center gap-3">
-              <button
-                onClick={() => onScheduleCounseling(institute)}
-                className="bg-red-600 hover:bg-red-500 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl transition shadow-lg shadow-red-600/30 flex items-center space-x-2 cursor-pointer"
-              >
-                <Calendar className="h-4 w-4" />
-                <span>Apply for Free Counseling</span>
-              </button>
-
-              <button
-                onClick={onToggleShortlist}
-                className={`px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center space-x-1.5 cursor-pointer backdrop-blur-md border ${
-                  isShortlisted
-                    ? 'bg-rose-600 text-white border-rose-500'
-                    : 'bg-white/10 text-white hover:bg-white/20 border-white/20'
-                }`}
-              >
-                <Heart className={`h-4 w-4 ${isShortlisted ? 'fill-current' : ''}`} />
-                <span>{isShortlisted ? 'Shortlisted' : 'Shortlist'}</span>
-              </button>
-
-              <button
-                onClick={onToggleCart}
-                className={`px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center space-x-1.5 cursor-pointer backdrop-blur-md border ${
-                  isInCart
-                    ? 'bg-amber-500 text-white border-amber-400'
-                    : 'bg-white/10 text-white hover:bg-white/20 border-white/20'
-                }`}
-              >
-                <ShoppingCart className="h-4 w-4" />
-                <span>{isInCart ? 'In Basket' : 'Add to Compare'}</span>
-              </button>
-
-              {institute.brochureUrl && (
-                <a
-                  href={institute.brochureUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center space-x-1.5 cursor-pointer backdrop-blur-md bg-white/10 text-white hover:bg-white/20 border border-white/20"
-                >
-                  <FileText className="h-4 w-4 text-emerald-400" />
-                  <span>Download Brochure</span>
-                </a>
-              )}
-
-              {videoSource.type !== 'none' && !videoError && (
-                <button
-                  onClick={() => setShowFullVideoModal(true)}
-                  className="px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center space-x-1.5 cursor-pointer backdrop-blur-md bg-white/10 text-white hover:bg-white/20 border border-white/20"
-                >
-                  <Video className="h-4 w-4 text-rose-400" />
-                  <span>Watch Video Tour</span>
-                </button>
-              )}
-            </div>
-
           </div>
         </div>
 
@@ -575,6 +344,95 @@ export default function CollegeDetailPage({
 
             {/* Section: Overview */}
             <section id="sec-overview" className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs">
+              <div className="flex items-center flex-wrap gap-x-2 gap-y-1 text-xs text-amber-700 font-semibold mb-4 tracking-wide">
+                <span>{institute.category} Stream</span>
+                <span aria-hidden="true" className="text-slate-300">·</span>
+                <span>Affiliated: {institute.boardOrAffiliation}</span>
+                {institute.approval && (
+                  <>
+                    <span aria-hidden="true" className="text-slate-300">·</span>
+                    <span className="text-slate-600">{institute.approval}</span>
+                  </>
+                )}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs sm:text-sm text-slate-600 mb-5">
+                <div className="flex items-center space-x-1.5">
+                  <MapPin className="h-4 w-4 text-rose-500 shrink-0" />
+                  <span>{institute.location}, Indore, MP</span>
+                </div>
+                <span aria-hidden="true" className="text-slate-300 hidden sm:inline">·</span>
+                <div className="flex items-center space-x-1.5">
+                  <Clock className="h-4 w-4 text-rose-400 shrink-0" />
+                  <span>{institute.establishedYear ? `Established in ${institute.establishedYear} (${new Date().getFullYear() - institute.establishedYear} yrs of legacy)` : 'Establishment year not listed'}</span>
+                </div>
+                <span aria-hidden="true" className="text-slate-300 hidden sm:inline">·</span>
+                <div className="flex items-center space-x-1.5 text-amber-600 font-bold tabular-nums">
+                  {institute.rating > 0 ? (
+                    <>
+                      <Star className="h-4 w-4 fill-amber-400 text-amber-400 shrink-0" />
+                      <span>{institute.rating}</span>
+                      {(institute.ratingReviewCount && institute.ratingSource) ? (
+                        <span className="text-slate-500 font-normal">({institute.ratingReviewCount} {institute.ratingSource} reviews)</span>
+                      ) : institute.totalReviews > 0 ? (
+                        <span className="text-slate-500 font-normal">({institute.totalReviews} reviews)</span>
+                      ) : institute.ratingSource ? (
+                        <span className="text-slate-500 font-normal">({institute.ratingSource} rating)</span>
+                      ) : null}
+                    </>
+                  ) : (
+                    <span className="text-slate-500 font-normal">No student rating available</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 mb-6">
+                <button
+                  onClick={() => onScheduleCounseling(institute)}
+                  className="bg-red-600 hover:bg-red-500 text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-xl transition shadow-lg shadow-red-600/20 flex items-center space-x-2 cursor-pointer"
+                >
+                  <Calendar className="h-4 w-4" />
+                  <span>Apply for Free Counseling</span>
+                </button>
+
+                <button
+                  onClick={onToggleShortlist}
+                  className={`px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center space-x-1.5 border cursor-pointer ${
+                    isShortlisted
+                      ? 'bg-rose-600 text-white border-rose-500'
+                      : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200'
+                  }`}
+                >
+                  <Heart className={`h-4 w-4 ${isShortlisted ? 'fill-current' : ''}`} />
+                  <span>{isShortlisted ? 'Shortlisted' : 'Shortlist'}</span>
+                </button>
+
+                <button
+                  onClick={onToggleCart}
+                  className={`px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center space-x-1.5 border cursor-pointer ${
+                    isInCart
+                      ? 'bg-amber-500 text-white border-amber-400'
+                      : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200'
+                  }`}
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  <span>{isInCart ? 'In Basket' : 'Add to Compare'}</span>
+                </button>
+
+                {institute.brochureUrl && (
+                  <a
+                    href={institute.brochureUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center space-x-1.5 bg-white text-slate-700 hover:bg-slate-50 border border-slate-200"
+                  >
+                    <FileText className="h-4 w-4 text-emerald-600" />
+                    <span>Download Brochure</span>
+                  </a>
+                )}
+
+              </div>
+
               <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center space-x-2">
                 <Building className="h-5 w-5 text-red-600 shrink-0" />
                 <span>About {institute.name}</span>
@@ -595,7 +453,7 @@ export default function CollegeDetailPage({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-slate-100 text-xs">
                 <div>
                   <span className="text-slate-400 block text-[11px] font-semibold mb-0.5">Founding Year</span>
-                  <span className="font-bold text-slate-800">{institute.establishedYear}</span>
+                  <span className="font-bold text-slate-800">{institute.establishedYear || 'Not listed'}</span>
                 </div>
                 <div>
                   <span className="text-slate-400 block text-[11px] font-semibold mb-0.5">Campus Location</span>
@@ -609,7 +467,7 @@ export default function CollegeDetailPage({
                   <span className="text-slate-400 block text-[11px] font-semibold mb-0.5">Trust Marker</span>
                   <span className="font-bold text-emerald-700 inline-flex items-center">
                     <CheckCircle2 className="h-3.5 w-3.5 mr-1 text-emerald-600" />
-                    Indore Verified
+                    {institute.isDirectoryVerified === false ? 'Directory Listing' : 'Indore Verified'}
                   </span>
                 </div>
               </div>
@@ -624,7 +482,7 @@ export default function CollegeDetailPage({
                     <span>Academic Courses & Fee Structure</span>
                   </h2>
                   <p className="text-slate-500 text-xs mt-1">
-                    Verified degree paths, annual tuition rates, and specialization programs.
+                    Listed programmes and available fee information; confirm current details with the institution.
                   </p>
                 </div>
 
@@ -840,52 +698,49 @@ export default function CollegeDetailPage({
                     </p>
                   </div>
 
-                  {activeVideoUrl && (
-                    <button
-                      onClick={() => setShowFullVideoModal(true)}
-                      className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-red-600 text-white text-xs font-bold transition shadow-xs cursor-pointer self-start sm:self-auto shrink-0"
-                    >
-                      <Maximize2 className="w-3.5 h-3.5" />
-                      <span>Full Video Tour</span>
-                    </button>
-                  )}
                 </div>
 
                 {/* Authority Video & Statement Showcase */}
                 <div className="grid lg:grid-cols-12 gap-6 bg-slate-50/80 rounded-2xl border border-slate-200/80 p-5 sm:p-6">
                   
                   {/* Left Column: Authority Review Video Player */}
-                  <div className="lg:col-span-6 space-y-3">
+                  <div className="lg:col-span-7 space-y-3">
                     <div className="relative aspect-16/9 bg-slate-950 rounded-xl overflow-hidden shadow-md border border-slate-800 group">
-                      {videoSource.type === 'html5' && !videoError ? (
+                      {reviewVideoSource.type === 'html5' ? (
                         <video
-                          src={videoSource.src}
+                          src={reviewVideoSource.src}
                           controls
                           playsInline
                           className="w-full h-full object-cover"
                         />
-                      ) : videoSource.type === 'youtube' && !videoError ? (
+                      ) : reviewVideoSource.type === 'youtube' ? (
                         <iframe
-                          src={`${videoSource.src}?controls=1&rel=0`}
+                          src={`${reviewVideoSource.src}?controls=1&rel=0`}
                           title={`${institute.name} Authority Review Video`}
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                           allowFullScreen
                           className="w-full h-full border-0"
                         />
-                      ) : videoSource.type === 'vimeo' && !videoError ? (
+                      ) : reviewVideoSource.type === 'vimeo' ? (
                         <iframe
-                          src={`${videoSource.src}?autoplay=0`}
+                          src={`${reviewVideoSource.src}?autoplay=0`}
                           title={`${institute.name} Authority Review Video`}
                           allowFullScreen
                           className="w-full h-full border-0"
                         />
                       ) : (
                         <div className="relative w-full h-full">
-                          <img
-                            src={institute.image}
-                            alt={institute.name}
-                            className="w-full h-full object-cover"
-                          />
+                          {institute.image ? (
+                            <img
+                              src={institute.image}
+                              alt={institute.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-red-700 to-rose-500 flex items-center justify-center text-white text-4xl font-black tracking-widest">
+                              {institute.name.split(' ').filter(Boolean).map(word => word[0]).join('').slice(0, 3)}
+                            </div>
+                          )}
                           <div className="absolute inset-0 bg-black/60 flex items-center justify-center p-4 text-center">
                             <span className="text-white text-xs font-semibold">
                               Authority Video Tour loading or can be updated in indoreData.ts
@@ -912,7 +767,7 @@ export default function CollegeDetailPage({
                   </div>
 
                   {/* Right Column: Leadership Statement & Key Parameters */}
-                  <div className="lg:col-span-6 flex flex-col justify-between space-y-4">
+                  <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
                     <div>
                       {/* Authority Profile Header */}
                       <div className="flex items-center gap-3 pb-3 border-b border-slate-200">
@@ -1115,14 +970,22 @@ export default function CollegeDetailPage({
                   Annual Tuition Fee
                 </span>
                 <div className="flex items-baseline font-black text-slate-900 text-2xl tabular-nums">
-                  <IndianRupee className="h-5 w-5 text-slate-800 self-center mr-0.5" />
+                  {institute.feePerAnnum > 0 && <IndianRupee className="h-5 w-5 text-slate-800 self-center mr-0.5" />}
                   <span>{formatFee(institute.feePerAnnum)}</span>
-                  <span className="text-xs text-slate-400 font-medium ml-1.5">/ academic year</span>
+                  {institute.feePerAnnum > 0 && <span className="text-xs text-slate-400 font-medium ml-1.5">/ academic year</span>}
                 </div>
               </div>
 
               {/* Action Buttons */}
               <div className="space-y-2.5">
+                <Link
+                  to={`/reviews/${institute.category === 'Engineering' ? 'technical-college' : institute.category === 'Law' ? 'law-college' : institute.category === 'Medical' ? 'science-college' : 'professional-college'}/review-by-indore-colleges?college=${encodeURIComponent(institute.id)}`}
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs py-3 rounded-xl transition shadow-md shadow-orange-500/20 flex items-center justify-center space-x-2"
+                >
+                  <Video className="h-4 w-4" />
+                  <span>View Indore Colleges Review</span>
+                </Link>
+
                 <button
                   onClick={() => onScheduleCounseling(institute)}
                   className="w-full bg-red-600 hover:bg-red-500 text-white font-bold text-xs py-3 rounded-xl transition shadow-md shadow-red-600/20 flex items-center justify-center space-x-2 cursor-pointer"
@@ -1241,85 +1104,6 @@ export default function CollegeDetailPage({
 
         </div>
       </div>
-
-      {/* ========================================================================= */}
-      {/* 4. THEATER / FULLSCREEN CAMPUS VIDEO TOUR MODAL */}
-      {/* ========================================================================= */}
-      <AnimatePresence>
-        {showFullVideoModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 sm:p-6 backdrop-blur-md">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-5xl bg-slate-950 rounded-2xl overflow-hidden border border-white/10 shadow-2xl"
-            >
-              {/* Modal Top Bar */}
-              <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/10 bg-slate-900/80 text-white">
-                <div className="flex items-center space-x-2">
-                  <Video className="h-4 w-4 text-red-500" />
-                  <span className="font-bold text-sm truncate">{institute.name} — Campus Video Tour</span>
-                </div>
-                <button
-                  onClick={() => setShowFullVideoModal(false)}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition cursor-pointer"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-
-              {/* Video Player in Modal */}
-              <div className="relative aspect-video w-full bg-black">
-                {videoSource.type === 'html5' ? (
-                  <video
-                    src={videoSource.src}
-                    controls
-                    autoPlay
-                    className="w-full h-full object-contain"
-                  />
-                ) : videoSource.type === 'youtube' ? (
-                  <iframe
-                    src={`${videoSource.src}?autoplay=1&controls=1&rel=0`}
-                    title={`${institute.name} Tour`}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full border-0"
-                  />
-                ) : videoSource.type === 'vimeo' ? (
-                  <iframe
-                    src={`${videoSource.src}?autoplay=1`}
-                    title={`${institute.name} Tour`}
-                    allow="autoplay; fullscreen"
-                    allowFullScreen
-                    className="w-full h-full border-0"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full text-slate-400 text-xs">
-                    No video tour available.
-                  </div>
-                )}
-              </div>
-
-              {/* Modal Footer */}
-              <div className="px-5 py-3.5 bg-slate-900/90 text-slate-300 text-xs flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center space-x-2">
-                  <MapPin className="h-3.5 w-3.5 text-red-500" />
-                  <span>{institute.location}, Indore</span>
-                </div>
-                <button
-                  onClick={() => {
-                    setShowFullVideoModal(false);
-                    onScheduleCounseling(institute);
-                  }}
-                  className="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-2 rounded-xl text-xs transition cursor-pointer"
-                >
-                  Book Free Counseling for This College
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
     </motion.div>
   );

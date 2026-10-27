@@ -108,6 +108,7 @@ export default function InstituteCard({
   };
 
   const formatFee = (fee: number) => {
+    if (fee <= 0) return 'Contact college';
     if (fee >= 100000) {
       return `₹${(fee / 100000).toFixed(2)} Lakh`;
     }
@@ -125,7 +126,7 @@ export default function InstituteCard({
     >
       {/* Upper Card Block */}
       <div className="relative h-78 w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
-        {!imageError ? (
+        {institute.image && !imageError ? (
           <img
             src={institute.image}
             alt={institute.name}
@@ -204,7 +205,7 @@ export default function InstituteCard({
         {/* Established Year Badge on Bottom Right of Image */}
         <div className="absolute bottom-4 right-4 z-10">
           <span className="rounded bg-gray-900/65 backdrop-blur-xs px-2 py-0.5 text-[9px] font-bold text-gray-200 tracking-wider uppercase">
-            Est. {institute.establishedYear}
+            Est. {institute.establishedYear || 'N/A'}
           </span>
         </div>
 
@@ -229,11 +230,15 @@ export default function InstituteCard({
               <span>{institute.location}, Indore</span>
             </div>
             
-            <div className="flex items-center space-x-1 text-amber-500 font-bold">
-              <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500 flex-shrink-0" />
-              <span>{institute.rating}</span>
-              <span className="text-gray-400 font-normal">({institute.totalReviews} reviews)</span>
-            </div>
+            {institute.rating > 0 ? (
+              <div className="flex items-center space-x-1 text-amber-500 font-bold">
+                <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500 flex-shrink-0" />
+                <span>{institute.rating}</span>
+                <span className="text-gray-400 font-normal">({institute.totalReviews} reviews)</span>
+              </div>
+            ) : (
+              <span className="text-gray-400">Not yet rated</span>
+            )}
           </div>
 
           <p className="text-sm text-gray-600 line-clamp-2 mb-4 leading-relaxed">
@@ -245,7 +250,7 @@ export default function InstituteCard({
             <div>
               <p className="text-gray-400 mb-0.5">Annual Fee</p>
               <div className="flex items-center font-bold text-gray-900 text-sm">
-                <IndianRupee className="h-3.5 w-3.5 text-gray-700 flex-shrink-0 mr-0.5" />
+                {institute.feePerAnnum > 0 && <IndianRupee className="h-3.5 w-3.5 text-gray-700 flex-shrink-0 mr-0.5" />}
                 <span>{formatFee(institute.feePerAnnum)}</span>
               </div>
             </div>

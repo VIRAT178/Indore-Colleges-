@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Navigate, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { INDORE_INSTITUTES } from '../data/indoreData';
-import { Institute } from '../types';
 import { 
   GraduationCap, 
   Building2, 
@@ -64,23 +63,6 @@ function parseVideoSource(url?: string): {
     type: 'html5',
     src: clean
   };
-}
-
-// Match college names to institutes in indoreData
-function findMatchingInstitute(name: string): Institute | undefined {
-  const norm = name.toLowerCase().replace(/[^a-z0-9]/g, '');
-  return INDORE_INSTITUTES.find((inst) => {
-    const instNorm = inst.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-    const instId = inst.id.toLowerCase();
-    if (norm.includes('sgsits') && (instId.includes('sgsits') || instNorm.includes('sgsits'))) return true;
-    if (norm.includes('ietdavv') && (instId.includes('iet') || instNorm.includes('iet'))) return true;
-    if (norm.includes('acropolis') && (instId.includes('acropolis') || instNorm.includes('acropolis'))) return true;
-    if (norm.includes('medicaps') && (instId.includes('medicaps') || instNorm.includes('medicaps'))) return true;
-    if (norm.includes('chamelidevi') && (instId.includes('chameli') || instNorm.includes('chameli'))) return true;
-    if (norm.includes('svvv') && (instId.includes('svvv') || instNorm.includes('vaishnav'))) return true;
-    if (norm.includes('iil') && (instId.includes('iil') || instNorm.includes('indoreinstituteoflaw'))) return true;
-    return instNorm.includes(norm) || norm.includes(instNorm) || instId === norm;
-  });
 }
 
 export type CategoryType = 
@@ -202,71 +184,33 @@ export interface VideoCardData {
   collegeId?: string;
 }
 
-// Tailored colleges for each of the 6 categories
-const CATEGORY_COLLEGES: Record<CategoryType, { name: string; loc: string; type: string; img: string }[]> = {
-  'Technical College': [
-    { name: 'SGSITS Indore', loc: 'Park Road, Vallabh Nagar', type: 'Autonomous Govt Aided', img: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80' },
-    { name: 'IET DAVV Indore', loc: 'Khandwa Road, DAVV Campus', type: 'State University Dept', img: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Acropolis Institute (AITR)', loc: 'Manglia Bypass, Indore', type: 'Private Autonomous', img: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Medi-Caps University', loc: 'AB Road, Pigdamber, Rau', type: 'Private State University', img: 'https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Chameli Devi Group (CDGI)', loc: 'Gram Umrikheda, Khandwa Road', type: 'Private Engineering', img: 'https://images.unsplash.com/photo-1592280771190-3e2e4d571952?auto=format&fit=crop&w=800&q=80' },
-    { name: 'SVVV Indore', loc: 'Ujjain Road, Indore', type: 'Private University', img: 'https://images.unsplash.com/photo-1519452635265-7b1fbfd1e4e0?auto=format&fit=crop&w=800&q=80' }
-  ],
-  'Pharmacy College': [
-    { name: 'SGSITS Dept of Pharmacy', loc: 'Park Road, Indore', type: 'Autonomous PCI Approved', img: 'https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Modern Institute of Pharma', loc: 'Alwasa, Sanwer Road', type: 'PCI Approved', img: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80' },
-    { name: 'IPS Academy College of Pharmacy', loc: 'Knowledge Village, Rajendra Nagar', type: 'Autonomous PCI Approved', img: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Choithram College of Pharmacy', loc: 'Manik Bagh Road, Indore', type: 'Private PCI Approved', img: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80' },
-    { name: 'SAGE University Pharma Sciences', loc: 'Kailod Kartal, Bypass Road', type: 'Private University', img: 'https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Oriental University Pharmacy', loc: 'Sanwer Road, Jakhya', type: 'PCI Accredited', img: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=800&q=80' }
-  ],
-  'PG College': [
-    { name: 'IMS DAVV Indore', loc: 'Takshashila Campus, Khandwa Road', type: 'University Department', img: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Prestige Institute (PIMR PG)', loc: 'Sector 54, Scheme 74C, Vijay Nagar', type: 'Autonomous NAAC A++', img: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80' },
-    { name: 'SCSIT DAVV (Computer Apps)', loc: 'Khandwa Road, DAVV', type: 'State University Dept', img: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Jaipuria Institute of Management', loc: 'Dakachya, Indore Bypass', type: 'AICTE Approved PGDM', img: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80' },
-    { name: 'IPS Academy IBMR', loc: 'Rajendra Nagar, AB Road', type: 'Autonomous Management', img: 'https://images.unsplash.com/photo-1507537297725-24a1c029d3ca?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Pioneer Institute of Management', loc: 'Sector R, Mahalaxmi Nagar', type: 'AICTE / DAVV Approved', img: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=80' }
-  ],
-  'Professional College': [
-    { name: 'Prestige Institute (UG Campus)', loc: 'Scheme 54, Vijay Nagar', type: 'Autonomous UG College', img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Renaissance University Professional', loc: 'Gram Revati, Sanwer Road', type: 'Private University', img: 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=800&q=80' },
-    { name: 'IPS Academy Commerce & BBA', loc: 'Knowledge Village, Rajendra Nagar', type: 'Affiliated to DAVV', img: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80' },
-    { name: 'St. Paul Institute (SIPS)', loc: 'Lalaram Nagar, Indore', type: 'Autonomous Minority', img: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Christian Eminent College', loc: 'F-Sector, HIG Colony, Indore', type: 'NAAC A Accredited', img: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80' },
-    { name: 'BM College of Commerce & Tech', loc: 'Gokanya, Rau Bypass', type: 'Private College', img: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80' }
-  ],
-  'Law College': [
-    { name: 'Indore Institute of Law (IIL)', loc: 'Rau Pithampur Road, Indore', type: 'Bar Council Approved', img: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80' },
-    { name: 'School of Law, DAVV', loc: 'Takshashila Campus, Khandwa Road', type: 'State University Dept', img: 'https://images.unsplash.com/photo-1479142506502-19b3a3b7ff33?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Prestige School of Law', loc: 'Vijay Nagar, Indore', type: 'Autonomous Law College', img: 'https://images.unsplash.com/photo-1436450412740-6b988f486c6b?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Renaissance Law College', loc: 'Sanwer Road, Indore', type: 'BCI Recognized', img: 'https://images.unsplash.com/photo-1505664194779-8beaceb93744?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Oriental School of Law', loc: 'Opp. Revati Range, Sanwer Road', type: 'Private Law School', img: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=800&q=80' },
-    { name: 'SAGE University Faculty of Law', loc: 'Bypass Road, Indore', type: 'State Private University', img: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80' }
-  ],
-  'Science College': [
-    { name: 'Choithram College of Nursing', loc: 'Manik Bagh Road, Indore', type: 'INC Approved Healthcare', img: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80' },
-    { name: 'SAIMS Institute of Nursing', loc: 'Sanwer Road, Indore', type: 'Medical University Attached', img: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Index Nursing Sciences', loc: 'Index City, Nemawar Road', type: 'INC / MPNRC Approved', img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Bombay Hospital College of Nursing', loc: 'Ring Road, IDA Scheme 94', type: 'Hospital Attached College', img: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Modern Institute of Paramedical', loc: 'Sanwer Road, Indore', type: 'Paramedical Council', img: 'https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=800&q=80' },
-    { name: 'Arihant Science & Nursing College', loc: 'Khandwa Road, Indore', type: 'MPNRC Recognized', img: 'https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&w=800&q=80' }
-  ]
+const CATEGORY_INSTITUTE_TYPES: Record<CategoryType, string[]> = {
+  'Technical College': ['Engineering'],
+  'Professional College': ['Management', 'Arts & Science'],
+  'PG College': ['Management', 'Arts & Science'],
+  'Pharmacy College': ['Medical'],
+  'Law College': ['Law'],
+  'Science College': ['Medical', 'Arts & Science'],
 };
 
 function getVideosForPerspective(category: CategoryType, perspective: ReviewPerspectiveType): VideoCardData[] {
-  const colleges = CATEGORY_COLLEGES[category] || CATEGORY_COLLEGES['Technical College'];
+  const colleges = INDORE_INSTITUTES
+    .filter(institute => institute.type === 'college' && CATEGORY_INSTITUTE_TYPES[category].includes(institute.category))
+    .sort((a, b) => b.rating - a.rating);
 
   return colleges.map((col, idx) => {
     let title = '';
     let description = '';
     let tags: string[] = [];
 
-    const matchedInst = findMatchingInstitute(col.name);
-    const activeCollegeVideoUrl = matchedInst?.videoUrl || matchedInst?.backgroundVideoUrl;
-    const isSGSITS = col.name.toLowerCase().includes('sgsits') || matchedInst?.id === 'sgsits';
+    const activeCollegeVideoUrl = col.videoUrl || col.backgroundVideoUrl;
+    const isSGSITS = col.name.toLowerCase().includes('sgsits') || col.id === 'sgsits';
 
-    let videoUrl = (perspective === 'Review by College Authority' || isSGSITS) ? activeCollegeVideoUrl : undefined;
+    let videoUrl = (
+      perspective === 'Review by Indore Colleges'
+      || perspective === 'Review by College Authority'
+      || isSGSITS
+    ) ? activeCollegeVideoUrl : undefined;
     let isLiveAuthorityVideo = false;
     let authoritySpeaker = '';
 
@@ -288,7 +232,7 @@ function getVideosForPerspective(category: CategoryType, perspective: ReviewPers
         isLiveAuthorityVideo = Boolean(activeCollegeVideoUrl);
         videoUrl = activeCollegeVideoUrl;
       } else {
-        const foundDir = matchedInst?.facultyList?.find(f => f.qualification?.toLowerCase().includes('director') || f.role?.toLowerCase().includes('director'))?.name;
+        const foundDir = col.facultyList?.find(f => f.qualification?.toLowerCase().includes('director') || f.role?.toLowerCase().includes('director'))?.name;
         authoritySpeaker = foundDir ? `${foundDir} (Director)` : `Institutional Leadership & Academic Council`;
         title = `Executive Dialogue with College Authority — ${col.name}`;
         description = `Official executive dialogue with leadership of ${col.name}: discussing 2026 admissions, industry MoUs, syllabus updates, and student career roadmaps.`;
@@ -303,32 +247,44 @@ function getVideosForPerspective(category: CategoryType, perspective: ReviewPers
     return {
       id: `${category}-${perspective}-${idx}`,
       collegeName: col.name,
-      location: col.loc,
-      type: col.type,
+      location: col.location,
+      type: col.category,
       title,
       duration: isLiveAuthorityVideo ? 'Official Stream' : `${14 + idx * 2}m ${20 + idx * 5}s`,
-      thumbnail: col.img,
+      thumbnail: col.image,
       perspectiveType: perspective,
       category,
       description,
       tags,
-      productionProgress: isLiveAuthorityVideo ? 100 : (75 + idx * 4),
+      productionProgress: isLiveAuthorityVideo ? 100 : Math.min(75 + idx * 4, 100),
       votesCount: 42 + idx * 18,
       videoUrl,
       authoritySpeaker,
       isLiveAuthorityVideo,
-      collegeId: matchedInst?.id || (isSGSITS ? 'sgsits' : undefined)
+      collegeId: col.id
     };
-  });
+  }).filter(video => perspective !== 'Review by Indore Colleges' || Boolean(video.videoUrl));
 }
 
 export default function ReviewsHierarchyTable() {
+  const location = useLocation();
   const navigate = useNavigate();
-  const [activeCategory, setActiveCategory] = useState<CategoryType>('Technical College');
-  
-  // When null -> user is on the main Categories & Perspectives page
-  // When set to a ReviewPerspectiveType -> user is redirected to the Videos page for that perspective!
-  const [selectedPerspectiveForVideos, setSelectedPerspectiveForVideos] = useState<ReviewPerspectiveType | null>(null);
+  const { categorySlug, perspectiveSlug } = useParams<{ categorySlug?: string; perspectiveSlug?: string }>();
+  const [searchParams] = useSearchParams();
+  const requestedCollegeId = searchParams.get('college');
+  const basePath = location.pathname.startsWith('/reviews') ? '/reviews' : '/blogs';
+  const categoryFromRoute = CATEGORIES_LIST.find(
+    category => category.id.toLowerCase().replace(/[^a-z0-9]+/g, '-') === categorySlug
+  );
+  const perspectiveFromRoute = REVIEW_PERSPECTIVES.find(
+    perspective => perspective.type.toLowerCase().replace(/[^a-z0-9]+/g, '-') === perspectiveSlug
+  );
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType>('Technical College');
+  const activeCategory = categoryFromRoute?.id ?? selectedCategory;
+  const showingPerspectives = Boolean(categoryFromRoute);
+  const selectedPerspectiveForVideos = perspectiveFromRoute?.type ?? null;
+  const activeCategorySlug = activeCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const categoryPath = `${basePath}/${activeCategorySlug}`;
 
   // Local state for interactive notifications & upvotes
   const [notifiedVideos, setNotifiedVideos] = useState<Record<string, boolean>>(() => {
@@ -347,9 +303,6 @@ export default function ReviewsHierarchyTable() {
   const [isPlayingSimulated, setIsPlayingSimulated] = useState<boolean>(true);
   const [isMutedSimulated, setIsMutedSimulated] = useState<boolean>(false);
   const [playerCurrentTime, setPlayerCurrentTime] = useState<number>(12);
-  const [notifyPhoneNumber, setNotifyPhoneNumber] = useState<string>('');
-  const [isPhoneSubmitted, setIsPhoneSubmitted] = useState<boolean>(false);
-
   // Toast
   const [notificationToast, setNotificationToast] = useState<{ title: string; desc: string } | null>(null);
 
@@ -393,9 +346,27 @@ export default function ReviewsHierarchyTable() {
   };
 
   // Videos list when on the videos page
-  const videosList = selectedPerspectiveForVideos
-    ? getVideosForPerspective(activeCategory, selectedPerspectiveForVideos)
-    : [];
+  const videosList = useMemo(
+    () => selectedPerspectiveForVideos
+      ? getVideosForPerspective(activeCategory, selectedPerspectiveForVideos)
+      : [],
+    [activeCategory, selectedPerspectiveForVideos]
+  );
+  const requestedCollegeVideo = videosList.find(video => video.collegeId === requestedCollegeId);
+
+  useEffect(() => {
+    if (selectedPerspectiveForVideos === 'Review by Indore Colleges' && requestedCollegeVideo?.videoUrl) {
+      setPreviewVideoModal(requestedCollegeVideo);
+    }
+  }, [requestedCollegeVideo, selectedPerspectiveForVideos]);
+
+  if ((categorySlug && !categoryFromRoute) || (perspectiveSlug && !perspectiveFromRoute)) {
+    return <Navigate to={categorySlug && categoryFromRoute ? categoryPath : basePath} replace />;
+  }
+
+  if (selectedPerspectiveForVideos && !categoryFromRoute) {
+    return <Navigate to={basePath} replace />;
+  }
 
   return (
     <div className="w-full py-2">
@@ -430,9 +401,9 @@ export default function ReviewsHierarchyTable() {
       {/* ========================================================================= */}
       {!selectedPerspectiveForVideos ? (
         <div className="space-y-7 sm:space-y-8">
-          {/* 1. CATEGORIES: 3 cards in one layer and 3 cards in the second layer */}
+          {!showingPerspectives ? (
           <div>
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-3.5">
+            <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wider text-slate-900 mb-6 text-center">
               CATEGORIES
             </h2>
 
@@ -445,7 +416,10 @@ export default function ReviewsHierarchyTable() {
                   <button
                     key={cat.id}
                     type="button"
-                    onClick={() => setActiveCategory(cat.id)}
+                    onClick={() => {
+                      setSelectedCategory(cat.id);
+                      navigate(`${basePath}/${cat.id.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`);
+                    }}
                     className={`w-full p-3 sm:p-4 md:p-5 rounded-2xl text-center transition-all duration-200 cursor-pointer bg-white border flex flex-col items-center justify-between gap-2 sm:gap-2.5 group min-h-[135px] sm:min-h-[150px] ${
                       isSelected
                         ? 'border-2 border-[#F66710] shadow-sm ring-2 sm:ring-4 ring-orange-500/10'
@@ -492,14 +466,25 @@ export default function ReviewsHierarchyTable() {
               })}
             </div>
           </div>
+          ) : (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+              <button
+                onClick={() => {
+                  navigate(basePath, { replace: true });
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-[#F66710] text-white text-xs font-bold transition shadow-xs cursor-pointer self-start"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Categories</span>
+              </button>
+              <span className="text-xs text-slate-500 font-semibold">{activeCategory}</span>
+            </div>
 
-          {/* 2. SHOWING 3 PERSPECTIVES */}
+            {/* 2. REVIEW PERSPECTIVES */}
           <div>
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-3.5">
-              SHOWING 3 PERSPECTIVES FOR:{' '}
-              <span className="font-black text-slate-950">
-                {activeCategory.toUpperCase()}
-              </span>
+            <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wider text-slate-900 mb-5 text-center">
+              REVIEWS
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -511,8 +496,8 @@ export default function ReviewsHierarchyTable() {
                     key={persp.type}
                     type="button"
                     onClick={() => {
-                      // Redirect user to the videos page for this perspective!
-                      setSelectedPerspectiveForVideos(persp.type);
+                      const perspectivePath = persp.type.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                      navigate(`${categoryPath}/${perspectivePath}`);
                     }}
                     className="w-full bg-white rounded-3xl border border-slate-200 hover:border-[#F66710] hover:shadow-lg p-6 sm:p-8 transition-all duration-200 cursor-pointer text-center flex flex-col items-center justify-center gap-3.5 group min-h-[170px]"
                   >
@@ -534,6 +519,8 @@ export default function ReviewsHierarchyTable() {
               })}
             </div>
           </div>
+          </div>
+          )}
         </div>
       ) : (
         /* ========================================================================= */
@@ -548,24 +535,28 @@ export default function ReviewsHierarchyTable() {
           {/* Top Bar: Return Button & Breadcrumbs */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
             <button
-              onClick={() => setSelectedPerspectiveForVideos(null)}
+              onClick={() => navigate(categoryPath, { replace: true })}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-[#F66710] text-white text-xs font-bold transition shadow-xs cursor-pointer self-start"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>← Back to Categories &amp; Perspectives</span>
+              <span>Back to Reviews</span>
             </button>
 
             {/* Breadcrumb Navigation */}
             <div className="flex items-center gap-2 text-xs text-slate-500 font-semibold flex-wrap">
               <button 
-                onClick={() => setSelectedPerspectiveForVideos(null)}
+                onClick={() => {
+                  navigate(basePath, { replace: true });
+                }}
                 className="hover:text-[#F66710] transition cursor-pointer"
               >
                 Categories
               </button>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
               <button 
-                onClick={() => setSelectedPerspectiveForVideos(null)}
+                onClick={() => {
+                  navigate(categoryPath, { replace: true });
+                }}
                 className="hover:text-[#F66710] transition cursor-pointer"
               >
                 {activeCategory}
@@ -577,24 +568,19 @@ export default function ReviewsHierarchyTable() {
 
 
           {/* Videos Grid Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+          <div className="flex flex-col items-center gap-4 text-center">
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center justify-center gap-2.5">
                 <span>{activeCategory} Video Reviews</span>
                 <span className="text-xs px-2.5 py-0.5 rounded-full bg-orange-100 text-[#F66710] font-bold">
                   {videosList.length} Videos
                 </span>
               </h3>
-              <p className="text-xs text-slate-500 font-normal mt-1">
-                Showing video reviews for <strong>{activeCategory}</strong> curated under <strong>{selectedPerspectiveForVideos}</strong>.
-              </p>
-            </div>
 
             <a
               href="https://www.youtube.com/@Indorecolleges"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-xs transition shrink-0 group self-start sm:self-auto cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-xs transition shrink-0 group cursor-pointer"
             >
               <Youtube className="w-4 h-4" />
               <span>Subscribe on YouTube @Indorecolleges</span>
@@ -602,7 +588,14 @@ export default function ReviewsHierarchyTable() {
             </a>
           </div>
 
+          {requestedCollegeId && !requestedCollegeVideo && (
+            <div className="rounded-2xl border border-orange-200 bg-orange-50 px-5 py-4 text-center text-sm font-semibold text-slate-700">
+              {INDORE_INSTITUTES.find(institute => institute.id === requestedCollegeId)?.name ?? 'This college'} does not have an Indore Colleges review video yet.
+            </div>
+          )}
+
           {/* 6 Videos Cards Grid */}
+          {videosList.length > 0 ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
             {videosList.map((video, idx) => {
               const isNotified = !!notifiedVideos[video.id];
@@ -614,7 +607,7 @@ export default function ReviewsHierarchyTable() {
                   key={video.id}
                   className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
                 >
-                  {/* Thumbnail & Play Overlay */}
+                  {/* College thumbnail with play action and card number */}
                   <div 
                     onClick={() => setPreviewVideoModal(video)}
                     className="relative aspect-16/9 bg-slate-950 overflow-hidden cursor-pointer select-none"
@@ -629,26 +622,11 @@ export default function ReviewsHierarchyTable() {
                       }}
                     />
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/50 pointer-events-none" />
+                    <div className="absolute inset-0 bg-black/35 pointer-events-none" />
 
-                    {/* Top Badges */}
-                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
-                      <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white border border-white/20">
-                        Video #{idx + 1}
-                      </span>
-
-                      {video.isLiveAuthorityVideo && video.videoUrl ? (
-                        <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-600 text-white shadow-md">
-                          <CheckCircle2 className="w-3 h-3 text-white" />
-                          <span>Official Authority Video</span>
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-[#F66710] text-white shadow-md animate-pulse">
-                          <Clock className="w-3 h-3" />
-                          <span>Coming Soon</span>
-                        </span>
-                      )}
-                    </div>
+                    <span className="absolute top-3 right-3 text-[10px] sm:text-xs font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-black/75 text-white border border-white/20">
+                      #{idx + 1}
+                    </span>
 
                     {/* Center Play Button Overlay */}
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -657,65 +635,14 @@ export default function ReviewsHierarchyTable() {
                       </div>
                     </div>
 
-                    {/* Bottom Info inside Thumbnail */}
-                    <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-[10px] text-white font-bold">
-                      <span className="px-2 py-0.5 rounded bg-black/70 backdrop-blur-xs">
-                        4K Ultra HD
-                      </span>
-                      <span className="px-2 py-0.5 rounded bg-black/70 backdrop-blur-xs flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-amber-400" />
-                        <span>Est. {video.duration}</span>
-                      </span>
-                    </div>
                   </div>
 
                   {/* Card Body */}
                   <div className="p-5 flex-1 flex flex-col justify-between">
                     <div>
-                      {/* College Name & Location */}
-                      <div className="flex items-center justify-between gap-2 mb-2">
-                        <span className="text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-orange-50 text-[#F66710] border border-orange-100">
-                          {video.collegeName}
-                        </span>
-                        <span className="text-[10px] text-slate-400 font-medium truncate">
-                          {video.location}
-                        </span>
-                      </div>
-
-                      {/* Video Title */}
-                      <h4 
-                        onClick={() => setPreviewVideoModal(video)}
-                        className="font-bold text-base text-slate-900 group-hover:text-[#F66710] transition leading-snug cursor-pointer line-clamp-2 mb-2"
-                      >
-                        {video.title}
-                      </h4>
-
-                      {/* Speaker Badge if Authority Review */}
-                      {video.authoritySpeaker && (
-                        <div className="mb-2.5 inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
-                          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>Speaker: {video.authoritySpeaker}</span>
-                        </div>
-                      )}
-
-                      {/* Video Description */}
-                      <p className="text-xs text-slate-500 font-normal leading-relaxed line-clamp-2 mb-3">
-                        {video.description}
-                      </p>
-
-                      {/* Production Progress */}
-                      <div className="mb-3.5 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                        <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 mb-1">
-                          <span>Production Progress</span>
-                          <span className="text-[#F66710] font-black">{video.productionProgress}% Finalized</span>
-                        </div>
-                        <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-gradient-to-r from-amber-500 to-[#F66710] rounded-full" 
-                            style={{ width: `${video.productionProgress}%` }}
-                          />
-                        </div>
-                      </div>
+                      <h3 className="text-base sm:text-lg font-black leading-snug text-[#F66710] mb-2 break-words">
+                        {video.collegeName}
+                      </h3>
 
                       {/* Tags */}
                       <div className="flex flex-wrap gap-1.5 mb-4">
@@ -742,13 +669,13 @@ export default function ReviewsHierarchyTable() {
                         <span>{votes} Anticipating</span>
                       </button>
 
-                      {video.isLiveAuthorityVideo && video.videoUrl ? (
+                      {video.videoUrl ? (
                         <button
                           onClick={() => setPreviewVideoModal(video)}
                           className="px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs"
                         >
                           <Play className="w-3.5 h-3.5 fill-white" />
-                          <span>Watch Authority Video</span>
+                          <span>{video.isLiveAuthorityVideo ? 'Watch Authority Video' : 'Watch Review Video'}</span>
                         </button>
                       ) : (
                         <button
@@ -778,8 +705,15 @@ export default function ReviewsHierarchyTable() {
               );
             })}
           </div>
+          ) : (
+            <div className="rounded-2xl border border-slate-200 bg-white px-6 py-12 text-center">
+              <p className="text-sm font-bold text-slate-800">No review videos available yet.</p>
+              <p className="mt-1 text-xs text-slate-500">College cards will appear here when their review videos are added.</p>
+            </div>
+          )}
 
           {/* Bottom Notice */}
+          {selectedPerspectiveForVideos !== 'Review by Indore Colleges' && (
           <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-start gap-3">
               <Info className="w-5 h-5 text-[#F66710] shrink-0 mt-0.5" />
@@ -794,12 +728,15 @@ export default function ReviewsHierarchyTable() {
             </div>
 
             <button
-              onClick={() => setSelectedPerspectiveForVideos(null)}
+              onClick={() => {
+                navigate(categoryPath, { replace: true });
+              }}
               className="px-4 py-2.5 rounded-xl bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-bold text-xs transition cursor-pointer shrink-0"
             >
-              ← Back to Categories
+              ← Back to Reviews
             </button>
           </div>
+          )}
         </motion.div>
       )}
 
@@ -817,10 +754,7 @@ export default function ReviewsHierarchyTable() {
             >
               {/* Close Button */}
               <button
-                onClick={() => {
-                  setPreviewVideoModal(null);
-                  setIsPhoneSubmitted(false);
-                }}
+                onClick={() => setPreviewVideoModal(null)}
                 className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/70 hover:bg-black text-white flex items-center justify-center transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
@@ -867,11 +801,13 @@ export default function ReviewsHierarchyTable() {
                   <div className="absolute top-4 left-4 flex items-center gap-2 pointer-events-none">
                     <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-emerald-600 text-white shadow-lg flex items-center gap-1.5">
                       <ShieldCheck className="w-3.5 h-3.5 text-white" />
-                      <span>Official Authority Review Video</span>
+                      <span>{previewVideoModal.perspectiveType}</span>
                     </span>
-                    <span className="text-[10px] font-bold text-white/90 bg-black/70 px-2.5 py-1 rounded-full backdrop-blur-xs">
-                      Directorate Verified
-                    </span>
+                    {previewVideoModal.isLiveAuthorityVideo && (
+                      <span className="text-[10px] font-bold text-white/90 bg-black/70 px-2.5 py-1 rounded-full backdrop-blur-xs">
+                        Directorate Verified
+                      </span>
+                    )}
                   </div>
                 </div>
               ) : (
@@ -964,175 +900,11 @@ export default function ReviewsHierarchyTable() {
                 </div>
               )}
 
-              {/* MODAL BODY */}
-              <div className="p-6 sm:p-7 space-y-4">
-                <div>
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md bg-orange-100 text-[#F66710]">
-                      {previewVideoModal.collegeName} • {previewVideoModal.category}
-                    </span>
-                    <span className="text-xs text-slate-500 font-bold">
-                      {previewVideoModal.perspectiveType}
-                    </span>
-                  </div>
-
-                  <h3 className="text-lg sm:text-xl font-bold text-slate-950 mt-2 leading-snug">
-                    {previewVideoModal.title}
-                  </h3>
-                  <p className="text-xs text-slate-600 font-normal mt-2 leading-relaxed">
-                    {previewVideoModal.description}
-                  </p>
-                </div>
-
-                {/* College Authority Callout if Live Video */}
-                {previewVideoModal.videoUrl && (
-                  <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-xs">
-                        {previewVideoModal.collegeId === 'sgsits' ? 'NP' : 'DIR'}
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-bold text-emerald-950 flex items-center gap-1.5">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>{previewVideoModal.authoritySpeaker || 'College Authority Leadership'}</span>
-                        </h4>
-                        <p className="text-[11px] text-emerald-700">
-                          Official Institutional Review &amp; Background Campus Video for {previewVideoModal.collegeName}
-                        </p>
-                      </div>
-                    </div>
-
-                    {previewVideoModal.collegeId && (
-                      <button
-                        onClick={() => {
-                          const colId = previewVideoModal.collegeId;
-                          setPreviewVideoModal(null);
-                          navigate(`/college/${colId}`);
-                        }}
-                        className="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs transition flex items-center gap-1.5 shrink-0 shadow-xs cursor-pointer"
-                      >
-                        <span>Visit {previewVideoModal.collegeName} Page</span>
-                        <ArrowLeft className="w-3.5 h-3.5 rotate-180" />
-                      </button>
-                    )}
-                  </div>
-                )}
-
-                {/* Topics Covered */}
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                    Topics Documented in this Video:
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {previewVideoModal.tags.map((t, idx) => (
-                      <span key={idx} className="text-xs bg-white text-slate-800 border border-slate-200 px-2.5 py-1 rounded-lg font-medium">
-                        ✓ {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* WhatsApp / Phone Alert Registration Box */}
-                {!previewVideoModal.videoUrl && (
-                  <div className="p-4 rounded-2xl bg-orange-50/70 border border-orange-200">
-                    <div className="flex items-center justify-between mb-2">
-                      <p className="text-xs font-bold text-orange-950 flex items-center gap-1.5">
-                        <Bell className="w-4 h-4 text-[#F66710]" />
-                        <span>Get Instant Notification on Premiere</span>
-                      </p>
-                      <span className="text-[10px] text-[#F66710] font-bold">Free Alert</span>
-                    </div>
-
-                    {!isPhoneSubmitted ? (
-                      <div className="flex flex-col sm:flex-row gap-2 mt-2">
-                        <input
-                          type="text"
-                          placeholder="Enter WhatsApp or Phone Number (+91...)"
-                          value={notifyPhoneNumber}
-                          onChange={(e) => setNotifyPhoneNumber(e.target.value)}
-                          className="flex-1 px-3.5 py-2 text-xs rounded-xl border border-orange-200 bg-white focus:outline-hidden focus:border-[#F66710]"
-                        />
-                        <button
-                          onClick={() => {
-                            if (notifyPhoneNumber.trim().length >= 8) {
-                              setIsPhoneSubmitted(true);
-                              toggleNotify(previewVideoModal.id, previewVideoModal.collegeName);
-                            } else {
-                              toggleNotify(previewVideoModal.id, previewVideoModal.collegeName);
-                              setIsPhoneSubmitted(true);
-                            }
-                          }}
-                          className="px-4 py-2 bg-[#F66710] hover:bg-orange-600 text-white rounded-xl font-bold text-xs transition cursor-pointer shrink-0 shadow-xs"
-                        >
-                          Set Alert
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="p-2.5 rounded-xl bg-emerald-100 text-emerald-900 text-xs font-bold flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                        <span>Alert saved! We will send a direct video watch link upon publication.</span>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Footer buttons */}
-                <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
-                  {previewVideoModal.collegeId && (
-                    <button
-                      onClick={() => {
-                        const colId = previewVideoModal.collegeId;
-                        setPreviewVideoModal(null);
-                        navigate(`/college/${colId}`);
-                      }}
-                      className="py-3 px-4 rounded-2xl bg-[#F66710] hover:bg-orange-600 text-white font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer shadow-xs"
-                    >
-                      <Film className="w-4 h-4" />
-                      <span>Open Full College Background Video &amp; Page</span>
-                    </button>
-                  )}
-
-                  {!previewVideoModal.videoUrl && (
-                    <button
-                      onClick={() => {
-                        toggleNotify(previewVideoModal.id, previewVideoModal.collegeName);
-                      }}
-                      className={`flex-1 py-3 px-4 rounded-2xl font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer ${
-                        notifiedVideos[previewVideoModal.id]
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-slate-900 hover:bg-black text-white'
-                      }`}
-                    >
-                      <Bell className="w-4 h-4" />
-                      <span>
-                        {notifiedVideos[previewVideoModal.id]
-                          ? 'Notification Saved'
-                          : 'Notify Me for this Video'}
-                      </span>
-                    </button>
-                  )}
-
-                  <a
-                    href="https://www.youtube.com/@Indorecolleges"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="py-3 px-4 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition flex items-center justify-center gap-2 shrink-0 shadow-xs"
-                    title="Subscribe @Indorecolleges on YouTube"
-                  >
-                    <Youtube className="w-4 h-4" />
-                    <span>Subscribe @Indorecolleges</span>
-                  </a>
-
-                  <button
-                    onClick={() => {
-                      setPreviewVideoModal(null);
-                      setIsPhoneSubmitted(false);
-                    }}
-                    className="py-3 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer"
-                  >
-                    Close
-                  </button>
-                </div>
+              {/* Modal details */}
+              <div className="p-5 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-950 text-center leading-snug">
+                  {previewVideoModal.collegeName}
+                </h3>
               </div>
             </motion.div>
           </div>
