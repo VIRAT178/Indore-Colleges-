@@ -197,7 +197,7 @@ function getVideosForPerspective(category: CategoryType, perspective: ReviewPers
   const colleges = INDORE_INSTITUTES
     .filter(institute => institute.type === 'college' && CATEGORY_INSTITUTE_TYPES[category].includes(institute.category))
     .sort((a, b) => b.rating - a.rating);
-  const indoreCollegeReviewOrder = ['sgsits', 'iet-davv', 'malwa-institute'];
+  const indoreCollegeReviewOrder = ['sgsits', 'iet-davv', 'malwa-institute', 'acropolis'];
   const collegesForPerspective = perspective === 'Review by Indore Colleges'
     ? indoreCollegeReviewOrder
       .map(collegeId => colleges.find(college => college.id === collegeId))

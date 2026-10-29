@@ -341,6 +341,8 @@ export const INDORE_INSTITUTES: Institute[] = [
     indoreRating: 4.3,
     totalReviews: 314,
     image: '/acropolis.jpg',
+    videoUrl: '/AITR.mp4',
+    backgroundVideoUrl: '/AITR.mp4',
     description: 'Acropolis Institute of Technology and Research (AITR), established in 2005, is a prominent private engineering college in Indore. Affiliated with RGPV and approved by the AICTE with NBA accreditation for CSE, ME, and ECE departments, AITR delivers top-tier technical education. Known for its strong Career Development Cell (CDC), strict professional training modules, and outstanding campus placement programs, it prepares graduates for the modern IT and core sectors.',
     facilities: ['Smart Classrooms with Audio-Visual Aids', 'Centrally A/C Auditorium (250 capacity)', 'Group Discussion & Seminar Halls', 'Centrally Stocked Library (55,000+ books)', 'EDUSAT-ISRO Lab for Online Lectures', 'Sports Fields (Basketball, Badminton, Cricket)', 'Hygienic Canteens', 'Fleet of over 70 Bus Services'],
     establishedYear: 2005,
