@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Search, 
   MapPin, 
@@ -30,6 +31,16 @@ import IntroVideoSection from './IntroVideoSection';
 import StreamSelector from './StreamSelector';
 import { INDORE_INSTITUTES, INDORE_LOCATIONS, INDORE_LOCALITY_GROUPS, CATEGORIES } from '../data/indoreData';
 import { Institute } from '../types';
+
+const HOME_CATEGORY_LINKS = [
+  { label: 'Engineering colleges', slug: 'engineering' },
+  { label: 'Medical colleges', slug: 'medical' },
+  { label: 'MBA colleges', slug: 'mba' },
+  { label: 'BBA colleges', slug: 'bba' },
+  { label: 'BCA colleges', slug: 'bca' },
+  { label: 'Law colleges', slug: 'law' },
+  { label: 'Design colleges', slug: 'design' },
+] as const;
 
 interface HomeProps {
   setActiveTab: (tab: 'home' | 'explore' | 'register' | 'dashboard' | 'browse-campus' | 'blogs' | 'about' | 'careers' | 'contact' | 'college-portal' | 'admin-panel') => void;
@@ -941,14 +952,13 @@ export default function Home({
                   </div>
                   <span aria-hidden="true" className="shrink-0 text-gray-400">|</span>
                   {college.institute ? (
-                    <button
-                      type="button"
-                      onClick={() => college.institute && onViewCollegeDetail?.(college.institute)}
+                    <Link
+                      to={`/college/${college.institute.id}`}
                       className="min-w-0 flex-1 text-left font-outfit text-sm font-bold leading-snug text-orange-600 transition-colors hover:text-black sm:text-base"
                       title={college.name}
                     >
                       {college.name}
-                    </button>
+                    </Link>
                   ) : (
                     <span className="min-w-0 flex-1 text-left font-outfit text-sm font-bold leading-snug text-orange-600 sm:text-base">
                       {college.name}
@@ -1385,6 +1395,38 @@ export default function Home({
             ))}
           </div>
         </div>
+      </section>
+
+      <section className="sr-only" aria-labelledby="homepage-comparison-heading">
+        <h2 id="homepage-comparison-heading">How to compare colleges in Indore</h2>
+        <p>
+          IndoreColleges.in is a student-focused college discovery and comparison platform. Use the college profiles and category listings to explore options in Indore and build a shortlist that fits your course plans and priorities.
+        </p>
+        <ul>
+          <li>Courses: check the courses and specializations listed by each college against your academic interests.</li>
+          <li>Fees: compare the fee information shown for each option and confirm the current total directly with the college.</li>
+          <li>Admission eligibility: review the stated entry requirements and verify current eligibility and admission steps with the institution.</li>
+          <li>Placements: compare the placement information available on profiles and ask colleges about the reporting period and course-specific outcomes.</li>
+          <li>Facilities: review the facilities described by each college and consider which are relevant to your course.</li>
+          <li>Location: compare campus locations in Indore with your commute, transport and accommodation needs.</li>
+        </ul>
+        <p>
+          For college admission in Indore, compare colleges for the specific course you want rather than relying on a single overall label such as best or top. Confirm important details with the college before applying.
+        </p>
+        <nav aria-label="College category pages">
+          <ul>
+            {HOME_CATEGORY_LINKS.map(category => (
+              <li key={category.slug}>
+                <Link
+                  to={`/explore/${category.slug}`}
+                  className="focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:shadow-lg"
+                >
+                  {category.label} in Indore
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </section>
 
     </div>

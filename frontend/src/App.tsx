@@ -81,11 +81,11 @@ const CATEGORY_SEO: Record<string, CategorySeo> = {
 };
 
 const HOMEPAGE_SEO = {
-  title: 'Indore Colleges | Find & Apply to Top Colleges in Indore',
-  description: 'Discover the best engineering, management (MBA), computer applications (BCA), law, and medical colleges in Indore. Get expert admission guidance, check fee structures, and apply now to premier institutes like IIT Indore, IIM Indore, SGSITS, and SAIMS.',
+  title: 'Indore Colleges | Compare Courses, Fees & Admission',
+  description: 'Explore colleges in Indore by course. Compare engineering, medical, MBA, BBA, BCA, law and design colleges, then review fees, eligibility, placements and facilities.',
   canonical: 'https://indorecolleges.in/',
   socialUrl: 'https://indorecolleges.in',
-  ogDescription: 'Explore top-tier educational institutions in Indore. Compare premium campus locations, view detailed course fee structures, and secure your direct admission with top counseling advisors.',
+  ogDescription: 'Explore colleges in Indore by course. Compare engineering, medical, MBA, BBA, BCA, law and design colleges, then review fees, eligibility, placements and facilities.',
   image: 'https://indorecolleges.in/logo.svg'
 };
 
