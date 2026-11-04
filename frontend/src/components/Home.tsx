@@ -948,7 +948,7 @@ export default function Home({
                   className="flex items-center gap-2 rounded-xl border border-gray-200/80 bg-white px-3 py-3 sm:gap-3 sm:px-3.5 shadow-xs transition-all duration-200 hover:border-red-200 hover:shadow-sm"
                 >
                   <div className="shrink-0 font-outfit text-base font-extrabold leading-none text-[#0F244C] sm:text-lg">
-                    Rank #{rank}
+                    Rank {ratingType === 'google' ? rank : `#${rank}`}
                   </div>
                   <span aria-hidden="true" className="shrink-0 text-gray-400">|</span>
                   {college.institute ? (
@@ -965,14 +965,26 @@ export default function Home({
                     </span>
                   )}
                   <span aria-hidden="true" className="shrink-0 text-gray-400">|</span>
-                  <button
-                    type="button"
-                    onClick={onOpenCounseling}
-                    aria-label={`Apply now at ${college.name}`}
-                    className="shrink-0 rounded-lg border border-orange-500 px-2 py-2 text-[9px] font-extrabold uppercase tracking-wide text-orange-600 transition-colors hover:bg-orange-500 hover:text-white active:scale-95 sm:px-3 sm:text-[10px]"
-                  >
-                    Apply Now
-                  </button>
+                  {ratingType === 'google' ? (
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${college.name} Indore`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`View Google reviews for ${college.name}`}
+                      className="shrink-0 text-right text-[9px] font-extrabold uppercase tracking-wide text-orange-600 transition-colors hover:text-orange-700 sm:text-[10px]"
+                    >
+                      View Google Review →
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={onOpenCounseling}
+                      aria-label={`Apply now at ${college.name}`}
+                      className="shrink-0 rounded-lg border border-orange-500 px-2 py-2 text-[9px] font-extrabold uppercase tracking-wide text-orange-600 transition-colors hover:bg-orange-500 hover:text-white active:scale-95 sm:px-3 sm:text-[10px]"
+                    >
+                      Apply Now
+                    </button>
+                  )}
                 </div>
               );
             };
