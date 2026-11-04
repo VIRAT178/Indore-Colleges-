@@ -948,7 +948,7 @@ export default function Home({
                   className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 gap-y-2 rounded-xl border border-gray-200/80 bg-white px-3 py-3 shadow-xs transition-all duration-200 hover:border-red-200 hover:shadow-sm sm:grid-cols-[auto_auto_minmax(0,1fr)_auto_auto] sm:gap-x-3 sm:px-3.5"
                 >
                   <div className="font-outfit text-base font-extrabold leading-none text-[#0F244C] sm:text-lg">
-                    Rank {ratingType === 'google' ? rank : `#${rank}`}
+                    Rank {rank}
                   </div>
                   <span aria-hidden="true" className="hidden text-gray-400 sm:block">|</span>
                   {college.institute ? (
