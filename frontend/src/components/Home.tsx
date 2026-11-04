@@ -975,15 +975,13 @@ export default function Home({
                   )}
                   <span aria-hidden="true" className="hidden text-gray-400 sm:block">|</span>
                   {ratingType === 'google' ? (
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${college.name} Indore`)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`View Google reviews for ${college.name}`}
+                    <Link
+                      to={`/college/${college.id}`}
+                      aria-label={`View details for ${college.name}`}
                       className="col-start-2 row-start-2 inline-flex max-w-full items-center justify-center justify-self-start whitespace-normal break-words rounded-lg border border-orange-500 px-2 py-2 text-center text-[10px] font-extrabold uppercase leading-tight tracking-wide text-orange-600 transition-colors hover:bg-orange-500 hover:text-white active:scale-95 sm:col-start-5 sm:row-start-1 sm:justify-self-end sm:px-3 sm:text-[10px]"
                     >
-                      View Google Review →
-                    </a>
+                      View Details →
+                    </Link>
                   ) : (
                     <Link
                       to={`/reviews/${reviewCategory}/review-by-indore-colleges?college=${encodeURIComponent(college.id)}`}
