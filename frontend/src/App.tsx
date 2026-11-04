@@ -595,16 +595,16 @@ function ExploreRoute({
                   {(() => {
                     if (selectedStream === 'engineering') {
                       const engineeringColleges = [
-                        { rank: 1, name: 'IET DAVV', id: 'iet-davv', displayName: 'Institute of Engineering and Technology, DAVV (IET DAVV)' },
-                        { rank: 2, name: 'SGIST', id: 'sgsits', displayName: 'Shri Govindram Seksaria Institute of Technology and Science (SGSITS / SGIST)' },
-                        { rank: 3, name: 'Acropolis', id: 'acropolis', displayName: 'Acropolis Institute of Technology and Research' },
-                        { rank: 4, name: 'MIST', id: 'malwa-institute', displayName: 'Malwa Institute of Science & Technology (MIST)' },
-                        { rank: 5, name: 'IIST', id: 'iist-indore', displayName: 'Indore Institute of Science & Technology (IIST)' },
-                        { rank: 6, name: 'CDGI', id: 'chameli-devi', displayName: 'Chameli Devi Group of Institutions (CDGI)' },
-                        { rank: 7, name: 'IPS', id: 'ips-engineering', displayName: 'IPS Academy Institute of Engineering & Science' },
-                        { rank: 8, name: "SVKM's NMIMS Indore Campus", id: 'nmims-stme', displayName: "SVKM's NMIMS School of Technology & Management (NMIMS Indore Campus)" },
-                        { rank: 9, name: 'Medi-Caps University', id: 'medi-caps-university', displayName: 'Medi-Caps University' },
-                        { rank: 10, name: 'Symbiosis University (SUAS)', id: 'symbiosis-university', displayName: 'Symbiosis University of Applied Sciences (SUAS)' }
+                        { rank: 1, name: 'IIST', id: 'iist-indore', displayName: 'Indore Institute of Science & Technology' },
+                        { rank: 2, name: 'Acropolis', id: 'acropolis', displayName: 'Acropolis Institute of Technology and Research' },
+                        { rank: 3, name: 'Medi-Caps University', id: 'medi-caps-university', displayName: 'Medi-Caps University' },
+                        { rank: 4, name: 'SKITM', id: 'skitm-indore', displayName: 'Shivajirao Kadam Institute of Technology & Management' },
+                        { rank: 5, name: 'MIST', id: 'malwa-institute', displayName: 'Malwa Institute of Science & Technology' },
+                        { rank: 6, name: 'LNCTS', id: 'lncts-indore', displayName: 'Lakshmi Narain College of Technology & Science' },
+                        { rank: 7, name: 'SUAS', id: 'symbiosis-university', displayName: 'Symbiosis University of Applied Sciences (SUAS)' },
+                        { rank: 8, name: 'CDGI', id: 'chameli-devi', displayName: 'Chameli Devi Group of Institutions' },
+                        { rank: 9, name: 'PIEMR', id: 'piemr-indore', displayName: 'Prestige Institute of Engineering Management and Research (PIEMR)' },
+                        { rank: 10, name: 'SAIT', id: 'sri-aurobindo-institute-of-technology', displayName: 'Sri Aurobindo Institute of Technology (SAIT)' }
                       ];
 
                       return (
@@ -708,11 +708,27 @@ function ExploreRoute({
                       const otherColleges = streamFiltered.filter((inst: any) => inst.id !== 'malwa-institute');
                       otherColleges.sort((a: any, b: any) => b.rating - a.rating);
 
+                      const bbaMbaCollegeOrder = [
+                        'iim-indore',
+                        'symbiosis-university',
+                        'nmims-indore',
+                        'pimr',
+                        'malwa-institute',
+                        'acropolis',
+                        'sage-university',
+                        'ims-davv',
+                        'jaipuria-indore',
+                        'ips-ibmr'
+                      ];
                       const combined = [];
                       if (mistInst && ['bba', 'bca', 'mba'].includes(selectedStream)) {
                         combined.push(mistInst);
                       }
-                      const finalTop10 = [...combined, ...otherColleges].slice(0, 10);
+                      const finalTop10 = ['bba', 'mba'].includes(selectedStream)
+                        ? bbaMbaCollegeOrder
+                          .map(collegeId => streamFiltered.find((inst: any) => inst.id === collegeId))
+                          .filter(Boolean)
+                        : [...combined, ...otherColleges].slice(0, 10);
 
                       return (
                         <div className="bg-white rounded-3xl border border-gray-200/60 shadow-sm overflow-hidden divide-y divide-gray-150">
