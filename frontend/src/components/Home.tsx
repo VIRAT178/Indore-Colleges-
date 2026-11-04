@@ -945,45 +945,44 @@ export default function Home({
               return (
                 <div
                   key={`${ratingType}-${college.id}`}
-                  className="flex items-center gap-2 rounded-xl border border-gray-200/80 bg-white px-3 py-3 sm:gap-3 sm:px-3.5 shadow-xs transition-all duration-200 hover:border-red-200 hover:shadow-sm"
+                  className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 gap-y-2 rounded-xl border border-gray-200/80 bg-white px-3 py-3 shadow-xs transition-all duration-200 hover:border-red-200 hover:shadow-sm sm:grid-cols-[auto_auto_minmax(0,1fr)_auto_auto] sm:gap-x-3 sm:px-3.5"
                 >
-                  <div className="shrink-0 font-outfit text-base font-extrabold leading-none text-[#0F244C] sm:text-lg">
+                  <div className="font-outfit text-base font-extrabold leading-none text-[#0F244C] sm:text-lg">
                     Rank {ratingType === 'google' ? rank : `#${rank}`}
                   </div>
-                  <span aria-hidden="true" className="shrink-0 text-gray-400">|</span>
+                  <span aria-hidden="true" className="hidden text-gray-400 sm:block">|</span>
                   {college.institute ? (
                     <Link
                       to={`/college/${college.institute.id}`}
-                      className="min-w-0 flex-1 text-left font-outfit text-sm font-bold leading-snug text-orange-600 transition-colors hover:text-black sm:text-base"
+                      className="min-w-0 text-left font-outfit text-sm font-bold leading-snug text-orange-600 transition-colors hover:text-black sm:text-base"
                       title={college.name}
                     >
                       {college.name}
                     </Link>
                   ) : (
-                    <span className="min-w-0 flex-1 text-left font-outfit text-sm font-bold leading-snug text-orange-600 sm:text-base">
+                    <span className="min-w-0 text-left font-outfit text-sm font-bold leading-snug text-orange-600 sm:text-base">
                       {college.name}
                     </span>
                   )}
-                  <span aria-hidden="true" className="shrink-0 text-gray-400">|</span>
+                  <span aria-hidden="true" className="hidden text-gray-400 sm:block">|</span>
                   {ratingType === 'google' ? (
                     <a
                       href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${college.name} Indore`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`View Google reviews for ${college.name}`}
-                      className="shrink-0 text-right text-[9px] font-extrabold uppercase tracking-wide text-orange-600 transition-colors hover:text-orange-700 sm:text-[10px]"
+                      className="col-start-2 row-start-2 inline-flex max-w-full items-center justify-center justify-self-start whitespace-normal break-words rounded-lg border border-orange-500 px-2 py-2 text-center text-[10px] font-extrabold uppercase leading-tight tracking-wide text-orange-600 transition-colors hover:bg-orange-500 hover:text-white active:scale-95 sm:col-start-5 sm:row-start-1 sm:justify-self-end sm:px-3 sm:text-[10px]"
                     >
                       View Google Review →
                     </a>
                   ) : (
-                    <button
-                      type="button"
-                      onClick={onOpenCounseling}
-                      aria-label={`Apply now at ${college.name}`}
-                      className="shrink-0 rounded-lg border border-orange-500 px-2 py-2 text-[9px] font-extrabold uppercase tracking-wide text-orange-600 transition-colors hover:bg-orange-500 hover:text-white active:scale-95 sm:px-3 sm:text-[10px]"
+                    <a
+                      href="#home-reviews"
+                      aria-label={`View Indore Colleges reviews for ${college.name}`}
+                      className="col-start-2 row-start-2 inline-flex max-w-full items-center justify-center justify-self-start whitespace-normal break-words rounded-lg border border-orange-500 px-2 py-2 text-center text-[10px] font-extrabold uppercase leading-tight tracking-wide text-orange-600 transition-colors hover:bg-orange-500 hover:text-white active:scale-95 sm:col-start-5 sm:row-start-1 sm:justify-self-end sm:px-3 sm:text-[10px]"
                     >
-                      Apply Now
-                    </button>
+                      View Indore Colleges Review →
+                    </a>
                   )}
                 </div>
               );
@@ -1100,7 +1099,7 @@ export default function Home({
       </section>
 
       {/* 4. REVIEWS & TRUST TESTIMONIALS SECTION */}
-      <section className="py-12 sm:py-16 bg-slate-50 border-y border-gray-100">
+      <section id="home-reviews" className="py-12 sm:py-16 bg-slate-50 border-y border-gray-100">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
           {/* Section Header */}
