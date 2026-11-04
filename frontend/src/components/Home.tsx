@@ -942,6 +942,15 @@ export default function Home({
             ).slice(0, 10);
 
             const renderCollegeListItem = (college: { id: string; name: string; institute?: Institute }, ratingType: 'google' | 'indore', rank: number) => {
+              const collegeCategory = (college.institute?.category || activeSearchedTab).toLowerCase();
+              const reviewCategory = collegeCategory === 'engineering'
+                ? 'technical-college'
+                : collegeCategory === 'law'
+                  ? 'law-college'
+                  : collegeCategory === 'medical'
+                    ? 'science-college'
+                    : 'professional-college';
+
               return (
                 <div
                   key={`${ratingType}-${college.id}`}
@@ -976,13 +985,13 @@ export default function Home({
                       View Google Review →
                     </a>
                   ) : (
-                    <a
-                      href="#home-reviews"
+                    <Link
+                      to={`/reviews/${reviewCategory}/review-by-indore-colleges?college=${encodeURIComponent(college.id)}`}
                       aria-label={`View Indore Colleges reviews for ${college.name}`}
                       className="col-start-2 row-start-2 inline-flex max-w-full items-center justify-center justify-self-start whitespace-normal break-words rounded-lg border border-orange-500 px-2 py-2 text-center text-[10px] font-extrabold uppercase leading-tight tracking-wide text-orange-600 transition-colors hover:bg-orange-500 hover:text-white active:scale-95 sm:col-start-5 sm:row-start-1 sm:justify-self-end sm:px-3 sm:text-[10px]"
                     >
                       View Indore Colleges Review →
-                    </a>
+                    </Link>
                   )}
                 </div>
               );
