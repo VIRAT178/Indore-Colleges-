@@ -988,14 +988,6 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
     localStorage.setItem('edupath_cart_ids', JSON.stringify(cartIds));
   }, [hasLoadedLocalState, cartIds]);
 
-  // Auto-open Virtual Advisor after 10 seconds of loading the website
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsAdvisorOpen(true);
-    }, 10000);
-    return () => clearTimeout(timer);
-  }, []);
-
   const syncHistoryToBackend = async (email?: string, shortIds?: string[], basketIds?: string[]) => {
     const targetEmail = email || currentUser?.email;
     if (!targetEmail) return;
@@ -1111,14 +1103,6 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
 
   useEffect(() => {
     fetchInstitutes();
-    
-    const interacted = localStorage.getItem('edupath_advisor_interacted');
-    if (!interacted) {
-      const timer = setTimeout(() => {
-        setIsAdvisorOpen(true);
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
   }, []);
 
   const handleApplyAdvisorFilters = (filters: {
@@ -1135,7 +1119,6 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
     setMaxFee(filters.maxFee);
     
     navigate('/explore');
-    localStorage.setItem('edupath_advisor_interacted', 'true');
   };
 
   const fetchInstitutes = async () => {
@@ -1745,10 +1728,7 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
         {isAdvisorOpen && (
           <VirtualAdvisorModal
             isOpen={isAdvisorOpen}
-            onClose={() => {
-              setIsAdvisorOpen(false);
-              localStorage.setItem('edupath_advisor_interacted', 'true');
-            }}
+            onClose={() => setIsAdvisorOpen(false)}
             institutes={institutes}
             onApplyFilters={handleApplyAdvisorFilters}
           />
