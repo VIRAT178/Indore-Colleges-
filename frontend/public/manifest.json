@@ -1,0 +1,16 @@
+{
+  "name": "Indore Colleges",
+  "short_name": "Indore Colleges",
+  "description": "Find the best colleges and universities in Indore with verified admission guidance.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ef4444",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "768x768",
+      "type": "image/png"
+    }
+  ]
+}
