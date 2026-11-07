@@ -2,6 +2,7 @@ import {createRequire} from 'node:module';
 import {readFile, rm, mkdir, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
+import {createSitemapXml, getSitemapPaths} from '../shared/sitemap.js';
 
 const workingDirectory = process.cwd();
 const frontendDirectory = path.basename(workingDirectory) === 'frontend'
@@ -105,6 +106,8 @@ for (const route of routes) {
   await writeFile(outputPath, html, 'utf8');
 }
 
+const sitemapPaths = getSitemapPaths(renderer.getStaticCollegeRoutes());
+await writeFile(path.join(outputDirectory, 'sitemap.xml'), createSitemapXml(sitemapPaths), 'utf8');
+
 await rm(serverBundleDirectory, {recursive: true, force: true});
 console.log(`Prerendered ${routes.length} routes (${routes.length - baseRoutes.length} colleges) to ${outputDirectory}`);
-
