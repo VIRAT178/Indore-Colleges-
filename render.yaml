@@ -34,5 +34,6 @@ services:
         sync: false
       - key: ADMIN_EMAIL
         value: admin@indorecolleges.org
+      # Required in the Render dashboard; the service fails closed when unset.
       - key: ADMIN_PASSWORD
         sync: false

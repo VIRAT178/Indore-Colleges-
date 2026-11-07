@@ -7,10 +7,11 @@ import fs from 'fs';
 import nodemailer from 'nodemailer';
 import { MongoClient, Db } from 'mongodb';
 import cors from 'cors';
-import { randomBytes } from 'crypto';
+import { randomBytes, randomInt } from 'crypto';
 import { INDORE_INSTITUTES } from '../frontend/src/data/indoreData.js';
 import { CounselingRequest, CallbackRequest, Review, SchoolRegistrationRequest, CollegeUpdateRequest } from '../frontend/src/types.js';
 import { createSitemapXml, getSitemapPaths } from '../shared/sitemap.js';
+import { AdminSessionStore, consumeIssuedOtp, getAdminPasswordFingerprint } from './security.js';
 
 dotenv.config();
 
@@ -84,20 +85,30 @@ const DEFAULT_CALLBACKS: CallbackRequest[] = [
 let mongoClient: MongoClient | null = null;
 let mongoDb: Db | null = null;
 let isMongoConnecting = false;
-const adminSessionTokens = new Map<string, number>();
+const adminSessionTokens = new AdminSessionStore();
 const ADMIN_SESSION_TTL_MS = 12 * 60 * 60 * 1000;
 
 function isAdminSession(authorizationHeader?: string): boolean {
   const token = authorizationHeader?.match(/^Bearer\s+(.+)$/i)?.[1];
   if (!token) return false;
 
-  const expiresAt = adminSessionTokens.get(token);
-  if (!expiresAt) return false;
-  if (expiresAt <= Date.now()) {
-    adminSessionTokens.delete(token);
-    return false;
+  return adminSessionTokens.isValid(
+    token,
+    Date.now(),
+    getAdminPasswordFingerprint(process.env.ADMIN_PASSWORD),
+  );
+}
+
+function stripCredentials(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(item => stripCredentials(item));
   }
-  return true;
+  if (!value || typeof value !== 'object' || value instanceof Date) return value;
+
+  return Object.fromEntries(
+    Object.entries(value).filter(([key]) => !/(?:password|otp|token)/i.test(key))
+      .map(([key, item]) => [key, stripCredentials(item)]),
+  );
 }
 
 async function seedDatabase(db: Db) {
@@ -123,7 +134,7 @@ async function seedDatabase(db: Db) {
       console.log('Seeded default callback requests into MongoDB.');
     }
   } catch (err: any) {
-    console.log('[SmartDB] Note during database seed check:', err?.message || err);
+    console.log('[SmartDB] Database seed check failed.');
   }
 }
 
@@ -188,7 +199,6 @@ const DEFAULT_COLLEGE_REGISTRATIONS: any[] = [
     website: 'https://mistindore.ac.in',
     address: 'Index City, NH-59A, Nemawar Road, Indore, MP 452016',
     campusPhoto: '/malwa_institute_campus.jpg',
-    password: 'collegepassword',
     status: 'approved',
     pendingUpdate: DEFAULT_UPDATE_REQUESTS[0],
     createdAt: new Date(Date.now() - 7 * 86400000).toISOString()
@@ -230,8 +240,8 @@ class SmartCollection {
         if (self.realCol) {
           try {
             return await self.realCol.find(query).toArray();
-          } catch (err: any) {
-            console.warn(`[SmartDB Fallback] MongoDB find failed on '${self.colName}', falling back to memory:`, err.message || err);
+          } catch {
+            console.warn(`[SmartDB Fallback] MongoDB find failed on '${self.colName}', falling back to memory.`);
           }
         }
         return self.filterMemory(query);
@@ -242,8 +252,8 @@ class SmartCollection {
             if (self.realCol) {
               try {
                 return await self.realCol.find(query).sort(sortObj).toArray();
-              } catch (err: any) {
-                console.warn(`[SmartDB Fallback] MongoDB sort failed on '${self.colName}', falling back to memory:`, err.message || err);
+              } catch {
+                console.warn(`[SmartDB Fallback] MongoDB sort failed on '${self.colName}', falling back to memory.`);
               }
             }
             const arr = self.filterMemory(query);
@@ -271,7 +281,10 @@ class SmartCollection {
     }
     return fallback.filter((item: any) => {
       for (const key of Object.keys(query)) {
-        if (item[key] !== query[key]) {
+        const condition = query[key];
+        if (condition && typeof condition === 'object' && '$gt' in condition) {
+          if (!(item[key] > condition.$gt)) return false;
+        } else if (item[key] !== condition) {
           return false;
         }
       }
@@ -283,8 +296,8 @@ class SmartCollection {
     if (this.realCol) {
       try {
         return await this.realCol.findOne(query);
-      } catch (err: any) {
-        console.warn(`[SmartDB Fallback] MongoDB findOne failed on '${this.colName}', falling back to memory:`, err.message || err);
+      } catch {
+        console.warn(`[SmartDB Fallback] MongoDB findOne failed on '${this.colName}', falling back to memory.`);
       }
     }
     const matched = this.filterMemory(query);
@@ -304,8 +317,8 @@ class SmartCollection {
       try {
         await this.realCol.insertOne(doc);
         return { acknowledged: true, insertedId: doc.id || doc._id };
-      } catch (err: any) {
-        console.warn(`[SmartDB Fallback] MongoDB insertOne failed on '${this.colName}' (fallback memory preserved):`, err.message || err);
+      } catch {
+        console.warn(`[SmartDB Fallback] MongoDB insertOne failed on '${this.colName}' (fallback memory preserved).`);
       }
     }
     return { acknowledged: true, insertedId: doc.id };
@@ -334,8 +347,8 @@ class SmartCollection {
       try {
         await this.realCol.updateOne(query, update, options);
         return { acknowledged: true, modifiedCount: 1 };
-      } catch (err: any) {
-        console.warn(`[SmartDB Fallback] MongoDB updateOne failed on '${this.colName}' (fallback memory updated):`, err.message || err);
+      } catch {
+        console.warn(`[SmartDB Fallback] MongoDB updateOne failed on '${this.colName}' (fallback memory updated).`);
       }
     }
     return { acknowledged: true, modifiedCount: 1 };
@@ -360,11 +373,37 @@ class SmartCollection {
       try {
         await this.realCol.deleteOne(query);
         return { acknowledged: true, deletedCount };
-      } catch (err: any) {
-        console.warn(`[SmartDB Fallback] MongoDB deleteOne failed on '${this.colName}' (fallback memory updated):`, err.message || err);
+      } catch {
+        console.warn(`[SmartDB Fallback] MongoDB deleteOne failed on '${this.colName}' (fallback memory updated).`);
       }
     }
     return { acknowledged: true, deletedCount };
+  }
+
+  async findOneAndDelete(query: any) {
+    const fallback = this.getFallbackArray();
+    const matchedIdx = fallback.findIndex((item: any) => {
+      for (const key of Object.keys(query)) {
+        const condition = query[key];
+        if (condition && typeof condition === 'object' && '$gt' in condition) {
+          if (!(item[key] > condition.$gt)) return false;
+        } else if (item[key] !== condition) {
+          return false;
+        }
+      }
+      return true;
+    });
+    const fallbackRecord = matchedIdx === -1 ? null : fallback.splice(matchedIdx, 1)[0];
+
+    if (this.realCol) {
+      try {
+        return await this.realCol.findOneAndDelete(query);
+      } catch {
+        console.warn(`[SmartDB Fallback] MongoDB OTP consume failed on '${this.colName}'.`);
+      }
+    }
+
+    return fallbackRecord;
   }
 
   async deleteMany(query: any) {
@@ -385,8 +424,8 @@ class SmartCollection {
       try {
         await this.realCol.deleteMany(query);
         return { acknowledged: true, deletedCount };
-      } catch (err: any) {
-        console.warn(`[SmartDB Fallback] MongoDB deleteMany failed on '${this.colName}' (fallback memory updated):`, err.message || err);
+      } catch {
+        console.warn(`[SmartDB Fallback] MongoDB deleteMany failed on '${this.colName}' (fallback memory updated).`);
       }
     }
     return { acknowledged: true, deletedCount };
@@ -396,8 +435,8 @@ class SmartCollection {
     if (this.realCol) {
       try {
         return await this.realCol.countDocuments();
-      } catch (err: any) {
-        console.warn(`[SmartDB Fallback] MongoDB countDocuments failed on '${this.colName}':`, err.message || err);
+      } catch {
+        console.warn(`[SmartDB Fallback] MongoDB countDocuments failed on '${this.colName}'.`);
       }
     }
     return this.getFallbackArray().length;
@@ -494,7 +533,7 @@ async function getMongoDb(): Promise<any> {
       mongoAuthFailed = true;
       console.log("[SmartDB] MongoDB Atlas authentication unverified or invalid. Operating seamlessly on dynamic in-memory database.");
     } else {
-      console.log(`[SmartDB] MongoDB Atlas connection bypassed (${errMsg}). Operating seamlessly on dynamic in-memory database.`);
+      console.log('[SmartDB] MongoDB Atlas connection failed. Operating on the in-memory fallback.');
     }
     return new SmartDb(null);
   }
@@ -531,8 +570,7 @@ async function sendVerificationEmail(email: string, otp: string): Promise<{ succ
   const senderName = process.env.BREVO_SENDER_NAME || 'Indore Colleges';
 
   if (!apiKey || !senderEmail) {
-    const message = 'BREVO_API_KEY and BREVO_SENDER_EMAIL must be configured for email delivery.';
-    console.error(`[Email] Delivery unavailable for ${email}: ${message}`);
+    console.error('[Email] OTP delivery is not configured.');
     return { success: false, error: 'Unable to send the verification email. Please try again later.' };
   }
 
@@ -565,11 +603,10 @@ async function sendVerificationEmail(email: string, otp: string): Promise<{ succ
       throw new Error(`Brevo API ${response.status}: ${providerError}`);
     }
 
-    console.log(`OTP Email sent successfully to ${email}`);
+    console.log('OTP email sent successfully.');
     return { success: true };
   } catch (err: any) {
-    const message = err?.message || String(err);
-    console.error(`[Email] Failed to send OTP to ${email}: ${message}`);
+    console.error('[Email] OTP delivery failed.');
     return { success: false, error: 'Unable to send the verification email. Please try again later.' };
   }
 }
@@ -672,7 +709,7 @@ async function sendFormNotifications(
 
   if (!isSmtpConfigured()) {
     const message = 'SMTP_HOST, SMTP_USER, and SMTP_PASS must be configured for email delivery.';
-    console.error(`[Email] Form notification unavailable for ${userEmail}: ${message}`);
+    console.error('[Email] Form notification delivery is not configured.');
     return { success: false, error: message };
   }
 
@@ -690,12 +727,11 @@ async function sendFormNotifications(
       transporter.sendMail(adminMailOptions)
     ]);
 
-    console.log(`Form notifications sent successfully for ${userName} (${userEmail})`);
+    console.log('Form notifications sent successfully.');
     return { success: true };
-  } catch (err: any) {
-    const message = err?.message || String(err);
-    console.error(`[Email] Form notification failed for ${userEmail}: ${message}`);
-    return { success: false, error: message };
+  } catch {
+    console.error('[Email] Form notification delivery failed.');
+    return { success: false, error: 'Unable to send form notifications.' };
   }
 }
 
@@ -1033,13 +1069,29 @@ async function startServer() {
 
   // API Route: Get all counseling requests
   app.get('/api/counseling', async (req, res) => {
+    if (!isAdminSession(req.headers.authorization)) {
+      return res.status(401).json({ error: 'A valid admin session is required.' });
+    }
+
     try {
       const db = await getMongoDb();
       const list = await db.collection('counseling_requests').find().sort({ createdAt: -1 }).toArray();
-      res.json(list);
+      res.json(list.map((request: CounselingRequest) => ({
+        id: request.id,
+        parentName: request.parentName,
+        studentName: request.studentName,
+        studentClassOrDegree: request.studentClassOrDegree,
+        phone: request.phone,
+        email: request.email,
+        preferredSlot: request.preferredSlot,
+        date: request.date,
+        query: request.query,
+        status: request.status,
+        createdAt: request.createdAt,
+      })));
     } catch (err: any) {
-      console.error("MongoDB fetch counseling error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
+      console.error('MongoDB counseling request failed.');
+      res.status(500).json({ error: 'Unable to load counseling requests.' });
     }
   });
 
@@ -1084,12 +1136,12 @@ async function startServer() {
           preferredDate: newRequest.date,
           additionalQueries: newRequest.query
         }
-      ).catch(err => console.error("Error sending counseling email alerts:", err));
+      ).catch(() => console.error('Counseling email notifications failed.'));
 
-      res.status(201).json(newRequest);
+      res.status(201).json({ success: true });
     } catch (err: any) {
-      console.error("MongoDB counseling insert error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
+      console.error('MongoDB counseling submission failed.');
+      res.status(500).json({ error: 'Unable to submit the counseling request.' });
     }
   });
 
@@ -1130,12 +1182,12 @@ async function startServer() {
           targetedInstitute: newCallback.instituteId || 'General Inquiry / Home Page Consultation',
           userMessage: newCallback.query || 'Wants a callback for academic consultation.'
         }
-      ).catch(err => console.error("Error sending callback email alerts:", err));
+      ).catch(() => console.error('Callback email notifications failed.'));
 
-      res.status(201).json(newCallback);
-    } catch (err: any) {
-      console.error("MongoDB callback insert error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
+      res.status(201).json({ success: true });
+    } catch {
+      console.error('MongoDB callback request submission failed.');
+      res.status(500).json({ error: 'Unable to submit the callback request.' });
     }
   });
 
@@ -1188,12 +1240,12 @@ async function startServer() {
           facilities: newReg.facilities.join(', ') || 'None Listed',
           description: newReg.description
         }
-      ).catch(err => console.error("Error sending register-school email alerts:", err));
+      ).catch(() => console.error('School registration email notifications failed.'));
 
-      res.status(201).json(newReg);
-    } catch (err: any) {
-      console.error("MongoDB school registration insert error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
+      res.status(201).json({ success: true });
+    } catch {
+      console.error('MongoDB school registration submission failed.');
+      res.status(500).json({ error: 'Unable to submit the school registration.' });
     }
   });
 
@@ -1231,12 +1283,12 @@ async function startServer() {
           subjectMatter: newContact.subject,
           detailedMessage: newContact.message
         }
-      ).catch(err => console.error("Error sending contact email alerts:", err));
+      ).catch(() => console.error('Contact email notifications failed.'));
 
-      res.status(201).json(newContact);
-    } catch (err: any) {
-      console.error("MongoDB contact insert error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
+      res.status(201).json({ success: true });
+    } catch {
+      console.error('MongoDB contact request submission failed.');
+      res.status(500).json({ error: 'Unable to submit the contact request.' });
     }
   });
 
@@ -1274,12 +1326,12 @@ async function startServer() {
           targetedPosition: newCareerApp.position,
           briefPitchOrResumeLink: newCareerApp.pitch
         }
-      ).catch(err => console.error("Error sending career email alerts:", err));
+      ).catch(() => console.error('Career email notifications failed.'));
 
-      res.status(201).json(newCareerApp);
-    } catch (err: any) {
-      console.error("MongoDB career application insert error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
+      res.status(201).json({ success: true });
+    } catch {
+      console.error('MongoDB career application submission failed.');
+      res.status(500).json({ error: 'Unable to submit the career application.' });
     }
   });
 
@@ -1295,7 +1347,7 @@ async function startServer() {
     }
 
     const emailTrimmed = email.trim().toLowerCase();
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = randomInt(100000, 1000000).toString();
     const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes expiration
 
     const mailResult = await sendVerificationEmail(emailTrimmed, otp);
@@ -1315,8 +1367,8 @@ async function startServer() {
         message: 'OTP verification code sent.'
       });
     } catch (err: any) {
-      console.error("MongoDB OTP update error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
+      console.error('MongoDB OTP storage failed.');
+      res.status(500).json({ error: 'Unable to store the verification code.' });
     }
   });
 
@@ -1339,21 +1391,9 @@ async function startServer() {
       address: address.trim()
     };
 
-    let verified = false;
-
     try {
       const db = await getMongoDb();
-      const storedOtp = await db.collection('otps').findOne({ email: emailTrimmed });
-      if (storedOtp && storedOtp.otp === otpStr && new Date(storedOtp.expiresAt) > new Date()) {
-        verified = true;
-        await db.collection('otps').deleteOne({ email: emailTrimmed });
-      }
-
-      // Fallbacks for testing
-      if (otpStr === '123456' || otpStr === '000000') {
-        verified = true;
-      }
-
+      const verified = await consumeIssuedOtp(db.collection('otps'), emailTrimmed, otpStr);
       if (!verified) {
         return res.status(400).json({ error: 'Invalid or expired OTP code.' });
       }
@@ -1382,114 +1422,29 @@ async function startServer() {
         user = { ...user, ...profileDetails };
       }
 
-      res.json({ success: true, user });
-    } catch (err: any) {
-      console.error("MongoDB OTP verification error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
-    }
-  });
-
-  // 3. Get User Profile
-  app.get('/api/users/profile/:email', async (req, res) => {
-    const { email } = req.params;
-    const emailTrimmed = email.trim().toLowerCase();
-
-    try {
-      const db = await getMongoDb();
-      const user = await db.collection('users').findOne({ email: emailTrimmed });
-      if (!user) {
-        return res.status(404).json({ error: 'User not found.' });
-      }
-      res.json(user);
-    } catch (err: any) {
-      console.error("MongoDB get profile error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
-    }
-  });
-
-  // 4. Update User Profile
-  app.put('/api/users/profile/:email', async (req, res) => {
-    const { email } = req.params;
-    const emailTrimmed = email.trim().toLowerCase();
-    const updateData = req.body;
-
-    delete updateData._id;
-    delete updateData.email;
-    delete updateData.createdAt;
-
-    try {
-      const db = await getMongoDb();
-      await db.collection('users').updateOne(
-        { email: emailTrimmed },
-        { $set: updateData },
-        { upsert: true }
-      );
-      const user = await db.collection('users').findOne({ email: emailTrimmed });
-      res.json({ success: true, user });
-    } catch (err: any) {
-      console.error("MongoDB update profile error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
-    }
-  });
-
-  // 5. Delete User Profile
-  app.delete('/api/users/profile/:email', async (req, res) => {
-    const { email } = req.params;
-    const emailTrimmed = email.trim().toLowerCase();
-
-    try {
-      const db = await getMongoDb();
-      await db.collection('users').deleteOne({ email: emailTrimmed });
-      await db.collection('counseling_requests').deleteMany({ email: emailTrimmed });
-      await db.collection('callback_requests').deleteMany({ email: emailTrimmed });
-      res.json({ success: true, message: 'Account and associated records deleted.' });
-    } catch (err: any) {
-      console.error("MongoDB delete profile error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
-    }
-  });
-
-  // 6. Sync Shortlists & Basket/Cart ids
-  app.post('/api/users/sync-history', async (req, res) => {
-    const { email, shortlistedIds, cartIds } = req.body;
-    if (!email) {
-      return res.status(400).json({ error: 'Email is required.' });
-    }
-
-    const emailTrimmed = email.trim().toLowerCase();
-
-    try {
-      const db = await getMongoDb();
-      await db.collection('users').updateOne(
-        { email: emailTrimmed },
-        { $set: { shortlistedIds, cartIds } },
-        { upsert: true }
-      );
-      res.json({ success: true });
-    } catch (err: any) {
-      console.error("MongoDB sync history error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
-    }
-  });
-
-  // 7. Get User Counseling & Callback History
-  app.get('/api/users/history/:email', async (req, res) => {
-    const { email } = req.params;
-    const emailTrimmed = email.trim().toLowerCase();
-
-    try {
-      const db = await getMongoDb();
-      const userCounseling = await db.collection('counseling_requests').find({ email: emailTrimmed }).toArray();
-      const userCallbacks = await db.collection('callback_requests').find({ email: emailTrimmed }).toArray();
       res.json({
-        counseling: userCounseling,
-        callbacks: userCallbacks
+        success: true,
+        user: {
+          email: user.email,
+          ...profileDetails,
+          shortlistedIds: Array.isArray(user.shortlistedIds) ? user.shortlistedIds : [],
+          cartIds: Array.isArray(user.cartIds) ? user.cartIds : [],
+          createdAt: user.createdAt,
+        },
       });
     } catch (err: any) {
-      console.error("MongoDB history query error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
+      console.error('MongoDB OTP verification failed.');
+      res.status(500).json({ error: 'Unable to verify the code.' });
     }
   });
+
+  const unavailableUserAccess = (_req: any, res: any) =>
+    res.status(401).json({ error: 'Authenticated user access is unavailable.' });
+  app.get('/api/users/profile/:email', unavailableUserAccess);
+  app.put('/api/users/profile/:email', unavailableUserAccess);
+  app.delete('/api/users/profile/:email', unavailableUserAccess);
+  app.post('/api/users/sync-history', unavailableUserAccess);
+  app.get('/api/users/history/:email', unavailableUserAccess);
 
   // ==========================================
   // COLLEGE PARTNER PORTAL ENDPOINTS
@@ -1522,12 +1477,11 @@ async function startServer() {
       website,
       instagram,
       campusPhoto,
-      address,
-      password
+      address
     } = req.body;
 
-    if (!name || !contactEmail || !password || !contactPhone) {
-      return res.status(400).json({ error: 'College Name, Contact Email, Password, and Contact Phone are required.' });
+    if (!name || !contactEmail || !contactPhone) {
+      return res.status(400).json({ error: 'College Name, Contact Email, and Contact Phone are required.' });
     }
 
     const emailTrimmed = contactEmail.trim().toLowerCase();
@@ -1573,40 +1527,26 @@ async function startServer() {
         instagram: instagram || '',
         campusPhoto: campusPhoto || '',
         address: address || location || '',
-        password, // Stored securely/simply for demo context
         status: 'pending',
         createdAt: new Date().toISOString()
       };
 
       await db.collection('college_registrations').insertOne(newPartner);
-      res.status(201).json({ success: true, college: newPartner });
+      res.status(201).json({ success: true });
     } catch (err: any) {
-      console.error("College Partner register error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
+      console.error('College partner registration failed.');
+      res.status(500).json({ error: 'Unable to submit the college registration.' });
     }
   });
 
-  // 2. College Partner Login
+  // Partner account access remains disabled until server-verified ownership is implemented.
   app.post('/api/college-partner/login', async (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required.' });
-    }
-
-    const emailTrimmed = email.trim().toLowerCase();
-
-    try {
-      const db = await getMongoDb();
-      const college = await db.collection('college_registrations').findOne({ contactEmail: emailTrimmed });
-      if (!college || college.password !== password) {
-        return res.status(401).json({ error: 'Invalid email or password.' });
-      }
-      res.json({ success: true, college });
-    } catch (err: any) {
-      console.error("College Partner login error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
-    }
+    return res.status(503).json({ error: 'Partner account access is temporarily unavailable.' });
   });
+
+  app.use('/api/college-partner', (_req, res) =>
+    res.status(401).json({ error: 'Authenticated partner access is unavailable.' }),
+  );
 
   // 3. College Partner Request Update Info (Sent to Admin for approval before publishing)
   app.put('/api/college-partner/:id', async (req, res) => {
@@ -1847,17 +1787,22 @@ async function startServer() {
   // 1. Admin Login
   app.post('/api/admin/login', async (req, res) => {
     const { email, password } = req.body;
-    if (!email || !password) {
+    if (typeof email !== 'string' || typeof password !== 'string' || !email.trim() || !password) {
       return res.status(400).json({ error: 'Email and password are required.' });
     }
 
     const emailTrimmed = email.trim().toLowerCase();
     const envAdminEmail = (process.env.ADMIN_EMAIL || 'admin@indorecolleges.org').trim().toLowerCase();
-    const envAdminPassword = process.env.ADMIN_PASSWORD || 'adminpassword';
+    const envAdminPassword = process.env.ADMIN_PASSWORD;
+    const passwordFingerprint = getAdminPasswordFingerprint(envAdminPassword);
+
+    if (!passwordFingerprint) {
+      return res.status(503).json({ error: 'Admin authentication is not configured.' });
+    }
 
     if (emailTrimmed === envAdminEmail && password === envAdminPassword) {
       const token = randomBytes(32).toString('hex');
-      adminSessionTokens.set(token, Date.now() + ADMIN_SESSION_TTL_MS);
+      adminSessionTokens.issue(token, Date.now() + ADMIN_SESSION_TTL_MS, passwordFingerprint);
       res.json({ success: true, token });
     } else {
       res.status(401).json({ error: 'Invalid admin credentials.' });
@@ -1876,7 +1821,7 @@ async function startServer() {
     if (!token || !isAdminSession(req.headers.authorization)) {
       return res.status(401).json({ error: 'Admin session is invalid or expired.' });
     }
-    adminSessionTokens.delete(token);
+    adminSessionTokens.revoke(token);
     res.json({ success: true });
   });
 
@@ -1892,10 +1837,10 @@ async function startServer() {
     try {
       const db = await getMongoDb();
       const list = await db.collection('college_registrations').find().sort({ createdAt: -1 }).toArray();
-      res.json(list);
+      res.json(stripCredentials(list));
     } catch (err: any) {
-      console.error("Admin fetch registrations error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
+      console.error('Admin fetch registrations failed.');
+      res.status(500).json({ error: 'Unable to load college registrations.' });
     }
   });
 
@@ -1908,8 +1853,8 @@ async function startServer() {
       }
       res.json({ success: true });
     } catch (err: any) {
-      console.error('Admin delete registration error:', err);
-      res.status(500).json({ error: err.message || 'Database connection error' });
+      console.error('Admin delete registration failed.');
+      res.status(500).json({ error: 'Unable to delete the college registration.' });
     }
   });
 
@@ -1937,10 +1882,10 @@ async function startServer() {
         });
       }
 
-      res.json({ success: true, college });
+      res.json({ success: true, college: stripCredentials(college) });
     } catch (err: any) {
-      console.error("Admin update status error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
+      console.error('Admin update registration status failed.');
+      res.status(500).json({ error: 'Unable to update the college registration.' });
     }
   });
 
@@ -1949,10 +1894,10 @@ async function startServer() {
     try {
       const db = await getMongoDb();
       const list = await db.collection('college_update_requests').find().sort({ createdAt: -1 }).toArray();
-      res.json(list);
+      res.json(stripCredentials(list));
     } catch (err: any) {
-      console.error("Admin fetch update requests error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
+      console.error('Admin fetch update requests failed.');
+      res.status(500).json({ error: 'Unable to load college update requests.' });
     }
   });
 
@@ -2068,8 +2013,8 @@ async function startServer() {
         });
       }
     } catch (err: any) {
-      console.error("Admin update request action error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
+      console.error('Admin update request action failed.');
+      res.status(500).json({ error: 'Unable to process the college update request.' });
     }
   });
 
@@ -2078,10 +2023,10 @@ async function startServer() {
     try {
       const db = await getMongoDb();
       const list = await db.collection('counseling_requests').find().sort({ createdAt: -1 }).toArray();
-      res.json(list);
+      res.json(stripCredentials(list));
     } catch (err: any) {
-      console.error("Admin fetch counseling error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
+      console.error('Admin fetch counseling requests failed.');
+      res.status(500).json({ error: 'Unable to load counseling requests.' });
     }
   });
 
@@ -2094,8 +2039,8 @@ async function startServer() {
       }
       res.json({ success: true });
     } catch (err: any) {
-      console.error('Admin delete counselling lead error:', err);
-      res.status(500).json({ error: err.message || 'Database connection error' });
+      console.error('Admin delete counseling request failed.');
+      res.status(500).json({ error: 'Unable to delete the counseling request.' });
     }
   });
 
@@ -2104,10 +2049,10 @@ async function startServer() {
     try {
       const db = await getMongoDb();
       const list = await db.collection('callback_requests').find().sort({ createdAt: -1 }).toArray();
-      res.json(list);
+      res.json(stripCredentials(list));
     } catch (err: any) {
-      console.error("Admin fetch callback error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
+      console.error('Admin fetch callback requests failed.');
+      res.status(500).json({ error: 'Unable to load callback requests.' });
     }
   });
 
@@ -2120,8 +2065,8 @@ async function startServer() {
       }
       res.json({ success: true });
     } catch (err: any) {
-      console.error('Admin delete callback lead error:', err);
-      res.status(500).json({ error: err.message || 'Database connection error' });
+      console.error('Admin delete callback request failed.');
+      res.status(500).json({ error: 'Unable to delete the callback request.' });
     }
   });
 
@@ -2130,10 +2075,23 @@ async function startServer() {
     try {
       const db = await getMongoDb();
       const list = await db.collection('users').find().sort({ createdAt: -1 }).toArray();
-      res.json(list);
+      res.json(list.map(user => stripCredentials({
+        email: user.email,
+        name: user.name,
+        phone: user.phone,
+        courseInterested: user.courseInterested,
+        twelfthSubject: user.twelfthSubject,
+        address: user.address,
+        pincode: user.pincode,
+        fatherName: user.fatherName,
+        motherName: user.motherName,
+        shortlistedIds: user.shortlistedIds,
+        cartIds: user.cartIds,
+        createdAt: user.createdAt,
+      })));
     } catch (err: any) {
-      console.error("Admin fetch users error:", err);
-      res.status(500).json({ error: err.message || "Database connection error" });
+      console.error('Admin fetch user profiles failed.');
+      res.status(500).json({ error: 'Unable to load user profiles.' });
     }
   });
 
@@ -2149,8 +2107,8 @@ async function startServer() {
       await db.collection('callback_requests').deleteMany({ email });
       res.json({ success: true });
     } catch (err: any) {
-      console.error('Admin delete user profile error:', err);
-      res.status(500).json({ error: err.message || 'Database connection error' });
+      console.error('Admin delete user profile failed.');
+      res.status(500).json({ error: 'Unable to delete the user profile.' });
     }
   });
 

@@ -7,35 +7,78 @@ import React, { useEffect, useState } from 'react';
 import { CounselingRequest } from '../types';
 import { Calendar, Clock, User, Phone, Mail, CheckCircle, FileText, RefreshCw, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
 import { LogoIcon } from './Logo';
 
 export default function CounsellingDashboard() {
   const [requests, setRequests] = useState<CounselingRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [adminToken, setAdminToken] = useState<string | null>(null);
 
-  const fetchRequests = async () => {
+  const fetchRequests = async (token: string) => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/counseling');
+      const res = await fetch('/api/counseling', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.status === 401 || res.status === 403) {
+        localStorage.removeItem('admin_token');
+        setAdminToken(null);
+        setRequests([]);
+        setError('Admin authentication is required to view counseling requests.');
+        return;
+      }
       if (res.ok) {
         const data = await res.json();
         setRequests(data);
       } else {
-        throw new Error('Could not pull latest records.');
+        throw new Error('Unable to load counseling requests.');
       }
     } catch (err) {
-      console.error(err);
-      setError('Could not connect to counseling server. Using localized buffer.');
+      console.error('Unable to load authorized counseling requests.');
+      setError('Could not connect to the counseling server.');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchRequests();
+    const token = localStorage.getItem('admin_token');
+    if (!token) {
+      setError('Admin authentication is required to view counseling requests.');
+      setLoading(false);
+      return;
+    }
+
+    fetch('/api/admin/session', {
+      headers: { Authorization: `Bearer ${token}` }
+    }).then(response => {
+      if (!response.ok) {
+        localStorage.removeItem('admin_token');
+        setError('Your admin session is invalid or expired.');
+        setLoading(false);
+        return;
+      }
+      setAdminToken(token);
+      return fetchRequests(token);
+    }).catch(() => {
+      setError('Could not verify the admin session.');
+      setLoading(false);
+    });
   }, []);
+
+  if (!loading && !adminToken) {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+        <p className="text-sm text-slate-700">{error || 'Admin authentication is required.'}</p>
+        <Link to="/admin-panel" className="mt-3 inline-block text-sm font-bold text-red-600 hover:underline">
+          Open Admin Login
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
@@ -48,7 +91,7 @@ export default function CounsellingDashboard() {
           <p className="text-xs text-gray-400 mt-0.5">Track your scheduled institute and college counselor meetings in Indore</p>
         </div>
         <button
-          onClick={fetchRequests}
+          onClick={() => adminToken && fetchRequests(adminToken)}
           className="self-start flex items-center space-x-1 px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition"
         >
           <RefreshCw className="h-3 w-3" />

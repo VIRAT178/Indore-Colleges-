@@ -14,8 +14,6 @@ import {
   FileText, 
   Award, 
   BookOpen, 
-  Eye, 
-  EyeOff, 
   User, 
   Settings, 
   Clock, 
@@ -58,7 +56,6 @@ const MAX_UPLOAD_SIZE_BYTES = 4 * 1024 * 1024;
 
 export default function CollegePartnerRegistration() {
   const [activeTab, setActiveTab] = useState<'selection' | 'register' | 'login' | 'dashboard'>('selection');
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -101,9 +98,6 @@ export default function CollegePartnerRegistration() {
   // 15. College campus photograph
   const [campusPhoto, setCampusPhoto] = useState('');
   const [campusPhotoName, setCampusPhotoName] = useState('');
-  // 16. Set Account Password
-  const [password, setPassword] = useState('');
-
   // Logged-in College State
   const [loggedInCollege, setLoggedInCollege] = useState<any | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -202,11 +196,6 @@ export default function CollegePartnerRegistration() {
       setErrorMsg('Please enter Established Year.');
       return;
     }
-    if (!password.trim()) {
-      setErrorMsg('Please set an Account Password.');
-      return;
-    }
-
     setLoading(true);
 
     try {
@@ -239,8 +228,7 @@ export default function CollegePartnerRegistration() {
           description: visionMission.trim(),
           website: website.trim(),
           instagram: instagram.trim(),
-          campusPhoto,
-          password
+          campusPhoto
         })
       });
 
@@ -257,42 +245,10 @@ export default function CollegePartnerRegistration() {
         throw new Error(data.error || 'Failed to register your college.');
       }
 
-      setSuccessMsg(`Your college "${name}" has been registered successfully! Your application is pending admin review. You can now login with your official email.`);
-      
-      setTimeout(() => {
-        setActiveTab('login');
-        setSuccessMsg('');
-      }, 4500);
+      setSuccessMsg(`Your college "${name}" has been submitted for admin review. Partner account access is temporarily unavailable while secure sign-in is prepared.`);
 
     } catch (err: any) {
       setErrorMsg(err.message || 'An error occurred during registration.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMsg('');
-    setSuccessMsg('');
-    setLoading(true);
-
-    try {
-      const res = await fetch('/api/college-partner/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: contactEmail.trim(), password })
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Invalid official email or password.');
-      }
-
-      setLoggedInCollege(data.college);
-      setActiveTab('dashboard');
-    } catch (err: any) {
-      setErrorMsg(err.message || 'An error occurred during login.');
     } finally {
       setLoading(false);
     }
@@ -950,32 +906,6 @@ export default function CollegePartnerRegistration() {
                   </div>
                 </div>
 
-                {/* 16. Set Account Password */}
-                <div className="sm:col-span-2">
-                  <label htmlFor="reg-password" className="block font-bold text-slate-700 mb-1.5">
-                    16. Set Account Password <span className="text-rose-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
-                    <input
-                      id="reg-password"
-                      type={showPassword ? 'text' : 'password'}
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter account password"
-                      className="w-full rounded-xl border border-slate-200 pl-10 pr-10 py-2.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-[#FA6E00]"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
-                </div>
-
               </div>
 
               {/* Submit button */}
@@ -994,68 +924,24 @@ export default function CollegePartnerRegistration() {
           {/* LOGIN FORM */}
           {/* ======================================================== */}
           {activeTab === 'login' && loggedInCollege === null && (
-            <form onSubmit={handleLogin} className="max-w-md mx-auto py-6 space-y-5">
+            <div className="max-w-md mx-auto py-6 space-y-5 text-center">
               <div className="text-center">
                 <div className="w-12 h-12 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center mx-auto mb-2.5 text-[#FA6E00]">
                   <Lock className="h-6 w-6" />
                 </div>
                 <h2 className="text-base font-bold text-slate-900">Partner Dashboard Login</h2>
+                <p className="mt-2 text-sm text-slate-600">
+                  Partner sign-in is temporarily unavailable while secure account access is prepared. New college registrations remain open.
+                </p>
               </div>
-
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label htmlFor="login-email" className="block font-bold text-slate-700 mb-1">
-                    Official Email ID
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
-                    <input
-                      id="login-email"
-                      type="email"
-                      required
-                      value={contactEmail}
-                      onChange={(e) => setContactEmail(e.target.value)}
-                      placeholder="info@college.edu.in"
-                      className="w-full rounded-xl border border-slate-200 pl-10 pr-3 py-2.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-[#FA6E00]"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="login-password" className="block font-bold text-slate-700 mb-1">
-                    Password
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
-                    <input
-                      id="login-password"
-                      type={showPassword ? 'text' : 'password'}
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter password"
-                      className="w-full rounded-xl border border-slate-200 pl-10 pr-10 py-2.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-[#FA6E00]"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
               <button
-                type="submit"
-                id="btn-login-submit"
-                disabled={loading}
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white rounded-xl py-3 text-xs font-bold transition shadow-sm disabled:opacity-50 cursor-pointer"
+                type="button"
+                onClick={() => setActiveTab('register')}
+                className="text-sm font-bold text-[#FA6E00] hover:underline"
               >
-                {loading ? 'Signing In...' : 'Sign In to Portal'}
+                Submit a new college registration
               </button>
-            </form>
+            </div>
           )}
 
           {/* ======================================================== */}
