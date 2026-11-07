@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User, LogOut, Trash2, Save, Calendar, Mail, BookOpen, Heart, ShoppingBag, X, Loader2 } from 'lucide-react';
-import { UserProfile, Institute } from '../types';
+import { UserProfile, Institute, CounselingRequest, CallbackRequest } from '../types';
 import { INDORE_INSTITUTES } from '../data/indoreData';
 
 interface ProfileModalProps {
@@ -9,7 +9,7 @@ interface ProfileModalProps {
   user: UserProfile;
   onUpdate: (user: UserProfile) => void;
   onLogout: () => void;
-  onDeleteProfile: () => void;
+  onDeleteProfile: () => Promise<void>;
   shortlistedIds: string[];
   cartIds: string[];
 }
@@ -40,6 +40,31 @@ export default function ProfileModal({
   const [statusMessage, setStatusMessage] = useState('');
   const [statusType, setStatusType] = useState<'success' | 'error'>('success');
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState('');
+  const [historyData, setHistoryData] = useState<{
+    counseling: CounselingRequest[];
+    callbacks: CallbackRequest[];
+  }>({ counseling: [], callbacks: [] });
+
+  const fetchHistory = async () => {
+    setHistoryLoading(true);
+    setHistoryError('');
+    try {
+      const response = await fetch(`/api/users/history/${encodeURIComponent(user.email)}`);
+      if (!response.ok) throw new Error('Unable to load account history.');
+      const data = await response.json();
+      setHistoryData({
+        counseling: Array.isArray(data.counseling) ? data.counseling : [],
+        callbacks: Array.isArray(data.callbacks) ? data.callbacks : [],
+      });
+    } catch {
+      setHistoryError('Counseling and callback history is temporarily unavailable.');
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (isOpen) {
       setName(user.name || '');
@@ -52,6 +77,7 @@ export default function ProfileModal({
       setAddress(user.address || '');
       setPincode(user.pincode || '');
       setShowConfirmDelete(false);
+      void fetchHistory();
     }
   }, [isOpen, user]);
 
@@ -61,29 +87,47 @@ export default function ProfileModal({
     e.preventDefault();
     setSaving(true);
     setStatusMessage('');
-    const updatedProfile: UserProfile = {
-      ...user,
-      name,
-      fatherName,
-      fatherEmail,
-      motherName,
-      motherEmail,
-      childName,
-      childMotherTongue,
-      address,
-      pincode,
-    };
-    onUpdate(updatedProfile);
-    setStatusType('success');
-    setStatusMessage('Profile saved in this browser only. Server-side profile editing is temporarily unavailable.');
-    setSaving(false);
+    try {
+      const response = await fetch(`/api/users/profile/${encodeURIComponent(user.email)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          fatherName,
+          fatherEmail,
+          motherName,
+          motherEmail,
+          childName,
+          childMotherTongue,
+          address,
+          pincode,
+        }),
+      });
+      if (!response.ok) throw new Error('Unable to save profile.');
+      const data = await response.json();
+      onUpdate(data.user);
+      setStatusType('success');
+      setStatusMessage('Your profile and family records have been saved.');
+    } catch {
+      setStatusType('error');
+      setStatusMessage('Unable to save profile. Please sign in again and retry.');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDeleteProfile = () => {
+  const handleDeleteProfile = async () => {
     setDeleting(true);
-    onDeleteProfile();
-    onClose();
-    setDeleting(false);
+    setStatusMessage('');
+    try {
+      await onDeleteProfile();
+      onClose();
+    } catch {
+      setStatusType('error');
+      setStatusMessage('Unable to delete the profile. Please try again.');
+    } finally {
+      setDeleting(false);
+    }
   };
 
   // Filter linked institutes
@@ -115,9 +159,6 @@ export default function ProfileModal({
         </div>
 
         {/* Tab Selector */}
-        <p className="px-6 py-3 bg-amber-50 text-xs text-amber-900 border-b border-amber-100">
-          Profile information and saved colleges are stored in this browser. Server-side profile editing and counseling history are temporarily unavailable.
-        </p>
         <div className="flex border-b border-slate-100 text-sm font-medium bg-slate-50">
           <button
             onClick={() => setActiveSubTab('details')}
@@ -282,11 +323,48 @@ export default function ProfileModal({
               <div>
                 <h4 className="text-sm font-bold text-slate-950 flex items-center space-x-2 border-b border-slate-100 pb-2 mb-3">
                   <Calendar className="h-4 w-4 text-red-600" />
-                  <span>Counseling & Callback History</span>
+                  <span>Scheduled Counseling Sessions ({historyData.counseling.length})</span>
                 </h4>
-                <p className="text-xs text-slate-500 py-2">
-                  Counseling and callback history cannot be retrieved until secure account access is available.
-                </p>
+                {historyLoading ? (
+                  <p className="text-xs text-slate-500 py-2">Loading your counseling history...</p>
+                ) : historyError ? (
+                  <p className="text-xs text-amber-800 py-2">{historyError}</p>
+                ) : historyData.counseling.length === 0 ? (
+                  <p className="text-xs text-slate-400 italic py-2">No counseling sessions found.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {historyData.counseling.map(request => (
+                      <div key={request.id} className="p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs space-y-1">
+                        <p className="font-bold text-slate-900">{request.studentClassOrDegree} Counseling Request</p>
+                        <p className="text-slate-600"><strong>Date & Slot:</strong> {request.date} | {request.preferredSlot}</p>
+                        {request.query && <p className="text-slate-500">{request.query}</p>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <h4 className="text-sm font-bold text-slate-950 flex items-center space-x-2 border-b border-slate-100 pb-2 mb-3">
+                  <Mail className="h-4 w-4 text-indigo-600" />
+                  <span>Callback Requests ({historyData.callbacks.length})</span>
+                </h4>
+                {!historyLoading && !historyError && historyData.callbacks.length === 0 ? (
+                  <p className="text-xs text-slate-400 italic py-2">No callback requests found.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {historyData.callbacks.map(request => {
+                      const matched = INDORE_INSTITUTES.find(inst => inst.id === request.instituteId);
+                      return (
+                        <div key={request.id} className="p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs">
+                          <p className="font-bold text-slate-900">{matched?.name || 'General admission query'}</p>
+                          <p className="text-slate-500">Phone: {request.phone}</p>
+                          <p className="text-slate-400">{new Date(request.createdAt).toLocaleDateString()}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               {/* Shortlisted Colleges */}
@@ -342,11 +420,11 @@ export default function ProfileModal({
                 className="text-red-600 hover:text-red-500 text-xs font-semibold flex items-center space-x-1"
               >
                 <Trash2 className="h-3.5 w-3.5" />
-                <span>Remove Local Profile</span>
+                <span>Delete Account Profile</span>
               </button>
             ) : (
               <div className="flex items-center space-x-2">
-                <span className="text-xs text-red-600 font-bold">Remove this browser’s local profile?</span>
+                <span className="text-xs text-red-600 font-bold">Delete this account and profile?</span>
                 <button
                   onClick={handleDeleteProfile}
                   disabled={deleting}

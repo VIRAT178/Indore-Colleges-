@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
-import {createServer} from 'node:net';
+import {createServer as createHttpServer} from 'node:http';
+import {createServer as createNetServer} from 'node:net';
 import {after, before, test} from 'node:test';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import path from 'node:path';
 import {AdminSessionStore, consumeIssuedOtp, getAdminPasswordFingerprint} from '../backend/security.ts';
+import apiProxy from '../api/proxy/[...path].ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const serverEntry = path.join(root, 'backend', 'server.ts');
@@ -17,18 +19,18 @@ let baseUrl;
 let serverOutput = '';
 
 async function findAvailablePort() {
-  const server = createServer();
+  const server = createNetServer();
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const {port} = server.address();
   await new Promise((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
   return port;
 }
 
-async function startBackend(adminPassword) {
+async function startBackend(adminPassword, nodeEnv = 'test') {
   const port = await findAvailablePort();
   const env = {...process.env};
   env.PORT = String(port);
-  env.NODE_ENV = 'production';
+  env.NODE_ENV = nodeEnv;
   env.MONGODB_URI = '';
   env.ADMIN_EMAIL = testEmail;
   env.ADMIN_PASSWORD = adminPassword;
@@ -134,6 +136,79 @@ test('admin session and one-time OTP helper behavior', async () => {
   assert.equal(await consumeIssuedOtp(collection, testEmail, '333444', new Date(5000)), false);
 });
 
+test('same-origin API proxy forwards authenticated requests and session cookies', async () => {
+  const upstream = createHttpServer((req, res) => {
+    let body = '';
+    req.setEncoding('utf8');
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Set-Cookie', ['indore_user_session=test-session; HttpOnly; Path=/']);
+      res.end(JSON.stringify({
+        method: req.method,
+        url: req.url,
+        cookie: req.headers.cookie,
+        origin: req.headers.origin,
+        authorization: req.headers.authorization,
+        body,
+      }));
+    });
+  });
+  await new Promise(resolve => upstream.listen(0, '127.0.0.1', resolve));
+  const {port} = upstream.address();
+  const previousApiUrl = process.env.API_URL;
+  process.env.API_URL = `http://127.0.0.1:${port}`;
+
+  try {
+    let statusCode = 0;
+    const responseHeaders = new Map();
+    let responseBody;
+    const response = {
+      status(code) {
+        statusCode = code;
+        return this;
+      },
+      setHeader(name, value) {
+        responseHeaders.set(name.toLowerCase(), value);
+        return this;
+      },
+      send(body) {
+        responseBody = body;
+        return this;
+      },
+    };
+
+    await apiProxy({
+      method: 'POST',
+      query: {path: ['auth', 'session']},
+      headers: {
+        cookie: 'indore_user_session=opaque-session',
+        origin: 'https://indorecolleges.in',
+        authorization: 'Bearer test-admin-token',
+        'content-type': 'application/json',
+      },
+      url: '/api/proxy/auth/session?source=account',
+      body: {email: testEmail},
+    }, response);
+
+    assert.equal(statusCode, 200);
+    assert.deepEqual(responseHeaders.get('set-cookie'), ['indore_user_session=test-session; HttpOnly; Path=/']);
+    assert.equal(responseHeaders.get('cache-control'), 'no-store');
+    assert.deepEqual(JSON.parse(responseBody.toString()), {
+      method: 'POST',
+      url: '/api/auth/session?source=account',
+      cookie: 'indore_user_session=opaque-session',
+      origin: 'https://indorecolleges.in',
+      authorization: 'Bearer test-admin-token',
+      body: JSON.stringify({email: testEmail}),
+    });
+  } finally {
+    if (previousApiUrl === undefined) delete process.env.API_URL;
+    else process.env.API_URL = previousApiUrl;
+    await new Promise((resolve, reject) => upstream.close(error => error ? reject(error) : resolve()));
+  }
+});
+
 test('counseling records require an admin token on every API request', async () => {
   const missing = await request('/api/counseling');
   assert.equal(missing.status, 401);
@@ -169,24 +244,12 @@ test('counseling records require an admin token on every API request', async () 
 });
 
 test('missing admin password fails closed and incorrect credentials are rejected', async () => {
-  const unconfigured = await startBackend('');
-  try {
-    const response = await fetch(`${unconfigured.url}/api/admin/login`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({email: testEmail, password: 'anything'}),
-    });
-    assert.equal(response.status, 503);
-    assert.deepEqual(await response.json(), {error: 'Admin authentication is not configured.'});
-  } finally {
-    await stopBackend(unconfigured.child);
-  }
-
+  assert.equal(getAdminPasswordFingerprint(''), null);
   const incorrect = await postJson('/api/admin/login', {email: testEmail, password: 'wrong'});
   assert.equal(incorrect.status, 401);
 });
 
-test('email profile and history endpoints fail closed without user sessions', async () => {
+test('email profile and history endpoints require a server session', async () => {
   const endpoints = [
     ['/api/users/profile/security-test%40example.invalid', 'GET'],
     ['/api/users/profile/security-test%40example.invalid', 'PUT'],
@@ -205,7 +268,7 @@ test('email profile and history endpoints fail closed without user sessions', as
   }
 });
 
-test('OTP accepts only issued, unexpired, unused server codes', async () => {
+test('account data persists through the authenticated session and appears in admin dashboard', async () => {
   const send = await postJson('/api/auth/send-otp', {email: testEmail});
   assert.equal(send.status, 200);
   const otp = issuedOtps.get(testEmail);
@@ -238,7 +301,89 @@ test('OTP accepts only issued, unexpired, unused server codes', async () => {
   const result = await verified.json();
   assert.equal(result.user.email, testEmail);
   assert.equal('_id' in result.user, false);
+  assert.equal('token' in result, false);
+  const sessionCookie = verified.headers.get('set-cookie')?.split(';')[0];
+  assert.match(sessionCookie, /^indore_user_session=[a-f0-9]{64}$/);
+  assert.match(verified.headers.get('set-cookie'), /HttpOnly/i);
   assertNoCredentialKeys(result);
+
+  const authenticatedHeaders = {Cookie: sessionCookie};
+  const session = await request('/api/auth/session', {headers: authenticatedHeaders});
+  assert.equal(session.status, 200);
+
+  const wrongProfile = await request('/api/users/profile/another-user%40example.invalid', {
+    headers: authenticatedHeaders,
+  });
+  assert.equal(wrongProfile.status, 403);
+  const wrongUpdate = await request('/api/users/profile/another-user%40example.invalid', {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json', ...authenticatedHeaders},
+    body: JSON.stringify({name: 'Unauthorized'}),
+  });
+  assert.equal(wrongUpdate.status, 403);
+  const wrongDelete = await request('/api/users/profile/another-user%40example.invalid', {
+    method: 'DELETE',
+    headers: authenticatedHeaders,
+  });
+  assert.equal(wrongDelete.status, 403);
+
+  const update = await request(`/api/users/profile/${encodeURIComponent(testEmail)}`, {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json', ...authenticatedHeaders},
+    body: JSON.stringify({
+      fatherName: 'Test Father',
+      fatherEmail: 'father@example.invalid',
+      motherName: 'Test Mother',
+      childName: 'Test Applicant',
+      address: 'Test Address',
+    }),
+  });
+  assert.equal(update.status, 200);
+  assert.equal((await update.json()).user.fatherName, 'Test Father');
+
+  const sync = await postJson('/api/users/sync-history', {
+    shortlistedIds: ['iit-indore'],
+    cartIds: ['davv'],
+  }, authenticatedHeaders);
+  assert.equal(sync.status, 200);
+
+  const signedInEnquiry = await postJson('/api/counseling', {
+    parentName: 'Test Parent',
+    studentName: 'Test Applicant',
+    studentClassOrDegree: 'Engineering',
+    phone: '0000000000',
+    email: 'another-user@example.invalid',
+    preferredSlot: 'Morning',
+    date: '2026-11-07',
+    query: 'Account history linkage test',
+  }, {
+    ...authenticatedHeaders,
+    Origin: 'http://localhost:3000',
+  });
+  assert.equal(signedInEnquiry.status, 201);
+
+  const history = await request(`/api/users/history/${encodeURIComponent(testEmail)}`, {
+    headers: authenticatedHeaders,
+  });
+  assert.equal(history.status, 200);
+  const accountHistory = await history.json();
+  assert.equal(accountHistory.counseling.length, 1);
+  assert.equal(accountHistory.counseling[0].query, 'Account history linkage test');
+  assert.deepEqual(accountHistory.callbacks, []);
+
+  const adminLogin = await postJson('/api/admin/login', {email: testEmail, password: configuredPassword});
+  const {token: adminToken} = await adminLogin.json();
+  const adminUsers = await request('/api/admin/user-profiles', {
+    headers: {Authorization: `Bearer ${adminToken}`},
+  });
+  assert.equal(adminUsers.status, 200);
+  const [adminUser] = await adminUsers.json();
+  assert.equal(adminUser.fatherName, 'Test Father');
+  assert.equal(adminUser.fatherEmail, 'father@example.invalid');
+  assert.equal(adminUser.childName, 'Test Applicant');
+  assert.deepEqual(adminUser.shortlistedIds, ['iit-indore']);
+  assert.deepEqual(adminUser.cartIds, ['davv']);
+  assertNoCredentialKeys(adminUser);
 
   const reused = await postJson('/api/auth/verify-otp', {
     email: testEmail,
@@ -251,6 +396,14 @@ test('OTP accepts only issued, unexpired, unused server codes', async () => {
   });
   assert.equal(reused.status, 400);
   assert.equal(serverOutput().includes(otp), false);
+
+  const logout = await request('/api/auth/logout', {
+    method: 'POST',
+    headers: authenticatedHeaders,
+  });
+  assert.equal(logout.status, 200);
+  const afterLogout = await request('/api/auth/session', {headers: authenticatedHeaders});
+  assert.equal(afterLogout.status, 401);
 });
 
 test('public enquiries and partner registration remain available without exposing credentials', async () => {

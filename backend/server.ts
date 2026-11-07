@@ -11,7 +11,7 @@ import { randomBytes, randomInt } from 'crypto';
 import { INDORE_INSTITUTES } from '../frontend/src/data/indoreData.js';
 import { CounselingRequest, CallbackRequest, Review, SchoolRegistrationRequest, CollegeUpdateRequest } from '../frontend/src/types.js';
 import { createSitemapXml, getSitemapPaths } from '../shared/sitemap.js';
-import { AdminSessionStore, consumeIssuedOtp, getAdminPasswordFingerprint } from './security.js';
+import { AdminSessionStore, consumeIssuedOtp, getAdminPasswordFingerprint, hashSessionToken } from './security.js';
 
 dotenv.config();
 
@@ -87,6 +87,49 @@ let mongoDb: Db | null = null;
 let isMongoConnecting = false;
 const adminSessionTokens = new AdminSessionStore();
 const ADMIN_SESSION_TTL_MS = 12 * 60 * 60 * 1000;
+const USER_SESSION_TTL_MS = 12 * 60 * 60 * 1000;
+const USER_SESSION_COOKIE = 'indore_user_session';
+
+function getAllowedFrontendOrigins() {
+  const configuredOrigins = (process.env.FRONTEND_ORIGINS || '')
+    .split(',')
+    .map(origin => origin.trim())
+    .filter(Boolean);
+  return new Set([
+    'https://indorecolleges.in',
+    'https://www.indorecolleges.in',
+    'http://localhost:3000',
+    'http://localhost:5173',
+    ...configuredOrigins,
+  ]);
+}
+
+function isAllowedFrontendOrigin(origin?: string) {
+  return !origin || getAllowedFrontendOrigins().has(origin);
+}
+
+function readUserSessionCookie(cookieHeader?: string) {
+  const cookie = cookieHeader?.split(';')
+    .map(part => part.trim())
+    .find(part => part.startsWith(`${USER_SESSION_COOKIE}=`));
+  return cookie?.slice(USER_SESSION_COOKIE.length + 1) || null;
+}
+
+function setUserSessionCookie(res: express.Response, token: string) {
+  const secure = process.env.NODE_ENV === 'production';
+  res.append(
+    'Set-Cookie',
+    `${USER_SESSION_COOKIE}=${token}; HttpOnly; Path=/; Max-Age=${USER_SESSION_TTL_MS / 1000}; SameSite=${secure ? 'None; Secure' : 'Lax'}`,
+  );
+}
+
+function clearUserSessionCookie(res: express.Response) {
+  const secure = process.env.NODE_ENV === 'production';
+  res.append(
+    'Set-Cookie',
+    `${USER_SESSION_COOKIE}=; HttpOnly; Path=/; Max-Age=0; SameSite=${secure ? 'None; Secure' : 'Lax'}`,
+  );
+}
 
 function isAdminSession(authorizationHeader?: string): boolean {
   const token = authorizationHeader?.match(/^Bearer\s+(.+)$/i)?.[1];
@@ -328,6 +371,7 @@ class SmartCollection {
     const fallback = this.getFallbackArray();
     const isUpsert = !!options.upsert;
     const setFields = update.$set || {};
+    const insertFields = update.$setOnInsert || {};
 
     let matchedIdx = fallback.findIndex((item: any) => {
       for (const key of Object.keys(query)) {
@@ -339,7 +383,7 @@ class SmartCollection {
     if (matchedIdx !== -1) {
       fallback[matchedIdx] = { ...fallback[matchedIdx], ...setFields };
     } else if (isUpsert) {
-      const newDoc = { ...query, ...setFields };
+      const newDoc = { ...query, ...insertFields, ...setFields };
       fallback.push(newDoc);
     }
 
@@ -537,6 +581,17 @@ async function getMongoDb(): Promise<any> {
     }
     return new SmartDb(null);
   }
+}
+
+async function getPersistentMongoDb(): Promise<any> {
+  if (process.env.NODE_ENV === 'test') {
+    return new SmartDb(null);
+  }
+  await getMongoDb();
+  if (!mongoDb) {
+    throw new Error('Persistent database is unavailable.');
+  }
+  return mongoDb;
 }
 
 // Mail SMTP helper with Nodemailer
@@ -865,9 +920,11 @@ async function startServer() {
   const app = express();
   const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
-  // Permissive CORS to support Vercel frontend deployments and custom domains
+  const allowedFrontendOrigins = getAllowedFrontendOrigins();
   app.use(cors({
-    origin: true,
+    origin: (origin, callback) => {
+      callback(null, !origin || allowedFrontendOrigins.has(origin));
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
@@ -1067,6 +1124,31 @@ async function startServer() {
     }
   });
 
+  const attachVerifiedEmailToPublicSubmission = async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ) => {
+    const token = readUserSessionCookie(req.headers.cookie);
+    if (!token || !isAllowedFrontendOrigin(req.get('origin'))) {
+      return next();
+    }
+
+    try {
+      const db = await getPersistentMongoDb();
+      const session = await db.collection('user_sessions').findOne({
+        tokenHash: hashSessionToken(token),
+        expiresAt: { $gt: new Date() },
+      });
+      if (typeof session?.email === 'string') {
+        res.locals.verifiedUserEmail = session.email;
+      }
+    } catch {
+      console.warn('Unable to associate a public submission with the signed-in user.');
+    }
+    next();
+  };
+
   // API Route: Get all counseling requests
   app.get('/api/counseling', async (req, res) => {
     if (!isAdminSession(req.headers.authorization)) {
@@ -1096,7 +1178,7 @@ async function startServer() {
   });
 
   // API Route: Post a counseling request
-  app.post('/api/counseling', async (req, res) => {
+  app.post('/api/counseling', attachVerifiedEmailToPublicSubmission, async (req, res) => {
     const { parentName, studentName, studentClassOrDegree, phone, email, preferredSlot, date, query } = req.body;
 
     if (!parentName || !studentClassOrDegree || !phone || !preferredSlot || !date) {
@@ -1109,7 +1191,7 @@ async function startServer() {
       studentName: studentName || '',
       studentClassOrDegree,
       phone,
-      email: email ? email.trim().toLowerCase() : '',
+      email: res.locals.verifiedUserEmail || (email ? email.trim().toLowerCase() : ''),
       preferredSlot,
       date,
       query: query || '',
@@ -1146,7 +1228,7 @@ async function startServer() {
   });
 
   // API Route: Post a callback request
-  app.post('/api/callback', async (req, res) => {
+  app.post('/api/callback', attachVerifiedEmailToPublicSubmission, async (req, res) => {
     const { name, phone, instituteId, email, query } = req.body;
 
     if (!name || !phone) {
@@ -1158,7 +1240,7 @@ async function startServer() {
       name,
       phone,
       instituteId,
-      email: email ? email.trim().toLowerCase() : '',
+      email: res.locals.verifiedUserEmail || (email ? email.trim().toLowerCase() : ''),
       query: query || 'General Home Consultation',
       createdAt: new Date().toISOString()
     };
@@ -1339,10 +1421,60 @@ async function startServer() {
   // AUTHENTICATION & PROFILE MANAGEMENT ENDPOINTS
   // ==========================================
 
+  const requireUserSession = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const token = readUserSessionCookie(req.headers.cookie);
+    if (!token) {
+      return res.status(401).json({ error: 'A valid user session is required.' });
+    }
+
+    try {
+      const db = await getPersistentMongoDb();
+      const session = await db.collection('user_sessions').findOne({
+        tokenHash: hashSessionToken(token),
+        expiresAt: { $gt: new Date() },
+      });
+      if (!session || typeof session.email !== 'string') {
+        clearUserSessionCookie(res);
+        return res.status(401).json({ error: 'User session is invalid or expired.' });
+      }
+
+      res.locals.authenticatedUserEmail = session.email;
+      next();
+    } catch {
+      res.status(503).json({ error: 'User account storage is temporarily unavailable.' });
+    }
+  };
+
+  const requireTrustedUserOrigin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    if (!isAllowedFrontendOrigin(req.get('origin'))) {
+      return res.status(403).json({ error: 'Request origin is not allowed.' });
+    }
+    next();
+  };
+
+  const toUserProfile = (user: any) => ({
+    email: user.email,
+    name: user.name,
+    phone: user.phone,
+    courseInterested: user.courseInterested,
+    twelfthSubject: user.twelfthSubject,
+    fatherName: user.fatherName || '',
+    fatherEmail: user.fatherEmail || '',
+    motherName: user.motherName || '',
+    motherEmail: user.motherEmail || '',
+    childName: user.childName || '',
+    childMotherTongue: user.childMotherTongue || '',
+    address: user.address || '',
+    pincode: user.pincode || '',
+    shortlistedIds: Array.isArray(user.shortlistedIds) ? user.shortlistedIds : [],
+    cartIds: Array.isArray(user.cartIds) ? user.cartIds : [],
+    createdAt: user.createdAt,
+  });
+
   // 1. Send OTP via SMTP
-  app.post('/api/auth/send-otp', async (req, res) => {
+  app.post('/api/auth/send-otp', requireTrustedUserOrigin, async (req, res) => {
     const { email } = req.body;
-    if (!email) {
+    if (typeof email !== 'string' || !email.trim()) {
       return res.status(400).json({ error: 'Email is required.' });
     }
 
@@ -1350,30 +1482,30 @@ async function startServer() {
     const otp = randomInt(100000, 1000000).toString();
     const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes expiration
 
-    const mailResult = await sendVerificationEmail(emailTrimmed, otp);
-    if (!mailResult.success) {
-      return res.status(502).json({ error: mailResult.error || 'Unable to send verification email.' });
-    }
-
     try {
-      const db = await getMongoDb();
+      const db = await getPersistentMongoDb();
       await db.collection('otps').updateOne(
         { email: emailTrimmed },
         { $set: { email: emailTrimmed, otp, expiresAt } },
         { upsert: true }
       );
+      const mailResult = await sendVerificationEmail(emailTrimmed, otp);
+      if (!mailResult.success) {
+        await db.collection('otps').deleteOne({ email: emailTrimmed });
+        return res.status(502).json({ error: 'Unable to send the verification email.' });
+      }
       res.json({
         success: true,
         message: 'OTP verification code sent.'
       });
-    } catch (err: any) {
+    } catch {
       console.error('MongoDB OTP storage failed.');
-      res.status(500).json({ error: 'Unable to store the verification code.' });
+      res.status(503).json({ error: 'Account storage is temporarily unavailable.' });
     }
   });
 
   // 2. Verify OTP & Register/Login User
-  app.post('/api/auth/verify-otp', async (req, res) => {
+  app.post('/api/auth/verify-otp', requireTrustedUserOrigin, async (req, res) => {
     const { email, otp, name, phone, courseInterested, twelfthSubject, address } = req.body;
     if (![email, otp, name, phone, courseInterested, twelfthSubject, address].every(
       (value) => typeof value === 'string' && value.trim()
@@ -1392,59 +1524,202 @@ async function startServer() {
     };
 
     try {
-      const db = await getMongoDb();
+      const db = await getPersistentMongoDb();
       const verified = await consumeIssuedOtp(db.collection('otps'), emailTrimmed, otpStr);
       if (!verified) {
         return res.status(400).json({ error: 'Invalid or expired OTP code.' });
       }
 
-      let user: any = await db.collection('users').findOne({ email: emailTrimmed });
-      const initialUserObj = {
-        email: emailTrimmed,
-        ...profileDetails,
-        fatherName: '',
-        fatherEmail: '',
-        motherName: '',
-        motherEmail: '',
-        childName: '',
-        childMotherTongue: '',
-        pincode: '',
-        shortlistedIds: [],
-        cartIds: [],
-        createdAt: new Date().toISOString()
-      };
-
+      const now = new Date().toISOString();
+      await db.collection('users').updateOne(
+        { email: emailTrimmed },
+        {
+          $set: profileDetails,
+          $setOnInsert: {
+            email: emailTrimmed,
+            fatherName: '',
+            fatherEmail: '',
+            motherName: '',
+            motherEmail: '',
+            childName: '',
+            childMotherTongue: '',
+            pincode: '',
+            shortlistedIds: [],
+            cartIds: [],
+            createdAt: now,
+          },
+        },
+        { upsert: true },
+      );
+      const user = await db.collection('users').findOne({ email: emailTrimmed });
       if (!user) {
-        user = { ...initialUserObj };
-        await db.collection('users').insertOne(user);
-      } else {
-        await db.collection('users').updateOne({ email: emailTrimmed }, { $set: profileDetails });
-        user = { ...user, ...profileDetails };
+        return res.status(503).json({ error: 'Unable to load the user profile.' });
       }
 
-      res.json({
-        success: true,
-        user: {
-          email: user.email,
-          ...profileDetails,
-          shortlistedIds: Array.isArray(user.shortlistedIds) ? user.shortlistedIds : [],
-          cartIds: Array.isArray(user.cartIds) ? user.cartIds : [],
-          createdAt: user.createdAt,
-        },
+      const sessionToken = randomBytes(32).toString('hex');
+      await db.collection('user_sessions').insertOne({
+        tokenHash: hashSessionToken(sessionToken),
+        email: emailTrimmed,
+        createdAt: new Date(),
+        expiresAt: new Date(Date.now() + USER_SESSION_TTL_MS),
       });
-    } catch (err: any) {
+      setUserSessionCookie(res, sessionToken);
+      res.json({ success: true, user: toUserProfile(user) });
+    } catch {
       console.error('MongoDB OTP verification failed.');
-      res.status(500).json({ error: 'Unable to verify the code.' });
+      res.status(503).json({ error: 'Unable to verify the code or save the user profile.' });
     }
   });
 
-  const unavailableUserAccess = (_req: any, res: any) =>
-    res.status(401).json({ error: 'Authenticated user access is unavailable.' });
-  app.get('/api/users/profile/:email', unavailableUserAccess);
-  app.put('/api/users/profile/:email', unavailableUserAccess);
-  app.delete('/api/users/profile/:email', unavailableUserAccess);
-  app.post('/api/users/sync-history', unavailableUserAccess);
-  app.get('/api/users/history/:email', unavailableUserAccess);
+  app.get('/api/auth/session', requireUserSession, async (_req, res) => {
+    try {
+      const db = await getPersistentMongoDb();
+      const user = await db.collection('users').findOne({ email: res.locals.authenticatedUserEmail });
+      if (!user) return res.status(404).json({ error: 'User profile not found.' });
+      res.json({ user: toUserProfile(user) });
+    } catch {
+      res.status(503).json({ error: 'Unable to load the user profile.' });
+    }
+  });
+
+  app.post('/api/auth/logout', requireTrustedUserOrigin, requireUserSession, async (req, res) => {
+    try {
+      const token = readUserSessionCookie(req.headers.cookie);
+      if (token) {
+        const db = await getPersistentMongoDb();
+        await db.collection('user_sessions').deleteOne({ tokenHash: hashSessionToken(token) });
+      }
+      clearUserSessionCookie(res);
+      res.json({ success: true });
+    } catch {
+      res.status(503).json({ error: 'Unable to end the user session.' });
+    }
+  });
+
+  app.use('/api/users', requireTrustedUserOrigin, requireUserSession);
+
+  app.get('/api/users/profile/:email', async (req, res) => {
+    const email = String(res.locals.authenticatedUserEmail);
+    if (req.params.email.trim().toLowerCase() !== email) {
+      return res.status(403).json({ error: 'You are not authorized to access this profile.' });
+    }
+    try {
+      const db = await getPersistentMongoDb();
+      const user = await db.collection('users').findOne({ email });
+      if (!user) return res.status(404).json({ error: 'User profile not found.' });
+      res.json({ user: toUserProfile(user) });
+    } catch {
+      res.status(503).json({ error: 'Unable to load the user profile.' });
+    }
+  });
+
+  app.put('/api/users/profile/:email', async (req, res) => {
+    const email = String(res.locals.authenticatedUserEmail);
+    if (req.params.email.trim().toLowerCase() !== email) {
+      return res.status(403).json({ error: 'You are not authorized to update this profile.' });
+    }
+
+    const editableFields = [
+      'name', 'phone', 'courseInterested', 'twelfthSubject', 'fatherName',
+      'fatherEmail', 'motherName', 'motherEmail', 'childName',
+      'childMotherTongue', 'address', 'pincode',
+    ];
+    const updates: Record<string, string> = {};
+    for (const field of editableFields) {
+      if (Object.prototype.hasOwnProperty.call(req.body, field)) {
+        const value = req.body[field];
+        if (typeof value !== 'string' || value.length > 500) {
+          return res.status(400).json({ error: 'Invalid profile data.' });
+        }
+        updates[field] = value.trim();
+      }
+    }
+    if (!Object.keys(updates).length) {
+      return res.status(400).json({ error: 'No editable profile fields were provided.' });
+    }
+
+    try {
+      const db = await getPersistentMongoDb();
+      await db.collection('users').updateOne({ email }, { $set: updates });
+      const user = await db.collection('users').findOne({ email });
+      if (!user) return res.status(404).json({ error: 'User profile not found.' });
+      res.json({ success: true, user: toUserProfile(user) });
+    } catch {
+      res.status(503).json({ error: 'Unable to save the user profile.' });
+    }
+  });
+
+  app.delete('/api/users/profile/:email', async (req, res) => {
+    const email = String(res.locals.authenticatedUserEmail);
+    if (req.params.email.trim().toLowerCase() !== email) {
+      return res.status(403).json({ error: 'You are not authorized to delete this profile.' });
+    }
+    try {
+      const db = await getPersistentMongoDb();
+      await db.collection('users').deleteOne({ email });
+      await db.collection('user_sessions').deleteMany({ email });
+      await db.collection('counseling_requests').deleteMany({ email });
+      await db.collection('callback_requests').deleteMany({ email });
+      clearUserSessionCookie(res);
+      res.json({ success: true });
+    } catch {
+      res.status(503).json({ error: 'Unable to delete the user profile.' });
+    }
+  });
+
+  app.post('/api/users/sync-history', async (req, res) => {
+    const { shortlistedIds, cartIds } = req.body;
+    const isValidIds = (ids: unknown) =>
+      Array.isArray(ids)
+      && ids.length <= 200
+      && ids.every(id => typeof id === 'string' && id.length > 0 && id.length <= 128);
+    if (!isValidIds(shortlistedIds) || !isValidIds(cartIds)) {
+      return res.status(400).json({ error: 'Invalid saved-college data.' });
+    }
+    try {
+      const db = await getPersistentMongoDb();
+      await db.collection('users').updateOne(
+        { email: res.locals.authenticatedUserEmail },
+        { $set: { shortlistedIds: [...new Set(shortlistedIds)], cartIds: [...new Set(cartIds)] } },
+      );
+      res.json({ success: true });
+    } catch {
+      res.status(503).json({ error: 'Unable to save admission history.' });
+    }
+  });
+
+  app.get('/api/users/history/:email', async (req, res) => {
+    const email = String(res.locals.authenticatedUserEmail);
+    if (req.params.email.trim().toLowerCase() !== email) {
+      return res.status(403).json({ error: 'You are not authorized to access this history.' });
+    }
+    try {
+      const db = await getPersistentMongoDb();
+      const [counseling, callbacks] = await Promise.all([
+        db.collection('counseling_requests').find({ email }).sort({ createdAt: -1 }).toArray(),
+        db.collection('callback_requests').find({ email }).sort({ createdAt: -1 }).toArray(),
+      ]);
+      res.json({
+        counseling: counseling.map((request: CounselingRequest) => ({
+          id: request.id,
+          studentClassOrDegree: request.studentClassOrDegree,
+          preferredSlot: request.preferredSlot,
+          date: request.date,
+          query: request.query,
+          status: request.status,
+          createdAt: request.createdAt,
+        })),
+        callbacks: callbacks.map((request: CallbackRequest) => ({
+          id: request.id,
+          instituteId: request.instituteId,
+          phone: request.phone,
+          createdAt: request.createdAt,
+        })),
+      });
+    } catch {
+      res.status(503).json({ error: 'Unable to load account history.' });
+    }
+  });
 
   // ==========================================
   // COLLEGE PARTNER PORTAL ENDPOINTS
@@ -2073,7 +2348,7 @@ async function startServer() {
   // 6. Admin Get All User Profiles
   app.get('/api/admin/user-profiles', async (req, res) => {
     try {
-      const db = await getMongoDb();
+      const db = await getPersistentMongoDb();
       const list = await db.collection('users').find().sort({ createdAt: -1 }).toArray();
       res.json(list.map(user => stripCredentials({
         email: user.email,
@@ -2084,27 +2359,32 @@ async function startServer() {
         address: user.address,
         pincode: user.pincode,
         fatherName: user.fatherName,
+        fatherEmail: user.fatherEmail,
         motherName: user.motherName,
+        motherEmail: user.motherEmail,
+        childName: user.childName,
+        childMotherTongue: user.childMotherTongue,
         shortlistedIds: user.shortlistedIds,
         cartIds: user.cartIds,
         createdAt: user.createdAt,
       })));
     } catch (err: any) {
       console.error('Admin fetch user profiles failed.');
-      res.status(500).json({ error: 'Unable to load user profiles.' });
+      res.status(503).json({ error: 'Unable to load user profiles from persistent storage.' });
     }
   });
 
   app.delete('/api/admin/user-profiles/:email', async (req, res) => {
     try {
       const email = req.params.email.trim().toLowerCase();
-      const db = await getMongoDb();
+      const db = await getPersistentMongoDb();
       const result = await db.collection('users').deleteOne({ email });
       if (result.deletedCount === 0) {
         return res.status(404).json({ error: 'User profile not found.' });
       }
       await db.collection('counseling_requests').deleteMany({ email });
       await db.collection('callback_requests').deleteMany({ email });
+      await db.collection('user_sessions').deleteMany({ email });
       res.json({ success: true });
     } catch (err: any) {
       console.error('Admin delete user profile failed.');

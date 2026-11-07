@@ -382,7 +382,13 @@ export default function AdminPortal() {
       u.phone,
       u.courseInterested,
       u.twelfthSubject,
-      u.address
+      u.address,
+      u.fatherName,
+      u.fatherEmail,
+      u.motherName,
+      u.motherEmail,
+      u.childName,
+      u.childMotherTongue,
     ];
     return searchableDetails.some(value =>
       typeof value === 'string' && value.toLowerCase().includes(searchQuery.toLowerCase())
@@ -1517,17 +1523,23 @@ export default function AdminPortal() {
                                   </td>
                                   <td className="p-4">
                                     {item.fatherName && <p className="text-[11px] text-slate-700">F: {item.fatherName}</p>}
+                                    {item.fatherEmail && <p className="text-[10px] text-slate-400">{item.fatherEmail}</p>}
                                     {item.motherName && <p className="text-[11px] text-slate-700">M: {item.motherName}</p>}
+                                    {item.motherEmail && <p className="text-[10px] text-slate-400">{item.motherEmail}</p>}
+                                    {item.childName && <p className="text-[11px] text-slate-700">Applicant: {item.childName}</p>}
+                                    {item.childMotherTongue && <p className="text-[10px] text-slate-500">Mother tongue: {item.childMotherTongue}</p>}
                                   </td>
                                   <td className="p-4 max-w-[150px] truncate" title={item.shortlistedIds?.join(', ')}>
                                     <span className="px-2 py-0.5 bg-slate-100 text-slate-700 font-bold rounded text-[10px]">
                                       {item.shortlistedIds?.length || 0} Saved
                                     </span>
+                                    <p className="mt-1 whitespace-normal break-words text-[9px] text-slate-500">{item.shortlistedIds?.join(', ')}</p>
                                   </td>
                                   <td className="p-4 max-w-[150px] truncate" title={item.cartIds?.join(', ')}>
                                     <span className="px-2 py-0.5 bg-red-50 text-red-600 font-bold rounded text-[10px]">
                                       {item.cartIds?.length || 0} in Basket
                                     </span>
+                                    <p className="mt-1 whitespace-normal break-words text-[9px] text-slate-500">{item.cartIds?.join(', ')}</p>
                                   </td>
                                   <td className="p-4 text-slate-400 text-[10px]">
                                     {new Date(item.createdAt).toLocaleDateString()}
@@ -1586,7 +1598,11 @@ export default function AdminPortal() {
                                   <div>
                                     <p className="font-bold text-slate-400 uppercase tracking-wider text-[8px]">Parent Particulars</p>
                                     {item.fatherName && <p className="text-slate-700">Father Name: <span className="font-semibold text-slate-800">{item.fatherName}</span></p>}
+                                    {item.fatherEmail && <p className="text-slate-700">Father Email: <span className="font-semibold text-slate-800">{item.fatherEmail}</span></p>}
                                     {item.motherName && <p className="text-slate-700">Mother Name: <span className="font-semibold text-slate-800">{item.motherName}</span></p>}
+                                    {item.motherEmail && <p className="text-slate-700">Mother Email: <span className="font-semibold text-slate-800">{item.motherEmail}</span></p>}
+                                    {item.childName && <p className="text-slate-700">Applicant Name: <span className="font-semibold text-slate-800">{item.childName}</span></p>}
+                                    {item.childMotherTongue && <p className="text-slate-700">Mother Tongue: <span className="font-semibold text-slate-800">{item.childMotherTongue}</span></p>}
                                   </div>
                                 )}
                               </div>

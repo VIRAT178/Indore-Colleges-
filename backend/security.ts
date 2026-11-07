@@ -32,6 +32,10 @@ export function getAdminPasswordFingerprint(password: string | undefined) {
   return createHash('sha256').update(password).digest('hex');
 }
 
+export function hashSessionToken(token: string) {
+  return createHash('sha256').update(token).digest('hex');
+}
+
 type OtpCollection = {
   findOneAndDelete(query: {
     email: string;

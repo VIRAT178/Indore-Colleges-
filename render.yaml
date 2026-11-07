@@ -37,3 +37,5 @@ services:
       # Required in the Render dashboard; the service fails closed when unset.
       - key: ADMIN_PASSWORD
         sync: false
+      - key: FRONTEND_ORIGINS
+        sync: false

@@ -980,18 +980,45 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
   const [hasLoadedLocalState, setHasLoadedLocalState] = useState(false);
 
   useEffect(() => {
+    let active = true;
     try {
-      const savedUser = localStorage.getItem('indore_user_profile');
       const savedShortlist = localStorage.getItem('edupath_shortlisted_ids');
       const savedCart = localStorage.getItem('edupath_cart_ids');
-      if (savedUser) setCurrentUser(JSON.parse(savedUser));
       if (savedShortlist) setShortlistedIds(JSON.parse(savedShortlist));
       if (savedCart) setCartIds(JSON.parse(savedCart));
     } catch (e) {
-      // Ignore malformed browser-only session state.
-    } finally {
-      setHasLoadedLocalState(true);
+      console.warn('Could not restore saved colleges from this browser.');
     }
+
+    fetch('/api/auth/session')
+      .then(async response => {
+        if (response.ok) {
+          const data = await response.json();
+          if (!active || !data.user) return;
+          setCurrentUser(data.user);
+          localStorage.setItem('indore_user_profile', JSON.stringify(data.user));
+          setShortlistedIds(previous => Array.from(new Set([
+            ...previous,
+            ...(Array.isArray(data.user.shortlistedIds) ? data.user.shortlistedIds : []),
+          ])));
+          setCartIds(previous => Array.from(new Set([
+            ...previous,
+            ...(Array.isArray(data.user.cartIds) ? data.user.cartIds : []),
+          ])));
+        } else if (response.status === 401) {
+          localStorage.removeItem('indore_user_profile');
+        }
+      })
+      .catch(() => {
+        if (active) console.warn('Could not verify the saved user session.');
+      })
+      .finally(() => {
+        if (active) setHasLoadedLocalState(true);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -1020,6 +1047,21 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
     return false;
   };
 
+  const syncHistoryToBackend = async (shortIds: string[], basketIds: string[]) => {
+    try {
+      const response = await fetch('/api/users/sync-history', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ shortlistedIds: shortIds, cartIds: basketIds }),
+      });
+      if (!response.ok) {
+        console.warn('Saved college changes could not be synchronized with the account.');
+      }
+    } catch {
+      console.warn('Saved college changes could not be synchronized with the account.');
+    }
+  };
+
   const handleAuthSuccess = (user: UserProfile) => {
     setCurrentUser(user);
     localStorage.setItem('indore_user_profile', JSON.stringify(user));
@@ -1029,6 +1071,7 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
 
     setShortlistedIds(mergedShortlisted);
     setCartIds(mergedCart);
+    void syncHistoryToBackend(mergedShortlisted, mergedCart);
 
     if (pendingAction) {
       const { type, data } = pendingAction;
@@ -1036,11 +1079,13 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
         if (type === 'shortlist') {
           setShortlistedIds(prev => {
             const next = prev.includes(data) ? prev : [...prev, data];
+            void syncHistoryToBackend(next, mergedCart);
             return next;
           });
         } else if (type === 'cart') {
           setCartIds(prev => {
             const next = prev.includes(data) ? prev : [...prev, data];
+            void syncHistoryToBackend(mergedShortlisted, next);
             return next;
           });
         } else if (type === 'counseling') {
@@ -1060,7 +1105,13 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
     setAuthMessage('');
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', { method: 'POST' });
+      if (!response.ok) console.warn('The server could not end the user session.');
+    } catch {
+      console.warn('The server could not end the user session.');
+    }
     setCurrentUser(null);
     localStorage.removeItem('indore_user_profile');
     setShortlistedIds([]);
@@ -1068,7 +1119,14 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
     setIsProfileOpen(false);
   };
 
-  const handleDeleteProfile = () => {
+  const handleDeleteProfile = async () => {
+    if (!currentUser) return;
+    const response = await fetch(`/api/users/profile/${encodeURIComponent(currentUser.email)}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      throw new Error('Unable to delete the account profile.');
+    }
     setCurrentUser(null);
     localStorage.removeItem('indore_user_profile');
     setShortlistedIds([]);
@@ -1081,6 +1139,7 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
     if (!requireAuth({ type: 'shortlist', data: id }, 'Please log in to add colleges to your likes/shortlist.')) return;
     setShortlistedIds(prev => {
       const next = prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id];
+      if (currentUser) void syncHistoryToBackend(next, cartIds);
       return next;
     });
   };
@@ -1089,6 +1148,7 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
     if (!requireAuth({ type: 'cart', data: id }, 'Please log in to add colleges to your admission basket.')) return;
     setCartIds(prev => {
       const next = prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id];
+      if (currentUser) void syncHistoryToBackend(shortlistedIds, next);
       return next;
     });
   };

@@ -5,36 +5,37 @@ import App from './App.tsx';
 import {INDORE_INSTITUTES} from './data/indoreData';
 import './index.css';
 
-// Global fetch interceptor to support Vercel (frontend) + Render (backend) split deployment
+// Proxy API requests through the site origin so session cookies remain first-party.
 const originalFetch = window.fetch;
-const customFetch = function (input: any, init?: any) {
-  const env = (import.meta as any).env;
-  const baseUrl = (env?.API_URL as string)
-    || (env?.VITE_API_URL as string)
-    || 'https://indore-colleges-i560.onrender.com';
-  if (baseUrl) {
-    const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-    if (typeof input === 'string' && input.startsWith('/api/')) {
-      input = `${cleanBaseUrl}${input}`;
-    } else if (input instanceof URL && input.pathname.startsWith('/api/')) {
-      input = new URL(`${cleanBaseUrl}${input.pathname}${input.search}`);
-    } else if (input instanceof Request) {
-      const urlStr = input.url;
-      if (urlStr.startsWith('/api/')) {
-        input = new Request(`${cleanBaseUrl}${urlStr}`, input);
-      } else {
-        try {
-          const parsedUrl = new URL(urlStr);
-          if (parsedUrl.pathname.startsWith('/api/') && parsedUrl.origin === window.location.origin) {
-            input = new Request(`${cleanBaseUrl}${parsedUrl.pathname}${parsedUrl.search}`, input);
-          }
-        } catch (e) {
-          // ignore parsing failures
-        }
-      }
+const customFetch = function (input: RequestInfo | URL, init?: RequestInit) {
+  let isApiRequest = false;
+
+  const proxyApiUrl = (url: URL) => {
+    if (url.origin !== window.location.origin || !url.pathname.startsWith('/api/')) {
+      return url;
     }
+
+    isApiRequest = true;
+    if (import.meta.env.PROD && !url.pathname.startsWith('/api/proxy/')) {
+      url.pathname = `/api/proxy/${url.pathname.slice('/api/'.length)}`;
+    }
+    return url;
+  };
+
+  if (typeof input === 'string') {
+    const url = new URL(input, window.location.origin);
+    if (url.pathname.startsWith('/api/')) {
+      const rewritten = proxyApiUrl(url);
+      input = input.startsWith('/') ? `${rewritten.pathname}${rewritten.search}` : rewritten.href;
+    }
+  } else if (input instanceof URL) {
+    input = proxyApiUrl(new URL(input.href));
+  } else if (input instanceof Request) {
+    const rewritten = proxyApiUrl(new URL(input.url));
+    if (rewritten.href !== input.url) input = new Request(rewritten.href, input);
   }
-  return originalFetch(input, init);
+
+  return originalFetch(input, isApiRequest ? { ...init, credentials: 'include' } : init);
 };
 
 try {
