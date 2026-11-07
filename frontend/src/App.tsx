@@ -1004,24 +1004,6 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
     localStorage.setItem('edupath_cart_ids', JSON.stringify(cartIds));
   }, [hasLoadedLocalState, cartIds]);
 
-  const syncHistoryToBackend = async (email?: string, shortIds?: string[], basketIds?: string[]) => {
-    const targetEmail = email || currentUser?.email;
-    if (!targetEmail) return;
-    try {
-      await fetch('/api/users/sync-history', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: targetEmail,
-          shortlistedIds: shortIds !== undefined ? shortIds : shortlistedIds,
-          cartIds: basketIds !== undefined ? basketIds : cartIds
-        })
-      });
-    } catch (err) {
-      console.error("Failed syncing history with MongoDB:", err);
-    }
-  };
-
   const requireAuth = (
     action: {
       type: 'shortlist' | 'cart' | 'counseling' | 'general_counseling' | 'callback' | 'view_basket';
@@ -1048,21 +1030,17 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
     setShortlistedIds(mergedShortlisted);
     setCartIds(mergedCart);
 
-    syncHistoryToBackend(user.email, mergedShortlisted, mergedCart);
-
     if (pendingAction) {
       const { type, data } = pendingAction;
       setTimeout(() => {
         if (type === 'shortlist') {
           setShortlistedIds(prev => {
             const next = prev.includes(data) ? prev : [...prev, data];
-            syncHistoryToBackend(user.email, next, mergedCart);
             return next;
           });
         } else if (type === 'cart') {
           setCartIds(prev => {
             const next = prev.includes(data) ? prev : [...prev, data];
-            syncHistoryToBackend(user.email, mergedShortlisted, next);
             return next;
           });
         } else if (type === 'counseling') {
@@ -1103,7 +1081,6 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
     if (!requireAuth({ type: 'shortlist', data: id }, 'Please log in to add colleges to your likes/shortlist.')) return;
     setShortlistedIds(prev => {
       const next = prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id];
-      syncHistoryToBackend(currentUser?.email, next, cartIds);
       return next;
     });
   };
@@ -1112,7 +1089,6 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
     if (!requireAuth({ type: 'cart', data: id }, 'Please log in to add colleges to your admission basket.')) return;
     setCartIds(prev => {
       const next = prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id];
-      syncHistoryToBackend(currentUser?.email, shortlistedIds, next);
       return next;
     });
   };

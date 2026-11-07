@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { User, LogOut, Trash2, Save, Calendar, Phone, Mail, BookOpen, Heart, ShoppingBag, X, Loader2 } from 'lucide-react';
-import { UserProfile, CounselingRequest, CallbackRequest, Institute } from '../types';
+import { User, LogOut, Trash2, Save, Calendar, Mail, BookOpen, Heart, ShoppingBag, X, Loader2 } from 'lucide-react';
+import { UserProfile, Institute } from '../types';
 import { INDORE_INSTITUTES } from '../data/indoreData';
 
 interface ProfileModalProps {
@@ -40,12 +40,6 @@ export default function ProfileModal({
   const [statusMessage, setStatusMessage] = useState('');
   const [statusType, setStatusType] = useState<'success' | 'error'>('success');
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
-  const [historyLoading, setHistoryLoading] = useState(false);
-  const [historyData, setHistoryData] = useState<{
-    counseling: CounselingRequest[];
-    callbacks: CallbackRequest[];
-  }>({ counseling: [], callbacks: [] });
-
   useEffect(() => {
     if (isOpen) {
       setName(user.name || '');
@@ -58,24 +52,8 @@ export default function ProfileModal({
       setAddress(user.address || '');
       setPincode(user.pincode || '');
       setShowConfirmDelete(false);
-      fetchHistory();
     }
   }, [isOpen, user]);
-
-  const fetchHistory = async () => {
-    setHistoryLoading(true);
-    try {
-      const res = await fetch(`/api/users/history/${encodeURIComponent(user.email)}`);
-      if (res.ok) {
-        const data = await res.json();
-        setHistoryData(data);
-      }
-    } catch (err) {
-      console.error('Error fetching user history:', err);
-    } finally {
-      setHistoryLoading(false);
-    }
-  };
 
   if (!isOpen) return null;
 
@@ -83,66 +61,29 @@ export default function ProfileModal({
     e.preventDefault();
     setSaving(true);
     setStatusMessage('');
-    try {
-      const updatedProfile: Partial<UserProfile> = {
-        name,
-        fatherName,
-        fatherEmail,
-        motherName,
-        motherEmail,
-        childName,
-        childMotherTongue,
-        address,
-        pincode
-      };
-
-      const res = await fetch(`/api/users/profile/${encodeURIComponent(user.email)}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedProfile)
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        onUpdate(data.user);
-        setStatusType('success');
-        setStatusMessage('Your profile and family records have been updated successfully.');
-        setTimeout(() => setStatusMessage(''), 5000);
-      } else {
-        setStatusType('error');
-        setStatusMessage('Failed to save profile. Please check details.');
-      }
-    } catch (err) {
-      console.error(err);
-      setStatusType('error');
-      setStatusMessage('Network failure updating profile.');
-    } finally {
-      setSaving(false);
-    }
+    const updatedProfile: UserProfile = {
+      ...user,
+      name,
+      fatherName,
+      fatherEmail,
+      motherName,
+      motherEmail,
+      childName,
+      childMotherTongue,
+      address,
+      pincode,
+    };
+    onUpdate(updatedProfile);
+    setStatusType('success');
+    setStatusMessage('Profile saved in this browser only. Server-side profile editing is temporarily unavailable.');
+    setSaving(false);
   };
 
-  const handleDeleteProfile = async () => {
+  const handleDeleteProfile = () => {
     setDeleting(true);
-    setStatusMessage('');
-    try {
-      const res = await fetch(`/api/users/profile/${encodeURIComponent(user.email)}`, {
-        method: 'DELETE'
-      });
-
-      if (res.ok) {
-        onDeleteProfile();
-        onClose();
-      } else {
-        setStatusType('error');
-        setStatusMessage('Failed to delete profile.');
-      }
-    } catch (err) {
-      console.error(err);
-      setStatusType('error');
-      setStatusMessage('Error during delete request.');
-    } finally {
-      setDeleting(false);
-    }
+    onDeleteProfile();
+    onClose();
+    setDeleting(false);
   };
 
   // Filter linked institutes
@@ -174,6 +115,9 @@ export default function ProfileModal({
         </div>
 
         {/* Tab Selector */}
+        <p className="px-6 py-3 bg-amber-50 text-xs text-amber-900 border-b border-amber-100">
+          Profile information and saved colleges are stored in this browser. Server-side profile editing and counseling history are temporarily unavailable.
+        </p>
         <div className="flex border-b border-slate-100 text-sm font-medium bg-slate-50">
           <button
             onClick={() => setActiveSubTab('details')}
@@ -338,66 +282,11 @@ export default function ProfileModal({
               <div>
                 <h4 className="text-sm font-bold text-slate-950 flex items-center space-x-2 border-b border-slate-100 pb-2 mb-3">
                   <Calendar className="h-4 w-4 text-red-600" />
-                  <span>Scheduled Counseling Sessions ({historyData.counseling.length})</span>
+                  <span>Counseling & Callback History</span>
                 </h4>
-
-                {historyLoading ? (
-                  <div className="py-4 text-center text-xs text-slate-400 flex items-center justify-center space-x-1.5">
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                    <span>Retrieving counseling records from MongoDB...</span>
-                  </div>
-                ) : historyData.counseling.length === 0 ? (
-                  <p className="text-xs text-slate-400 italic py-2">No Scheduled Counseling sessions registered.</p>
-                ) : (
-                  <div className="space-y-2">
-                    {historyData.counseling.map((c, i) => (
-                      <div key={i} className="p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs space-y-1">
-                        <div className="flex justify-between items-center font-bold">
-                          <span className="text-slate-900">{c.studentClassOrDegree} Counseling Request</span>
-                          <span className="px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800 text-[10px] uppercase">
-                            {c.status}
-                          </span>
-                        </div>
-                        <p className="text-slate-600"><strong className="text-slate-700">Date & Slot:</strong> {c.date} | {c.preferredSlot}</p>
-                        {c.query && <p className="text-slate-500 italic">" {c.query} "</p>}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Callback inquiries */}
-              <div>
-                <h4 className="text-sm font-bold text-slate-950 flex items-center space-x-2 border-b border-slate-100 pb-2 mb-3">
-                  <Phone className="h-4 w-4 text-indigo-600" />
-                  <span>Call back Requests Submitted ({historyData.callbacks.length})</span>
-                </h4>
-
-                {historyLoading ? (
-                  <div className="py-4 text-center text-xs text-slate-400 flex items-center justify-center space-x-1.5">
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                    <span>Syncing logs...</span>
-                  </div>
-                ) : historyData.callbacks.length === 0 ? (
-                  <p className="text-xs text-slate-400 italic py-2">No callback inquiries submitted.</p>
-                ) : (
-                  <div className="space-y-2">
-                    {historyData.callbacks.map((cb, i) => {
-                      const matched = INDORE_INSTITUTES.find(inst => inst.id === cb.instituteId);
-                      return (
-                        <div key={i} className="p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs flex justify-between items-center">
-                          <div>
-                            <p className="font-bold text-slate-900">{matched?.name || 'General Admission Query'}</p>
-                            <p className="text-slate-500 mt-0.5">Submitted for Phone: {cb.phone}</p>
-                          </div>
-                          <span className="text-[10px] text-slate-400">
-                            {new Date(cb.createdAt).toLocaleDateString()}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
+                <p className="text-xs text-slate-500 py-2">
+                  Counseling and callback history cannot be retrieved until secure account access is available.
+                </p>
               </div>
 
               {/* Shortlisted Colleges */}
@@ -453,11 +342,11 @@ export default function ProfileModal({
                 className="text-red-600 hover:text-red-500 text-xs font-semibold flex items-center space-x-1"
               >
                 <Trash2 className="h-3.5 w-3.5" />
-                <span>Delete Account Profile</span>
+                <span>Remove Local Profile</span>
               </button>
             ) : (
               <div className="flex items-center space-x-2">
-                <span className="text-xs text-red-600 font-bold">Confirm Account Deletion?</span>
+                <span className="text-xs text-red-600 font-bold">Remove this browser’s local profile?</span>
                 <button
                   onClick={handleDeleteProfile}
                   disabled={deleting}
