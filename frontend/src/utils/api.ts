@@ -1,13 +1,14 @@
 const viteEnv = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env;
 
 const FALLBACK_API_BASE_URLS = [
-  'https://indore-colleges.onrender.com'
+  'https://indore-colleges-i560.onrender.com'
 ];
 
 let resolvedApiBaseUrl: string | null = null;
 
 function getCandidateApiBaseUrls() {
   const candidates = [
+    viteEnv?.API_URL,
     viteEnv?.VITE_API_BASE_URL,
     typeof window !== 'undefined' ? window.location.origin : null,
     ...FALLBACK_API_BASE_URLS

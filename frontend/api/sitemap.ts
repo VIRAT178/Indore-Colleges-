@@ -8,7 +8,7 @@ interface VercelResponse {
 }
 
 function getApiBaseUrl() {
-  return (process.env.PARTNER_API_BASE_URL || process.env.VITE_API_BASE_URL || 'https://indore-colleges.onrender.com').replace(/\/$/, '');
+  return (process.env.API_URL || process.env.PARTNER_API_BASE_URL || process.env.VITE_API_BASE_URL || 'https://indore-colleges-i560.onrender.com').replace(/\/$/, '');
 }
 
 const STATIC_COLLEGES = INDORE_INSTITUTES.filter(institute => institute.type === 'college');

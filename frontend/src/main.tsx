@@ -8,7 +8,10 @@ import './index.css';
 // Global fetch interceptor to support Vercel (frontend) + Render (backend) split deployment
 const originalFetch = window.fetch;
 const customFetch = function (input: any, init?: any) {
-  const baseUrl = ((import.meta as any).env?.VITE_API_URL as string) || '';
+  const env = (import.meta as any).env;
+  const baseUrl = (env?.API_URL as string)
+    || (env?.VITE_API_URL as string)
+    || 'https://indore-colleges-i560.onrender.com';
   if (baseUrl) {
     const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
     if (typeof input === 'string' && input.startsWith('/api/')) {
