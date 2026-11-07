@@ -1,12 +1,11 @@
 import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
-import {createServer as createHttpServer} from 'node:http';
 import {createServer as createNetServer} from 'node:net';
+import {readFile} from 'node:fs/promises';
 import {after, before, test} from 'node:test';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import path from 'node:path';
 import {AdminSessionStore, consumeIssuedOtp, getAdminPasswordFingerprint} from '../backend/security.ts';
-import apiProxy from '../api/proxy/[...path].ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const serverEntry = path.join(root, 'backend', 'server.ts');
@@ -136,77 +135,21 @@ test('admin session and one-time OTP helper behavior', async () => {
   assert.equal(await consumeIssuedOtp(collection, testEmail, '333444', new Date(5000)), false);
 });
 
-test('same-origin API proxy forwards authenticated requests and session cookies', async () => {
-  const upstream = createHttpServer((req, res) => {
-    let body = '';
-    req.setEncoding('utf8');
-    req.on('data', chunk => { body += chunk; });
-    req.on('end', () => {
-      res.setHeader('Content-Type', 'application/json');
-      res.setHeader('Set-Cookie', ['indore_user_session=test-session; HttpOnly; Path=/']);
-      res.end(JSON.stringify({
-        method: req.method,
-        url: req.url,
-        cookie: req.headers.cookie,
-        origin: req.headers.origin,
-        authorization: req.headers.authorization,
-        body,
-      }));
-    });
-  });
-  await new Promise(resolve => upstream.listen(0, '127.0.0.1', resolve));
-  const {port} = upstream.address();
-  const previousApiUrl = process.env.API_URL;
-  process.env.API_URL = `http://127.0.0.1:${port}`;
+test('Vercel forwards same-origin API requests to Render before the SPA fallback', async () => {
+  const config = JSON.parse(await readFile(path.join(root, 'vercel.json'), 'utf8'));
+  const proxyIndex = config.rewrites.findIndex(rewrite => rewrite.source === '/api/proxy/:path*');
+  const fallbackIndex = config.rewrites.findIndex(rewrite => rewrite.source === '/(.*)');
 
-  try {
-    let statusCode = 0;
-    const responseHeaders = new Map();
-    let responseBody;
-    const response = {
-      status(code) {
-        statusCode = code;
-        return this;
-      },
-      setHeader(name, value) {
-        responseHeaders.set(name.toLowerCase(), value);
-        return this;
-      },
-      send(body) {
-        responseBody = body;
-        return this;
-      },
-    };
-
-    await apiProxy({
-      method: 'POST',
-      query: {path: ['auth', 'session']},
-      headers: {
-        cookie: 'indore_user_session=opaque-session',
-        origin: 'https://indorecolleges.in',
-        authorization: 'Bearer test-admin-token',
-        'content-type': 'application/json',
-      },
-      url: '/api/proxy/auth/session?source=account',
-      body: {email: testEmail},
-    }, response);
-
-    assert.equal(statusCode, 200);
-    assert.deepEqual(responseHeaders.get('set-cookie'), ['indore_user_session=test-session; HttpOnly; Path=/']);
-    assert.equal(responseHeaders.get('cache-control'), 'no-store');
-    assert.deepEqual(JSON.parse(responseBody.toString()), {
-      method: 'POST',
-      url: '/api/auth/session?source=account',
-      cookie: 'indore_user_session=opaque-session',
-      origin: 'https://indorecolleges.in',
-      authorization: 'Bearer test-admin-token',
-      body: JSON.stringify({email: testEmail}),
-    });
-  } finally {
-    if (previousApiUrl === undefined) delete process.env.API_URL;
-    else process.env.API_URL = previousApiUrl;
-    await new Promise((resolve, reject) => upstream.close(error => error ? reject(error) : resolve()));
-  }
+  assert.notEqual(proxyIndex, -1);
+  assert.ok(proxyIndex < fallbackIndex);
+  assert.equal(
+    config.rewrites[proxyIndex].destination,
+    'https://indore-colleges-i560.onrender.com/api/:path*',
+  );
+  assert.ok(config.headers.some(rule =>
+    rule.source === '/api/proxy/:path*'
+    && rule.headers.some(header => header.key === 'Cache-Control' && header.value === 'no-store'),
+  ));
 });
 
 test('counseling records require an admin token on every API request', async () => {
