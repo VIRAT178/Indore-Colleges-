@@ -10,7 +10,7 @@ import cors from 'cors';
 import { randomBytes } from 'crypto';
 import { INDORE_INSTITUTES } from '../frontend/src/data/indoreData.js';
 import { CounselingRequest, CallbackRequest, Review, SchoolRegistrationRequest, CollegeUpdateRequest } from '../frontend/src/types.js';
-import { createSitemapXml } from '../frontend/src/utils/sitemap.js';
+import { createSitemapXml, getSitemapPaths } from '../shared/sitemap.js';
 
 dotenv.config();
 
@@ -856,14 +856,20 @@ async function startServer() {
       const partnerIds = approvedPartners
         .filter(partner => typeof partner.id === 'string' && typeof partner.name === 'string')
         .map(partner => partner.id);
+      const collegePaths = INDORE_INSTITUTES
+        .filter(institute => institute.type === 'college')
+        .map(institute => `/college/${institute.id}`);
 
       res.header('Content-Type', 'application/xml; charset=utf-8');
       res.header('Cache-Control', 'public, max-age=300, stale-while-revalidate=60');
-      return res.send(createSitemapXml(partnerIds));
+      return res.send(createSitemapXml(getSitemapPaths(collegePaths, partnerIds)));
     } catch (error) {
       console.error('Sitemap generation error:', error);
+      const collegePaths = INDORE_INSTITUTES
+        .filter(institute => institute.type === 'college')
+        .map(institute => `/college/${institute.id}`);
       res.header('Content-Type', 'application/xml; charset=utf-8');
-      return res.send(createSitemapXml());
+      return res.send(createSitemapXml(getSitemapPaths(collegePaths)));
     }
   });
 
