@@ -36,6 +36,55 @@ export function hashSessionToken(token: string) {
   return createHash('sha256').update(token).digest('hex');
 }
 
+type PersistedAdminSessionCollection = {
+  createIndex(index: {expiresAt: 1}, options: {expireAfterSeconds: 0}): Promise<unknown>;
+  insertOne(session: {
+    tokenHash: string;
+    passwordFingerprint: string;
+    expiresAt: Date;
+  }): Promise<unknown>;
+  findOne(query: {
+    tokenHash: string;
+    passwordFingerprint: string;
+    expiresAt: {$gt: Date};
+  }): Promise<unknown>;
+  deleteOne(query: {tokenHash: string}): Promise<unknown>;
+};
+
+export async function issuePersistedAdminSession(
+  collection: PersistedAdminSessionCollection,
+  token: string,
+  expiresAt: Date,
+  passwordFingerprint: string,
+) {
+  await collection.createIndex({expiresAt: 1}, {expireAfterSeconds: 0});
+  await collection.insertOne({
+    tokenHash: hashSessionToken(token),
+    passwordFingerprint,
+    expiresAt,
+  });
+}
+
+export async function isPersistedAdminSessionValid(
+  collection: PersistedAdminSessionCollection,
+  token: string,
+  passwordFingerprint: string,
+  now = new Date(),
+) {
+  return Boolean(await collection.findOne({
+    tokenHash: hashSessionToken(token),
+    passwordFingerprint,
+    expiresAt: {$gt: now},
+  }));
+}
+
+export async function revokePersistedAdminSession(
+  collection: PersistedAdminSessionCollection,
+  token: string,
+) {
+  await collection.deleteOne({tokenHash: hashSessionToken(token)});
+}
+
 type OtpCollection = {
   findOneAndDelete(query: {
     email: string;

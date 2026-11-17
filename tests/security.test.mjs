@@ -5,7 +5,15 @@ import {readFile} from 'node:fs/promises';
 import {after, before, test} from 'node:test';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import path from 'node:path';
-import {AdminSessionStore, consumeIssuedOtp, getAdminPasswordFingerprint} from '../backend/security.ts';
+import {
+  AdminSessionStore,
+  consumeIssuedOtp,
+  getAdminPasswordFingerprint,
+  hashSessionToken,
+  isPersistedAdminSessionValid,
+  issuePersistedAdminSession,
+  revokePersistedAdminSession,
+} from '../backend/security.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const serverEntry = path.join(root, 'backend', 'server.ts');
@@ -133,6 +141,42 @@ test('admin session and one-time OTP helper behavior', async () => {
   assert.equal(await consumeIssuedOtp(collection, testEmail, '111222', new Date(4000)), false);
   records.push({email: testEmail, otp: '333444', expiresAt: new Date(5000)});
   assert.equal(await consumeIssuedOtp(collection, testEmail, '333444', new Date(5000)), false);
+});
+
+test('persisted admin sessions are hashed, expire, and can be revoked', async () => {
+  const sessions = new Map();
+  const collection = {
+    async createIndex(index, options) {
+      assert.deepEqual(index, {expiresAt: 1});
+      assert.deepEqual(options, {expireAfterSeconds: 0});
+    },
+    async insertOne(session) {
+      sessions.set(session.tokenHash, session);
+    },
+    async findOne(query) {
+      const session = sessions.get(query.tokenHash);
+      if (
+        session?.passwordFingerprint === query.passwordFingerprint
+        && session.expiresAt > query.expiresAt.$gt
+      ) return session;
+      return null;
+    },
+    async deleteOne(query) {
+      return {deletedCount: Number(sessions.delete(query.tokenHash))};
+    },
+  };
+  const token = 'admin-session-token';
+  const passwordFingerprint = getAdminPasswordFingerprint(configuredPassword);
+
+  await issuePersistedAdminSession(collection, token, new Date(5000), passwordFingerprint);
+  assert.equal(sessions.has(token), false);
+  assert.equal(sessions.has(hashSessionToken(token)), true);
+  assert.equal(await isPersistedAdminSessionValid(collection, token, passwordFingerprint, new Date(4000)), true);
+  assert.equal(await isPersistedAdminSessionValid(collection, token, getAdminPasswordFingerprint('rotated-secret'), new Date(4000)), false);
+  assert.equal(await isPersistedAdminSessionValid(collection, token, passwordFingerprint, new Date(5000)), false);
+
+  await revokePersistedAdminSession(collection, token);
+  assert.equal(await isPersistedAdminSessionValid(collection, token, passwordFingerprint, new Date(4000)), false);
 });
 
 test('Vercel forwards API requests to Render without a homepage fallback', async () => {

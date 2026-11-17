@@ -11,7 +11,15 @@ import { randomBytes, randomInt } from 'crypto';
 import { INDORE_INSTITUTES } from '../frontend/src/data/indoreData.js';
 import { CounselingRequest, CallbackRequest, Review, SchoolRegistrationRequest, CollegeUpdateRequest } from '../frontend/src/types.js';
 import { createSitemapXml, getSitemapPaths } from '../shared/sitemap.js';
-import { AdminSessionStore, consumeIssuedOtp, getAdminPasswordFingerprint, hashSessionToken } from './security.js';
+import {
+  AdminSessionStore,
+  consumeIssuedOtp,
+  getAdminPasswordFingerprint,
+  hashSessionToken,
+  isPersistedAdminSessionValid,
+  issuePersistedAdminSession,
+  revokePersistedAdminSession,
+} from './security.js';
 
 dotenv.config();
 
@@ -84,7 +92,7 @@ const DEFAULT_CALLBACKS: CallbackRequest[] = [
 
 let mongoClient: MongoClient | null = null;
 let mongoDb: Db | null = null;
-let isMongoConnecting = false;
+let mongoConnectionPromise: Promise<Db | null> | null = null;
 const adminSessionTokens = new AdminSessionStore();
 const ADMIN_SESSION_TTL_MS = 12 * 60 * 60 * 1000;
 const USER_SESSION_TTL_MS = 12 * 60 * 60 * 1000;
@@ -131,15 +139,44 @@ function clearUserSessionCookie(res: express.Response) {
   );
 }
 
-function isAdminSession(authorizationHeader?: string): boolean {
+async function isAdminSession(authorizationHeader?: string): Promise<boolean> {
   const token = authorizationHeader?.match(/^Bearer\s+(.+)$/i)?.[1];
   if (!token) return false;
 
-  return adminSessionTokens.isValid(
-    token,
-    Date.now(),
-    getAdminPasswordFingerprint(process.env.ADMIN_PASSWORD),
-  );
+  const passwordFingerprint = getAdminPasswordFingerprint(process.env.ADMIN_PASSWORD);
+  if (!passwordFingerprint) return false;
+
+  if (process.env.NODE_ENV !== 'production') {
+    return adminSessionTokens.isValid(token, Date.now(), passwordFingerprint);
+  }
+
+  const db = await getPersistentMongoDb();
+  return isPersistedAdminSessionValid(db.collection('admin_sessions'), token, passwordFingerprint);
+}
+
+const requireAdminSession: express.RequestHandler = async (req, res, next) => {
+  try {
+    if (!await isAdminSession(req.headers.authorization)) {
+      return res.status(401).json({ error: 'A valid admin session is required.' });
+    }
+    return next();
+  } catch {
+    console.error('Admin session verification failed because persistent storage is unavailable.');
+    return res.status(503).json({ error: 'Admin session verification is temporarily unavailable.' });
+  }
+};
+
+async function revokeAdminSession(authorizationHeader?: string) {
+  const token = authorizationHeader?.match(/^Bearer\s+(.+)$/i)?.[1];
+  if (!token) return;
+
+  if (process.env.NODE_ENV !== 'production') {
+    adminSessionTokens.revoke(token);
+    return;
+  }
+
+  const db = await getPersistentMongoDb();
+  await revokePersistedAdminSession(db.collection('admin_sessions'), token);
 }
 
 function stripCredentials(value: unknown): unknown {
@@ -539,8 +576,8 @@ async function getMongoDb(): Promise<any> {
     return new SmartDb(mongoDb);
   }
 
-  if (isMongoConnecting) {
-    return new SmartDb(null);
+  if (mongoConnectionPromise) {
+    return new SmartDb(await mongoConnectionPromise);
   }
 
   // Cooldown to avoid hammering connection on failures
@@ -548,39 +585,40 @@ async function getMongoDb(): Promise<any> {
     return new SmartDb(null);
   }
 
-  isMongoConnecting = true;
   lastMongoAttemptTime = Date.now();
-  try {
-    const uri = process.env.MONGODB_URI!;
-    mongoClient = new MongoClient(uri, {
-      connectTimeoutMS: 4000,
-      serverSelectionTimeoutMS: 4000
-    });
-    await mongoClient.connect();
-    mongoDb = mongoClient.db();
-    console.log("[SmartDB] Successfully connected to MongoDB Atlas!");
-    
-    // Seed default records if empty in MongoDB
-    await seedDatabase(mongoDb);
-    
-    isMongoConnecting = false;
-    return new SmartDb(mongoDb);
-  } catch (err: any) {
-    isMongoConnecting = false;
-    const errMsg = err?.message || String(err);
-    if (
-      errMsg.includes('bad auth') ||
-      errMsg.includes('Authentication failed') ||
-      errMsg.includes('auth failed') ||
-      errMsg.includes('auth error')
-    ) {
-      mongoAuthFailed = true;
-      console.log("[SmartDB] MongoDB Atlas authentication unverified or invalid. Operating seamlessly on dynamic in-memory database.");
-    } else {
-      console.log('[SmartDB] MongoDB Atlas connection failed. Operating on the in-memory fallback.');
+  mongoConnectionPromise = (async () => {
+    try {
+      const uri = process.env.MONGODB_URI!;
+      mongoClient = new MongoClient(uri, {
+        connectTimeoutMS: 4000,
+        serverSelectionTimeoutMS: 4000
+      });
+      await mongoClient.connect();
+      mongoDb = mongoClient.db();
+      console.log("[SmartDB] Successfully connected to MongoDB Atlas!");
+
+      await seedDatabase(mongoDb);
+      return mongoDb;
+    } catch (err: any) {
+      const errMsg = err?.message || String(err);
+      if (
+        errMsg.includes('bad auth') ||
+        errMsg.includes('Authentication failed') ||
+        errMsg.includes('auth failed') ||
+        errMsg.includes('auth error')
+      ) {
+        mongoAuthFailed = true;
+        console.log("[SmartDB] MongoDB Atlas authentication unverified or invalid. Operating seamlessly on dynamic in-memory database.");
+      } else {
+        console.log('[SmartDB] MongoDB Atlas connection failed. Operating on the in-memory fallback.');
+      }
+      return null;
+    } finally {
+      mongoConnectionPromise = null;
     }
-    return new SmartDb(null);
-  }
+  })();
+
+  return new SmartDb(await mongoConnectionPromise);
 }
 
 async function getPersistentMongoDb(): Promise<any> {
@@ -1150,11 +1188,7 @@ async function startServer() {
   };
 
   // API Route: Get all counseling requests
-  app.get('/api/counseling', async (req, res) => {
-    if (!isAdminSession(req.headers.authorization)) {
-      return res.status(401).json({ error: 'A valid admin session is required.' });
-    }
-
+  app.get('/api/counseling', requireAdminSession, async (_req, res) => {
     try {
       const db = await getMongoDb();
       const list = await db.collection('counseling_requests').find().sort({ createdAt: -1 }).toArray();
@@ -2077,35 +2111,44 @@ async function startServer() {
 
     if (emailTrimmed === envAdminEmail && password === envAdminPassword) {
       const token = randomBytes(32).toString('hex');
-      adminSessionTokens.issue(token, Date.now() + ADMIN_SESSION_TTL_MS, passwordFingerprint);
-      res.json({ success: true, token });
+      const expiresAt = Date.now() + ADMIN_SESSION_TTL_MS;
+      try {
+        if (process.env.NODE_ENV === 'production') {
+          const db = await getPersistentMongoDb();
+          await issuePersistedAdminSession(
+            db.collection('admin_sessions'),
+            token,
+            new Date(expiresAt),
+            passwordFingerprint,
+          );
+        } else {
+          adminSessionTokens.issue(token, expiresAt, passwordFingerprint);
+        }
+        res.json({ success: true, token });
+      } catch {
+        console.error('Admin session could not be stored.');
+        res.status(503).json({ error: 'Admin authentication is temporarily unavailable.' });
+      }
     } else {
       res.status(401).json({ error: 'Invalid admin credentials.' });
     }
   });
 
-  app.get('/api/admin/session', (req, res) => {
-    if (!isAdminSession(req.headers.authorization)) {
-      return res.status(401).json({ error: 'Admin session is invalid or expired.' });
-    }
+  app.get('/api/admin/session', requireAdminSession, (_req, res) => {
     res.json({ success: true });
   });
 
-  app.post('/api/admin/logout', (req, res) => {
-    const token = req.headers.authorization?.match(/^Bearer\s+(.+)$/i)?.[1];
-    if (!token || !isAdminSession(req.headers.authorization)) {
-      return res.status(401).json({ error: 'Admin session is invalid or expired.' });
+  app.post('/api/admin/logout', requireAdminSession, async (req, res) => {
+    try {
+      await revokeAdminSession(req.headers.authorization);
+      res.json({ success: true });
+    } catch {
+      console.error('Admin session could not be revoked.');
+      res.status(503).json({ error: 'Admin logout is temporarily unavailable.' });
     }
-    adminSessionTokens.revoke(token);
-    res.json({ success: true });
   });
 
-  app.use('/api/admin', (req, res, next) => {
-    if (!isAdminSession(req.headers.authorization)) {
-      return res.status(401).json({ error: 'A valid admin session is required.' });
-    }
-    next();
-  });
+  app.use('/api/admin', requireAdminSession);
 
   // 2. Admin Get All College Partner Registrations
   app.get('/api/admin/all-registrations', async (req, res) => {
