@@ -32,14 +32,15 @@ export const INDORE_INSTITUTES: Institute[] = [
       'MP Counselling Cutoff 2026 has been released. BTech Round 1 Cutoff Rank is 1101941-1501100 for the General Category.',
       'Ongoing Admission Timeline for BBA/BBM: Jun 22, 2026 - Aug 14, 2026.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹3 Lakh Total Fees', specializations: ['CS', 'IT', 'ME', 'CE', 'EC'] },
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹90,000 Total Fees', specializations: ['Marketing', 'HR', 'Finance', 'Production & Operations', 'IS', 'BA'] },
-      { name: 'Bachelor of Physiotherapy [BPT]', duration: '4 Years', fees: '₹2.8 Lakh Total Fees' },
-      { name: 'Integrated BBA+MBA', duration: '5 Years', fees: '₹2.95 Lakh Total Fees' },
-      { name: 'Bachelor in Medical Laboratory Technology [BMLT]', duration: '3 Years', fees: '₹2.1 Lakh Total Fees' },
-      { name: 'BSC - IT & Electronics', duration: '3 Years', fees: 'Varies', specializations: ['Web Development', 'Android Mobile App Development'] },
-      { name: 'B.Com. (Plain | Tax | Foreign Trade)', duration: '3 Years', fees: 'Varies' }
+  coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹3 Lakh Total Fees', specializations: ['Computer Science & Engineering', 'Information Technology', 'Electronics & Communication Engineering', 'Mechanical Engineering', 'Civil Engineering'] },
+      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: 'Varies', specializations: ['Structural Engineering (CE)', 'Computer Science & Engineering (CSE)', 'Thermal Engineering (ME)'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹90,000 Total Fees', specializations: ['Marketing', 'Finance', 'Human Resources Management', 'Business Analytics', 'Information System', 'Production & Operations'] },
+      { name: 'Diploma in Engineering (Polytechnic)', duration: '3 Years', fees: 'Varies', specializations: ['Mechanical Engineering', 'Civil Engineering', 'Computer Science & Engineering'] },
+      { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: 'Varies' },
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: 'Varies', specializations: ['Plain', 'Foreign Trade', 'Hotel Management'] },
+      { name: 'B.Com.', duration: '3 Years', fees: 'Varies', specializations: ['Plain', 'Hons', 'Computer Applications', 'Foreign Trade', 'Taxation'] },
+      { name: 'B.Sc.', duration: '3 Years', fees: 'Varies', specializations: ['Plain', 'Biotechnology', 'IT & Electronics'] }
     ],
     placements: {
       highest: 'INR 15.40 LPA',
@@ -94,11 +95,14 @@ export const INDORE_INSTITUTES: Institute[] = [
       'JEE Advanced 2026 Cutoff Ranks are published. The Round 1 CSE closing rank for gender-neutral is 1639.',
       'JoSAA 2026 Round 4 reporting and withdrawal windows are currently open (Ongoing: Jul 10 - Jul 14, 2026).'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹2,99,400 (1st Year Fees)', specializations: ['Computer Science & Eng', 'Mathematics & Computing', 'Electrical Eng', 'Mechanical Eng', 'Space Sci & Eng', 'Engineering Physics', 'Chemical Eng', 'Civil Eng', 'Metallurgical Eng & Materials Sci'] },
-      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: '₹1,14,600 (1st Year Fees)', specializations: ['Biomedical Eng', 'Computer Science & Eng', 'Communication & Signal Processing', 'VLSI Design & Nanoelectronics', 'Advanced Manufacturing', 'Applied Optics', 'Electrical Vehicle Eng', 'Mechanical System Design'] },
-      { name: 'Master of Science [M.Sc]', duration: '2 Years', fees: '₹74,000 (1st Year Fees)', specializations: ['Biotechnology', 'Chemistry', 'Mathematics', 'Astronomy', 'Physics'] },
-      { name: 'Doctor of Philosophy [Ph.D]', duration: '3 Years', fees: '₹1,63,400 (1st Year Fees)', specializations: ['Psychology', 'Engineering', 'Sciences'] }
+coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹2,99,400 (1st Year Fees)', specializations: ['Computer Science and Engineering', 'Electrical Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Metallurgical Engineering and Materials Science', 'Chemical Engineering', 'Mathematics and Computing', 'Engineering Physics', 'Space Science and Engineering', 'Biomedical Engineering and Data Science', 'Environmental Economics and Sustainable Engineering'] },
+      { name: 'Bachelor of Science [BS]', duration: '4 Years', fees: 'Varies', specializations: ['Applied and Industrial Chemistry'] },
+      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: '₹1,14,600 (1st Year Fees)', specializations: ['Communication and Signal Processing', 'VLSI Design and Nanoelectronics', 'Metallurgical Engineering', 'Electric Vehicle Technology', 'Space Engineering', 'Geotechnical Engineering', 'Transportation Systems Engineering', 'Chemical Processes Design & Intelligence'] },
+      { name: 'Master of Science [M.Sc]', duration: '2 Years', fees: '₹74,000 (1st Year Fees)', specializations: ['Chemistry', 'Physics', 'Mathematics', 'Biotechnology', 'Astronomy'] },
+      { name: 'MS (Research)', duration: '2 Years', fees: 'Varies', specializations: ['Computer Science and Engineering', 'Electrical Engineering', 'Mechanical Engineering', 'Humanities and Social Sciences', 'Data Science and Management (MS-DSM)'] },
+      { name: 'Master of Arts [M.A.]', duration: '2 Years', fees: 'Varies', specializations: ['English (Literature and Linguistics)'] },
+      { name: 'Doctor of Philosophy [Ph.D]', duration: '3 Years', fees: '₹1,63,400 (1st Year Fees)', specializations: ['Computer Science and Engineering', 'Electrical Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Metallurgical Engineering and Materials Science', 'Biosciences and Biomedical Engineering', 'Chemical Engineering', 'Chemistry', 'Physics', 'Psychology', 'Sociology', 'Astronomy, Astrophysics and Space Engineering'] }
     ],
     placements: {
       highest: 'INR 1.37 Crore',
@@ -167,11 +171,14 @@ export const INDORE_INSTITUTES: Institute[] = [
       'The institute has achieved 100% placement for the 2023-25 batch with over 225 recruiters, with the highest package reaching INR 70 LPA.',
       'CAT sectional cutoff for shortlisting remains at 80 percentile across VARC, DILR, and QA, with a 90 overall percentile threshold.'
     ],
-    coursesList: [
-      { name: 'Post Graduate Programme in Management [PGP/MBA]', duration: '2 Years', fees: '₹10.51 Lakhs (1st Year Fees)', specializations: ['General', 'Human Resources'] },
-      { name: 'Integrated Programme in Management [IPM]', duration: '5 Years', fees: '₹44.8 Lakhs (Total Fees)' },
-      { name: 'Executive Post Graduate Programme [EPGP]', duration: '1 Year', fees: '₹27.77 Lakhs (Total Fees)' },
-      { name: 'Doctoral Programme in Management [DPM]', duration: '3-4 Years', fees: '₹75,000 (1st Year Fees)' }
+coursesList: [
+      { name: 'Post Graduate Programme in Management [PGP/MBA]', duration: '2 Years', fees: '₹10.51 Lakhs (1st Year Fees)', specializations: ['General Management'] },
+      { name: 'Post Graduate Programme in Human Resource Management [PGP-HRM]', duration: '2 Years', fees: '₹10.51 Lakhs (1st Year Fees)', specializations: ['Human Resource Management'] },
+      { name: 'Five Year Integrated Programme in Management [IPM]', duration: '5 Years', fees: '₹44.8 Lakhs (Total Fees)' },
+      { name: 'Executive Post Graduate Programme in Management [EPGP]', duration: '1 Year', fees: '₹27.77 Lakhs (Total Fees)' },
+      { name: 'Post Graduate Programme in Management for Working Executives [PGPMX]', duration: '2 Years', fees: 'Varies' },
+      { name: 'Doctoral Programme in Management [DPM]', duration: '3-4 Years', fees: '₹75,000 (1st Year Fees)', specializations: ['Communication', 'Economics', 'Finance & Accounting', 'Humanities and Social Sciences', 'Information Systems', 'Marketing Management', 'Operations Management and Quantitative Techniques', 'Organizational Behaviour and Human Resource Management', 'Strategic Management'] },
+      { name: 'Executive Doctoral Programme in Management [EDPM / EDPMG]', duration: '3-4 Years', fees: 'Varies' }
     ],
     placements: {
       highest: 'INR 70.00 LPA',
@@ -206,13 +213,14 @@ export const INDORE_INSTITUTES: Institute[] = [
     name: 'Shri Govindram Seksaria Institute of Technology and Science (SGSITS)',
     type: 'college',
     category: 'Engineering',
-    boardOrAffiliation: 'AICTE',
+    boardOrAffiliation: 'RGPV',
     location: 'Vallabh Nagar',
     feePerAnnum: 95000,
-    rating: 4.4,
+    rating: 4.8,
     googleRating: 4.4,
     indoreRating: 4.8,
-    totalReviews: 1100,
+    ratingSource: 'IndoreColleges',
+    totalReviews: 0,
     image: '/sgsits.jpg',
     videoUrl: '/SGSITS.mp4',
     backgroundVideoUrl: '/SGSITS.mp4',
@@ -225,23 +233,82 @@ export const INDORE_INSTITUTES: Institute[] = [
     website: 'http://www.sgsits.ac.in',
     address: '23 Sir M. Visvesvaraya Marg, Vallabh Nagar, Indore - 452003, Madhya Pradesh, India',
     nearestAirport: 'Devi Ahilya Bai Holkar Airport (approx 7 km)',
-    approval: 'Government-Aided Autonomous Institute, Affiliated to RGPV, UGC and AICTE Approved, NAAC Grade A',
+    approval: 'Government-Aided Autonomous Institute',
+    affiliations: ['RGPV'],
+    regulatoryApprovals: ['AICTE', 'UGC'],
+    accreditations: ['NAAC Grade A'],
     selectionCriteria: 'Entrance-based. B.Tech/BE admissions via JEE Main score and MP DTE Counseling. M.Tech via GATE score. MCA/MBA via MP DTE centralized counseling process.',
     updates: [
       'JEE Main general category Round 1 Cutoff Rank starts from 21533 for B.Tech Computer Science Engineering.',
       'SGSITS has been ranked 152nd in India for B.Tech and 6th in Madhya Pradesh by Collegedunia 2026.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹1.0 Lakh - ₹1.81 Lakh (1st Year Fees)', specializations: ['Computer Science and Engineering', 'Information Technology', 'Electronics & Telecommunication', 'Electronics & Instrumentation', 'Electrical Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Biomedical Engineering', 'Industrial & Production Engineering'] },
+coursesList: [
+      {
+        name: 'Bachelor of Technology [B.Tech]',
+        duration: '4 Years',
+        fees: '₹1.0 Lakh - ₹1.81 Lakh (1st Year Fees)',
+        feeHistory: [{
+          fee: '₹1,80,100',
+          description: 'B.Tech first-year fee',
+          academicYear: '2025–26',
+          sourceUrl: 'https://www.sgsits.ac.in/admission/prospectus',
+          sourceStatus: 'pending-direct-source'
+        }],
+        specializations: ['Computer Science and Engineering', 'Information Technology', 'Electronics & Telecommunication', 'Electronics & Instrumentation', 'Electrical Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Biomedical Engineering', 'Industrial & Production Engineering']
+      },
+      { name: 'Bachelor of Pharmacy [B.Pharm]', duration: '4 Years', fees: 'Varies' },
+      {
+        name: 'Bachelor of Design (B.Des)',
+        academicYear: '2026–27',
+        programmeLevel: 'UG',
+        sourceUrl: 'https://www.sgsits.ac.in/admissions/ug',
+        sourceStatus: 'pending-direct-source'
+      },
+      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: '₹88,550 (1st Year Fees)', specializations: ['Quantum Computing', 'Power Electronics', 'Information Technology', 'Transportation Engineering', 'Computer Engineering', 'CAD/CAM and Automation', 'Structural Engineering', 'Environmental Engineering'] },
+      { name: 'Master of Pharmacy [M.Pharm]', duration: '2 Years', fees: 'Varies', specializations: ['Industrial Pharmacy', 'Pharmaceutical Chemistry'] },
       { name: 'Master of Computer Applications [MCA]', duration: '2 Years', fees: '₹2.45 Lakhs (1st Year Fees)' },
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹1.23 Lakhs (1st Year Fees)', specializations: ['General Management', 'Hospital Administration'] },
-      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: '₹88,550 (1st Year Fees)', specializations: ['Quantum Computing', 'Power Electronics', 'Information Technology', 'Transportation Engineering', 'Computer Engineering', 'CAD/CAM and Automation', 'Structural Engineering', 'Environmental Engineering'] }
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹1.23 Lakhs (1st Year Fees)', specializations: ['General Management', 'Hospital Administration'] }
     ],
     placements: {
-      highest: 'INR 44.00 LPA',
-      average: 'INR 7.00 LPA (UG Median)',
-      lowest: 'INR 4.50 LPA (PG Median)',
-      recruiters: ['Amazon', 'Google', 'Adobe', 'Samsung', 'Deloitte', 'Groww', 'Infosys', 'TCS', 'Wipro', 'Accenture', 'Cognizant']
+      highest: '₹44.5 LPA',
+      recruiters: ['Amazon', 'Google', 'Adobe', 'Samsung', 'Deloitte', 'Groww', 'Infosys', 'TCS', 'Wipro', 'Accenture', 'Cognizant'],
+      metrics: [
+        {
+          type: 'highest',
+          value: '₹44.5 LPA',
+          academicYearStatus: 'pending-verification',
+          sourceLabel: 'SGSITS prospectus (2024 edition)',
+          sourceUrl: 'https://www.sgsits.ac.in/admission/prospectus',
+          sourceStatus: 'pending-direct-source'
+        },
+        {
+          type: 'median',
+          value: '₹7 LPA',
+          academicYear: '2023–24',
+          programme: 'UG',
+          sourceLabel: 'NIRF Overall',
+          sourceUrl: 'https://www.nirfindia.org/Rankings/2025/OverallRanking.html',
+          sourceStatus: 'pending-direct-source'
+        },
+        {
+          type: 'median',
+          value: '₹4.5 LPA',
+          academicYear: '2023–24',
+          programme: 'Overall PG',
+          sourceLabel: 'NIRF Overall',
+          sourceUrl: 'https://www.nirfindia.org/Rankings/2025/OverallRanking.html',
+          sourceStatus: 'pending-direct-source'
+        },
+        {
+          type: 'median',
+          value: '₹6.25 LPA',
+          academicYear: '2023–24',
+          programme: 'Engineering PG',
+          sourceLabel: 'NIRF Engineering',
+          sourceUrl: 'https://www.nirfindia.org/Rankings/2025/EngineeringRanking.html',
+          sourceStatus: 'pending-direct-source'
+        }
+      ]
     },
     facultyList: [
       { name: 'Prof. Neetesh Purohit', qualification: 'Director' },
@@ -254,8 +321,8 @@ export const INDORE_INSTITUTES: Institute[] = [
       { name: 'Dr. Anupama Paliwal', qualification: 'Assistant Professor, Department of MBA' }
     ],
     scholarships: [
-      { name: 'State Post Matric Scholarship', criteria: 'SC/ST/OBC categories', benefits: 'Tuition and maintenance fee reimbursement schemes' },
-      { name: 'Mukhyamantri Medhavi Vidyarthi Yojana (MMVY)', criteria: 'MP State meritorious criteria', benefits: 'Complete tuition fee funding support' }
+      { name: 'State Post Matric Scholarship' },
+      { name: 'Mukhyamantri Medhavi Vidyarthi Yojana (MMVY)' }
     ],
     cutoffs: [
       { course: 'B.Tech Computer Science Engineering', rank: '21533' },
@@ -358,9 +425,10 @@ export const INDORE_INSTITUTES: Institute[] = [
       'MP Counselling Cutoff 2026 has been released. BTech Round 1 Cutoff Rank is 306287-1165551 for the General Category.',
       'DTE MP Admission Timeline for MCA/MBA counseling is currently active.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech / B.E.]', duration: '4 Years', fees: '₹74,000 - ₹93,000 (1st Year Fees)', specializations: ['Computer Science and Engineering', 'Information Technology', 'Artificial Intelligence and Machine Learning', 'Data Science', 'Cyber Security', 'Computer Science and Information Technology', 'Mechanical Engineering', 'Civil Engineering', 'Electronics & Communication Engineering'] },
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹1.14 Lakhs (1st Year Fees)', specializations: ['Marketing', 'Finance', 'Human Resources'] },
+ coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹74,000 - ₹93,000 (1st Year Fees)', specializations: ['Computer Science and Engineering', 'Information Technology', 'Artificial Intelligence and Machine Learning', 'Data Science', 'Cyber Security', 'Computer Science and Information Technology', 'Internet of Things', 'VLSI Design', 'Advance Communication Technologies', 'Computer Engineering (Regional Language)', 'Mechanical Engineering', 'Civil Engineering', 'Electronics & Communication Engineering'] },
+      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: 'Varies', specializations: ['Computer Science and Engineering', 'VLSI Design', 'Thermal Engineering'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹1.14 Lakhs (1st Year Fees)', specializations: ['Marketing', 'Finance', 'Human Resource Management', 'Business Analytics'] },
       { name: 'Master of Computer Applications [MCA]', duration: '2 Years', fees: '₹85,000 (1st Year Fees)' },
       { name: 'BCA + MCA Integrated', duration: '5 Years', fees: '₹69,000 (1st Year Fees)' },
       { name: 'Diploma in Engineering (Polytechnic)', duration: '3 Years', fees: '₹26,000 (1st Year Fees)', specializations: ['Civil Engineering', 'Mechanical Engineering'] }
@@ -424,12 +492,14 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Admission to MBA program is done on the basis of SNAP / CAT / MAT / CMAT / XAT / MAH-CET etc.',
       'Symbiosis Indore focus is skill development in high employment sectors to produce industry-ready professionals.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹2.75 Lakhs (Per Year)', specializations: ['Computer Science And IT', 'Mechatronics Engineering', 'Automobile Engineering'] },
-      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹2.60 Lakhs (Per Year)', specializations: ['Retail & E-Commerce', 'BFSI', 'Digital Media & Marketing', 'Logistics & Supply Chain Management'] },
-      { name: 'Bachelor of Science [B.Sc] (Data Science)', duration: '3 Years', fees: '₹2.0 Lakhs (Per Year)' },
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹6.25 Lakhs (Per Year)', specializations: ['BFSI', 'Marketing'] },
-      { name: 'MBA-Tech Integrated', duration: '5 Years', fees: '₹2.75 Lakhs (Per Year)' }
+coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹2.75 Lakhs (Per Year)', specializations: ['Computer Science & Information Technology', 'Artificial Intelligence and Machine Learning', 'Cyber Security', 'Automation and Robotics'] },
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹2.60 Lakhs (Per Year)', specializations: ['Retail & E-Commerce Management', 'Banking Financial Services and Insurance (BFSI)', 'Digital Media & Marketing', 'Logistics and Supply Chain Management'] },
+      { name: 'Bachelor of Science [B.Sc]', duration: '3 Years', fees: '₹2.0 Lakhs (Per Year)', specializations: ['Data Science'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹6.25 Lakhs (Per Year)', specializations: ['Banking Financial Services and Insurance (BFSI)', 'Logistics and Supply Chain Management', 'Digital Marketing'] },
+      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: 'Varies' },
+      { name: 'Diploma Programs', duration: '3 Years', fees: 'Varies', specializations: ['Manufacturing'] },
+      { name: 'Doctor of Philosophy [Ph.D]', duration: '3 Years', fees: 'Varies' }
     ],
     placements: {
       highest: 'INR 20.00 LPA',
@@ -481,15 +551,19 @@ export const INDORE_INSTITUTES: Institute[] = [
       'SVVV Admissions are currently open for all undergraduate, postgraduate, and research programs.',
       'Shri Vaishnav Vidyapeeth Vishwavidyalaya conducts its own SVET entrance test.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹4.28 Lakhs - ₹7.28 Lakhs (Total Fees)', specializations: ['Computer Science and Engineering', 'Electronics & Communication', 'Mechanical Engineering', 'Civil Engineering', 'Electrical Engineering'] },
+coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹4.28 Lakhs - ₹7.28 Lakhs (Total Fees)', specializations: ['Computer Science Engineering', 'Computer Science and Business Systems (TCS)', 'CSE - Data Science (IBM)', 'CSE - Artificial Intelligence (IBM)', 'CSE - AI & Machine Learning (Microsoft)', 'CSE - Cyber Security / IoT / Quantum Computing / Generative AI', 'Information Technology', 'Electronics & Communication Engineering', 'Electrical & Electronics Engineering', 'Robotics and Automation', 'Mechatronics', 'Mechanical Engineering', 'Automobile Engineering', 'Civil Engineering'] },
+      { name: 'Integrated B.Tech + MBA / B.Tech + M.Tech', duration: '5 Years', fees: 'Varies', specializations: ['Computer Science Engineering', 'Electronics & Communication Engineering'] },
       { name: 'Bachelor of Architecture [B.Arch]', duration: '5 Years', fees: '₹4.33 Lakhs (Total Fees)' },
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹2.58 Lakhs - ₹3.48 Lakhs (Total Fees)', specializations: ['Agribusiness', 'International Business', 'Media Management', 'Family Business & Entrepreneurship', 'Tourism Management', 'Engineering Management'] },
-      { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: '₹1.88 Lakhs - ₹2.03 Lakhs (Total Fees)', specializations: ['Big Data Analytics in collaboration with IBM'] },
-      { name: 'Bachelor of Science [B.Sc]', duration: '3 Years', fees: '₹1.13 Lakhs - ₹1.88 Lakhs (Total Fees)', specializations: ['Biotechnology', 'Forensic Sciences'] },
-      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: '₹1.58 Lakhs (Total Fees)' },
+      { name: 'Bachelor of Design [B.Des]', duration: '4 Years', fees: 'Varies', specializations: ['Graphics and Animation', 'Interior Design', 'Product Design'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹2.58 Lakhs - ₹3.48 Lakhs (Total Fees)', specializations: ['Marketing', 'Finance', 'Human Resource Management', 'Business Analytics (IBM)', 'Strategy & Consulting (Grant Thornton)', 'Healthcare and Hospital Management', 'Fintech', 'Agribusiness', 'International Business', 'Media Management', 'Family Business & Entrepreneurship', 'Tourism Management', 'Engineering Management'] },
+      { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: '₹1.88 Lakhs - ₹2.03 Lakhs (Total Fees)', specializations: ['Plain', 'Artificial Intelligence & Machine Learning (IBM)', 'Big Data Analytics (IBM)'] },
+      { name: 'Bachelor of Commerce [B.Com] / B.Com (Hons.)', duration: '3-4 Years', fees: 'Varies', specializations: ['Plain', 'Banking and Finance', 'Business Administration', 'Computer Applications', 'Entrepreneurship', 'Tax Procedure', 'Corporate Secretarial Practices'] },
+      { name: 'Bachelor of Science [B.Sc] / B.Sc (Hons.)', duration: '3-4 Years', fees: '₹1.13 Lakhs - ₹1.88 Lakhs (Total Fees)', specializations: ['Physics', 'Chemistry', 'Mathematics', 'Computer Science', 'Electronics', 'Biotechnology', 'Forensic Sciences'] },
+      { name: 'Bachelor of Arts [B.A. Hons.]', duration: '3 Years', fees: 'Varies', specializations: ['Psychology', 'Economics', 'English Literature', 'Sociology', 'Political Science', 'Public Administration', 'Anthropology', 'History'] },
+      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: '₹1.58 Lakhs (Total Fees)', specializations: ['Computer Science Engineering', 'Data Science', 'Artificial Intelligence', 'Big Data Analytics', 'VLSI Design', 'Embedded System', 'Power Electronics', 'Robotics and Automation', 'Structural Engineering', 'Transportation Engineering'] },
       { name: 'Master of Science [M.Sc]', duration: '2 Years', fees: '₹98,000 - ₹1.68 Lakhs (Total Fees)' },
-      { name: 'Ph.D', duration: '3 Years', fees: '₹2.48 Lakhs (Total Fees)', specializations: ['Management'] }
+      { name: 'Ph.D', duration: '3 Years', fees: '₹2.48 Lakhs (Total Fees)', specializations: ['Management', 'Computer Science & Engineering', 'Computer Applications', 'Electronics Engineering', 'Science', 'Social Science', 'Agriculture'] }
     ],
     placements: {
       highest: 'INR 47.00 LPA',
@@ -553,11 +627,12 @@ export const INDORE_INSTITUTES: Institute[] = [
       'SAGE SEE 2026 Phase 8 is scheduled for July 11-12, 2026, and Phase 9 is scheduled for July 25-26, 2026.',
       'B.Tech admissions are open, featuring direct admission options with 50% in 10+2 PCM.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹2.83 Lakhs - ₹10.43 Lakhs (Total Fees)', specializations: ['Computer Science and Engineering', 'Artificial Intelligence & Machine Learning', 'Data Science', 'Cyber Security'] },
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹1.91 Lakhs - ₹6.31 Lakhs (Total Fees)', specializations: ['General', 'Marketing', 'Finance', 'HR', 'Business Analytics'] },
-      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹2.92 Lakhs - ₹6.37 Lakhs (Total Fees)' },
+coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹2.83 Lakhs - ₹10.43 Lakhs (Total Fees)', specializations: ['Computer Science & Engineering', 'Artificial Intelligence & Machine Learning', 'Data Science', 'Cyber Security', 'Computer Science & Information Technology', 'CSE with VLSI', 'Robotics and Automation', 'Civil Engineering', 'Mechanical Engineering', 'Electronics & Communication Engineering'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹1.91 Lakhs - ₹6.31 Lakhs (Total Fees)', specializations: ['Marketing Management', 'Finance Management', 'Human Resource Management', 'Business Analytics', 'Banking and Financial Services', 'Artificial Intelligence in Management', 'Hospital Administration', 'Agri Business Management', 'Logistics and Supply Chain Management', 'Retail Management', 'Production & Operations', 'Information Technology', 'Event Management'] },
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3-4 Years', fees: '₹2.92 Lakhs - ₹6.37 Lakhs (Total Fees)', specializations: ['Business Analytics', 'Banking and Financial Services', 'Aviation', 'Hospital Administration', 'Logistics and Supply Chain Management', 'Digital Media Management', 'E-Commerce', 'Marketing', 'Finance', 'Human Resource Management', 'Event Management'] },
       { name: 'Master of Computer Applications [MCA]', duration: '2 Years', fees: '₹2.01 Lakhs (Total Fees)', specializations: ['Artificial Intelligence & Machine Learning'] },
+      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: 'Varies', specializations: ['Computer Science & Engineering', 'Artificial Intelligence', 'Data Science', 'Cyber Security', 'Digital Communication Engineering', 'Structural Engineering', 'Automobile Engineering'] },
       { name: 'Bachelor of Pharmacy [B.Pharm]', duration: '4 Years', fees: '₹5.23 Lakhs (Total Fees)' },
       { name: 'Bachelor of Laws [L.L.B.] {Hons.}', duration: '3 Years', fees: '₹2.62 Lakhs (Total Fees)' },
       { name: 'Bachelor of Science [B.Sc] (Hons.)', duration: '3 Years', fees: '₹1.72 Lakhs (Total Fees)', specializations: ['Forensic Science'] }
@@ -616,13 +691,15 @@ export const INDORE_INSTITUTES: Institute[] = [
       'NMAT 2025 results are being released sequentially; MBA admissions scheduling is currently active.',
       'Competency Assessment weightage has been increased to 60%, with NMAT weightage at 10% for the 2026 batch.'
     ],
-    coursesList: [
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹18 Lakhs (Total Fees)', specializations: ['General', 'Marketing', 'Human Resources', 'Business Analytics'] },
+coursesList: [
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹18 Lakhs (Total Fees)', specializations: ['Finance', 'Marketing', 'Human Resource', 'Strategy', 'Analytics', 'Operations'] },
       { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹8.08 Lakhs (Total Fees)', specializations: ['Computer Engineering', 'Artificial Intelligence & Data Science'] },
-      { name: 'Bachelor of Business Administration [BBA]', duration: '4 Years', fees: '₹11 Lakhs (Total Fees)' },
-      { name: 'Bachelor of Commerce [B.Com] (Hons.)', duration: '4 Years', fees: '₹6 Lakhs (Total Fees)' },
-      { name: 'B.Tech + MBA Integrated (Tech Management)', duration: '5 Years', fees: '₹14.25 Lakhs (Total Fees)' },
-      { name: 'BALLB {Hons.} / BBALLB {Hons.}', duration: '5 Years', fees: '₹10 Lakhs (Total Fees)' }
+      { name: 'MBA Tech (B.Tech + MBA Integrated)', duration: '5 Years', fees: '₹14.25 Lakhs (Total Fees)', specializations: ['Computer Engineering'] },
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3-4 Years', fees: '₹11 Lakhs (Total Fees)' },
+      { name: 'Bachelor of Commerce [B.Com] (Hons.)', duration: '3-4 Years', fees: '₹6 Lakhs (Total Fees)' },
+      { name: 'B.A., LL.B. (Hons.) / B.B.A., LL.B. (Hons.)', duration: '5 Years', fees: '₹10 Lakhs (Total Fees)' },
+      { name: 'Bachelor of Pharmacy [B.Pharm]', duration: '4 Years', fees: 'Varies' },
+      { name: 'MBA Pharma Tech (B.Pharm + MBA Integrated)', duration: '5 Years', fees: 'Varies' }
     ],
     placements: {
       highest: 'INR 10.00 LPA',
@@ -677,13 +754,21 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Ranked 94 in the engineering category by The Times of India in 2025.',
       'Offers direct admission in several UG and diploma programs based on 10+2 and graduation merit.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Engineering [BE]', duration: '4 Years', fees: '₹3.56 Lakhs - ₹3.58 Lakhs (Total Fees)', specializations: ['Computer Science And Engineering'] },
-      { name: 'Bachelor of Pharmacy [B.Pharma]', duration: '4 Years', fees: '₹1.0 Lakh (Total Fees)' },
-      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: '₹4.02 Lakhs (Total Fees)' },
+coursesList: [
+      { name: 'Bachelor of Engineering [BE]', duration: '4 Years', fees: '₹3.56 Lakhs - ₹3.58 Lakhs (Total Fees)', specializations: ['Computer Science and Engineering', 'Information Technology', 'Electronics & Communication Engineering', 'Electrical & Electronics Engineering', 'Mechanical Engineering', 'Civil Engineering'] },
+      { name: 'Diploma in Engineering (Polytechnic)', duration: '3 Years', fees: 'Varies', specializations: ['Civil Engineering', 'Mechanical Engineering', 'Electrical Engineering', 'Computer Science & Engineering', 'Electronics & Telecommunication'] },
+      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: '₹4.02 Lakhs (Total Fees)', specializations: ['Computer Science & Engineering', 'Cyber Security', 'Digital Communication', 'Power System', 'Thermal Engineering', 'Structural Engineering', 'Computer Technology & Applications'] },
+      { name: 'Bachelor of Pharmacy [B.Pharm]', duration: '4 Years', fees: '₹1.0 Lakh (Total Fees)' },
+      { name: 'Diploma in Pharmacy [D.Pharm]', duration: '2 Years', fees: 'Varies' },
       { name: 'Master of Pharmacy [M.Pharm]', duration: '2 Years', fees: '₹1.0 Lakh (Total Fees)' },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: 'Varies', specializations: ['General', 'Hospital Administration'] },
+      { name: 'Master of Computer Applications [MCA]', duration: '2 Years', fees: 'Varies' },
+      { name: 'Bachelor of Computer Applications [BCA]', duration: '3-4 Years', fees: 'Varies' },
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3-4 Years', fees: 'Varies' },
+      { name: 'Bachelor of Science [B.Sc]', duration: '3-4 Years', fees: 'Varies', specializations: ['Physics', 'Chemistry', 'Biochemistry', 'Agriculture'] },
       { name: 'Bachelor of Education [B.Ed]', duration: '2 Years', fees: 'Merit-based Fees' },
-      { name: 'Bachelor of Laws [L.L.B.]', duration: '3 Years', fees: 'Merit-based Fees' },
+      { name: 'Bachelor of Laws [L.L.B.] / B.A. LL.B.', duration: '3-5 Years', fees: 'Merit-based Fees' },
+      { name: 'Master of Laws [LL.M.]', duration: '2 Years', fees: 'Varies' },
       { name: 'Ph.D', duration: '3 Years', fees: '₹2.83 Lakhs - ₹3.73 Lakhs (1st Year Fees)', specializations: ['Management Studies'] }
     ],
     placements: {
@@ -728,16 +813,22 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Admissions 2026 are currently open for multiple undergraduate, postgraduate, and doctoral streams.',
       'Ranked 95th in India and 4th in Madhya Pradesh for Education category by Collegedunia 2026.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹1.63 Lakhs - ₹4.03 Lakhs (Total Fees)', specializations: ['Computer Science and Engineering', 'Artificial Intelligence & Machine Learning', 'Robotics and Automation', 'Mechanical Engineering', 'Civil Engineering', 'Electronics & Communication Engineering'] },
-      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹1.38 Lakhs - ₹2.13 Lakhs (Total Fees)', specializations: ['General'] },
-      { name: 'Master of Computer Applications [MCA]', duration: '2 Years', fees: '₹1.23 Lakhs (Total Fees)', specializations: ['Artificial Intelligence & Machine Learning'] },
+coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹1.63 Lakhs - ₹4.03 Lakhs (Total Fees)', specializations: ['Computer Science and Engineering', 'Artificial Intelligence & Machine Learning', 'Data Science', 'Cyber Security', 'Gaming & Animation (Gaming Technology)', 'Robotics and Automation', 'Mechatronics', 'Electric Vehicle Technology', 'Construction Technology & Smart Cities', 'Mechanical Engineering', 'Civil Engineering', 'Electronics & Communication Engineering', 'Electrical & Electronics Engineering'] },
+      { name: 'Diploma in Engineering', duration: '3 Years', fees: 'Varies', specializations: ['Computer Science and Engineering', 'Artificial Intelligence & ML', 'Gaming & Animation', 'Civil Engineering', 'Mechanical Engineering', 'Electrical and Electronics Engineering', 'Electronics and Communication Engineering'] },
+      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: 'Varies', specializations: ['Artificial Intelligence & ML', 'Cyber Security', 'Computer Networks', 'Digital Communication', 'VLSI Design and Technology', 'Electric Vehicle (EV)', 'Power Systems', 'Power Electronics', 'CAD-CAM', 'Machine Design', 'Thermal Engineering', 'Construction Technology and Management', 'Structural Engineering'] },
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹1.38 Lakhs - ₹2.13 Lakhs (Total Fees)', specializations: ['Core', 'Business Intelligence and Analytics (BIA)', 'BFSI', 'Digital Marketing', 'International Business'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: 'Varies', specializations: ['Finance', 'Human Resources', 'Information Technology', 'Marketing', 'Data Analytics and Data Visualization', 'International Business'] },
+      { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: 'Varies', specializations: ['Plain', 'Artificial Intelligence and Data Analysis', 'Data Science and Data Visualization', 'Full Stack Development'] },
+      { name: 'Master of Computer Applications [MCA]', duration: '2 Years', fees: '₹1.23 Lakhs (Total Fees)', specializations: ['Plain', 'Artificial Intelligence & Machine Learning', 'Full Stack Development'] },
       { name: 'Bachelor of Pharmacy [B.Pharm]', duration: '4 Years', fees: '₹3.63 Lakhs (Total Fees)' },
-      { name: 'Bachelor of Education [B.Ed]', duration: '2 Years', fees: '₹1.43 Lakhs (Total Fees)' },
-      { name: 'Bachelor of Arts [BA]', duration: '3 Years', fees: '₹62,500 - ₹68,500 (Total Fees)' },
-      { name: 'Master of Science [M.Sc]', duration: '2 Years', fees: '₹72,500 - ₹1.53 Lakhs (Total Fees)' },
       { name: 'Master of Pharmacy [M.Pharm]', duration: '2 Years', fees: '₹1.83 Lakhs (Total Fees)' },
-      { name: 'Ph.D', duration: '3 Years', fees: '₹3.03 Lakhs (Total Fees)', specializations: ['Library & Information Science'] }
+      { name: 'Bachelor of Science [B.Sc] / B.Sc (Hons.)', duration: '3-4 Years', fees: 'Varies', specializations: ['Agriculture', 'Biotechnology', 'Computer Science', 'Forensic Science', 'Microbiology', 'Multimedia Animation and Design', 'Nutrition & Dietetics', 'Medical Lab Technology (MLT)', 'Optometry', 'Radiology Technology (RLT)', 'Cardio-Vascular Technology', 'Operation Theatre & Anesthesia Technology'] },
+      { name: 'Master of Science [M.Sc]', duration: '2 Years', fees: '₹72,500 - ₹1.53 Lakhs (Total Fees)', specializations: ['Biotechnology', 'Chemistry', 'Mathematics', 'Physics', 'Forensic Science (Criminology)', 'Microbiology', 'Agronomy', 'Horticulture Science'] },
+      { name: 'B.A. LL.B. (Hons.) / LL.B. (Hons.)', duration: '3-5 Years', fees: 'Varies', specializations: ['Business Law', 'Constitutional Law', 'Crime & Criminology'] },
+      { name: 'Bachelor of Education [B.Ed]', duration: '2 Years', fees: '₹1.43 Lakhs (Total Fees)' },
+      { name: 'Bachelor of Arts [BA]', duration: '3 Years', fees: '₹62,500 - ₹68,500 (Total Fees)', specializations: ['Economics', 'History', 'Political Science', 'Psychology', 'Sociology', 'Yoga'] },
+      { name: 'Ph.D', duration: '3 Years', fees: '₹3.03 Lakhs (Total Fees)', specializations: ['Library & Information Science', 'Management', 'Engineering', 'Sciences'] }
     ],
     placements: {
       highest: 'INR 72.00 LPA',
@@ -797,11 +888,19 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Ranked No.1 Private University in Central India for engineering placements by i3RC Times Engineering.',
       'MU-SAT 2026 phase-wise registrations are now live on the official admissions portal.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹1.45 Lakhs (1st Year Fees)', specializations: ['Computer Science & Eng', 'Information Technology', 'Artificial Intelligence', 'Data Science', 'Mechanical Eng', 'Civil Eng'] },
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹1.25 Lakhs (1st Year Fees)', specializations: ['Finance', 'Marketing', 'HR', 'Foreign Trade'] },
-      { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: '₹75,000 (1st Year Fees)' },
-      { name: 'Bachelor of Pharmacy [B.Pharm]', duration: '4 Years', fees: '₹1.10 Lakhs (1st Year Fees)' }
+coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹1.45 Lakhs (1st Year Fees)', specializations: ['Computer Science and Engineering', 'CSE - Artificial Intelligence', 'CSE - Artificial Intelligence and Machine Learning', 'CSE - Artificial Intelligence & Analytics', 'CSE - Data Science', 'CSE - Cyber Security', 'CSE - Internet of Things', 'CSE - Networks', 'Computer Science and Business Systems (CSBS)', 'Information Technology', 'Robotics and Automation', 'Automobile Engineering (Electric Vehicle)', 'Electronics & Communication Engineering', 'ECE - VLSI & Packaging', 'ECE - Semiconductor Design', 'Electrical Engineering', 'Mechanical Engineering', 'Civil Engineering'] },
+      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: 'Varies', specializations: ['Computer Science and Engineering', 'Information Technology', 'Electronics and Communication', 'Electrical Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Nanotechnology'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹1.25 Lakhs (1st Year Fees)', specializations: ['Finance', 'Marketing', 'Human Resources', 'Business Analytics', 'Foreign Trade'] },
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: 'Varies', specializations: ['General', 'Business Analytics'] },
+      { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: '₹75,000 (1st Year Fees)', specializations: ['General', 'Artificial Intelligence', 'Cyber Security'] },
+      { name: 'Master of Computer Applications [MCA]', duration: '2 Years', fees: 'Varies', specializations: ['General', 'Artificial Intelligence', 'Data Science'] },
+      { name: 'Bachelor of Commerce [B.Com] (Hons.)', duration: '4 Years', fees: 'Varies', specializations: ['Plain', 'Global Finance with ACCA', 'Chartered Financial Analyst'] },
+      { name: 'Bachelor of Pharmacy [B.Pharm]', duration: '4 Years', fees: '₹1.10 Lakhs (1st Year Fees)' },
+      { name: 'Master of Pharmacy [M.Pharm]', duration: '2 Years', fees: 'Varies' },
+      { name: 'Bachelor of Science [B.Sc] / B.Sc (Hons.)', duration: '3-4 Years', fees: 'Varies', specializations: ['Agriculture', 'Biotechnology', 'Computer Science', 'Forensic Science', 'Medical Laboratory Technology (MLT)', 'Anaesthesia & Operation Theatre Technology', 'Cardiovascular Technology', 'Respiratory Technology'] },
+      { name: 'B.A. LL.B. (Hons.) / B.B.A. LL.B. (Hons.) / LL.B. (Hons.)', duration: '3-5 Years', fees: 'Varies' },
+      { name: 'Ph.D', duration: '3 Years', fees: 'Varies', specializations: ['Engineering', 'Computer Applications', 'Commerce', 'Management', 'Sciences'] }
     ],
     placements: {
       highest: 'INR 48.00 LPA',
@@ -848,10 +947,15 @@ export const INDORE_INSTITUTES: Institute[] = [
       'MBA 2026 application window is currently active for specialized streams including Food & Agri-Business and E-Commerce.',
       'Active international academic partnership with prestigious business schools in the US and Europe.'
     ],
-    coursesList: [
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹6.00 Lakhs (1st Year Fees)', specializations: ['Business Analytics', 'E-Commerce', 'Food & Agri-Business', 'Financial Technology', 'International Business'] },
-      { name: 'Bachelor of Business Administration [BBA] (Hons.)', duration: '3 Years', fees: '₹2.50 Lakhs (1st Year Fees)' },
-      { name: 'B.Tech (Computer Science Engineering)', duration: '4 Years', fees: '₹1.80 Lakhs (1st Year Fees)' }
+coursesList: [
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹6.00 Lakhs (1st Year Fees)', specializations: ['Business Analytics', 'E-Commerce', 'Food & Agri-Business', 'Financial Technology', 'International Business', 'Finance', 'Marketing', 'Operations Management', 'Entrepreneurship', 'Human Resource Management'] },
+      { name: 'Executive Master\'s Program [XMP - Weekend MBA]', duration: '2 Years', fees: 'Varies', specializations: ['Strategic Leadership', 'BFSI', 'Analytics', 'Manufacturing'] },
+      { name: '5-Year Integrated Master\'s Program [IMP - Management]', duration: '5 Years', fees: 'Varies', specializations: ['BBA + MBA', 'BBA + M.Sc (Data Science)'] },
+      { name: '5-Year Integrated Master\'s Program [IMP - Computing]', duration: '5 Years', fees: 'Varies', specializations: ['BCA + M.Sc (Data Science)', 'BCA + MBA', 'B.Sc (Mathematics & Computing) + M.Sc (Data Science)', 'B.Sc (Math & Computing) + MBA', 'B.Tech (Computer Science) + M.Sc (Data Science)', 'B.Tech (Computer Science) + MBA'] },
+      { name: 'Bachelor of Business Administration [BBA] (Hons.)', duration: '3-4 Years', fees: '₹2.50 Lakhs (1st Year Fees)' },
+      { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: 'Varies' },
+      { name: 'Bachelor of Science [B.Sc]', duration: '3 Years', fees: 'Varies', specializations: ['Economics', 'Mathematics & Computing'] },
+      { name: 'B.Tech (Computer Science Engineering)', duration: '4 Years', fees: '₹1.80 Lakhs (1st Year Fees)', specializations: ['Artificial Intelligence & Machine Learning', 'Data Science'] }
     ],
     placements: {
       highest: 'INR 18.00 LPA',
@@ -900,10 +1004,10 @@ export const INDORE_INSTITUTES: Institute[] = [
       'RCCM admissions 2026 for B.Com, BBA, BA (Journalism) and B.Sc are currently active.',
       'Active student grooming initiatives like Renaissance Gurukul and National Youth Parliaments have commenced.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Commerce [B.Com] (Hons.)', duration: '3 Years', fees: '₹75,000 (1st Year Fees)', specializations: ['Plain', 'Taxation', 'Computer Application'] },
-      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹85,000 (1st Year Fees)' },
-      { name: 'Bachelor of Arts [BA]', duration: '3 Years', fees: '₹50,000 (1st Year Fees)', specializations: ['Mass Communication', 'Psychology', 'Economics'] },
+coursesList: [
+      { name: 'Bachelor of Commerce [B.Com] / B.Com (Hons.)', duration: '3-4 Years', fees: '₹75,000 (1st Year Fees)', specializations: ['Plain', 'Honours', 'Computer Application', 'Taxation', 'Management', 'Foreign Trade', 'B.Com + Business Analytics Certification'] },
+      { name: 'Bachelor of Business Administration [BBA] / BBA (Hons.)', duration: '3-4 Years', fees: '₹85,000 (1st Year Fees)', specializations: ['General', 'Finance', 'Marketing', 'Human Resource Management', 'Foreign Trade'] },
+      { name: 'Bachelor of Arts [BA] / BA (Hons.)', duration: '3-4 Years', fees: '₹50,000 (1st Year Fees)', specializations: ['Journalism & Mass Communication', 'Psychology', 'Economics'] },
       { name: 'Bachelor of Science [B.Sc]', duration: '3 Years', fees: '₹55,000 (1st Year Fees)', specializations: ['Computer Science', 'Biotechnology'] }
     ],
     placements: {
@@ -953,11 +1057,16 @@ export const INDORE_INSTITUTES: Institute[] = [
       'PIMR is accredited with NAAC A++ Grade, making it one of the elite private management colleges in Central India.',
       'Placements for the 2026 batch are currently active with more than 150 recruiters visiting the campus.'
     ],
-    coursesList: [
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹1,50,000 (1st Year Fees)', specializations: ['General', 'Marketing', 'Finance', 'Human Resources', 'International Business', 'Advertising & PR'] },
-      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹1,18,000 (1st Year Fees)' },
-      { name: 'BALLB {Hons.} / BBALLB {Hons.}', duration: '5 Years', fees: '₹1,10,000 (1st Year Fees)' },
-      { name: 'Bachelor of Commerce [B.Com] (Hons.)', duration: '3 Years', fees: '₹85,000 (1st Year Fees)' }
+coursesList: [
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹1,50,000 (1st Year Fees)', specializations: ['Full-Time (Core / Dual Specialization)', 'Marketing Management', 'Financial Administration', 'International Business', 'Personnel Administration (HR)', 'Advertising & Public Relations', 'Business Analytics'] },
+      { name: 'Bachelor of Business Administration [BBA] / BBA (Hons.)', duration: '3-4 Years', fees: '₹1,18,000 (1st Year Fees)', specializations: ['General Management', 'Foreign Trade', 'Hotel Management'] },
+      { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: 'Varies' },
+      { name: 'Bachelor of Commerce [B.Com] (Hons.)', duration: '3 Years', fees: '₹85,000 (1st Year Fees)' },
+      { name: 'Bachelor of Arts in Journalism and Mass Communication [BAJMC]', duration: '3 Years', fees: 'Varies' },
+      { name: 'Master of Mass Communication [MMC]', duration: '2 Years', fees: 'Varies' },
+      { name: 'B.A. LL.B. (Hons.) / B.B.A. LL.B. (Hons.) / B.Com. LL.B. (Hons.)', duration: '5 Years', fees: '₹1,10,000 (1st Year Fees)' },
+      { name: 'Bachelor of Laws [LL.B. (Hons.)]', duration: '3 Years', fees: 'Varies' },
+      { name: 'Master of Laws [LL.M.]', duration: '2 Years', fees: 'Varies', specializations: ['Business Law', 'Criminal Law'] }
     ],
     placements: {
       highest: 'INR 14.00 LPA',
@@ -1004,9 +1113,9 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Registrations for NMIMS-CET 2026 are currently active for B.Tech and Integrated B.Tech+MBA programs.',
       'Active industry collaboration featuring joint certification with tech leaders like IBM.'
     ],
-    coursesList: [
+coursesList: [
       { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹2,12,000 (1st Year Fees)', specializations: ['Computer Engineering', 'Artificial Intelligence & Data Science'] },
-      { name: 'B.Tech + MBA Integrated (Tech Management)', duration: '5 Years', fees: '₹2,85,000 (1st Year Fees)', specializations: ['Computer Engineering', 'Information Technology'] }
+      { name: 'MBA Tech (B.Tech + MBA Integrated)', duration: '5 Years', fees: '₹2,85,000 (1st Year Fees)', specializations: ['Computer Engineering'] }
     ],
     placements: {
       highest: 'INR 10.50 LPA',
@@ -1052,10 +1161,11 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Admissions are open for B.Tech and MBA streams for the upcoming 2026-27 academic session.',
       'Active industrial collaboration programs with local SME hubs in Pithampur sector.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹62,000 (1st Year Fees)', specializations: ['Computer Science and Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Electronics & Communication', 'Electrical & Electronics'] },
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹55,000 (1st Year Fees)', specializations: ['Marketing', 'Finance', 'HR'] },
-      { name: 'Diploma in Engineering (Polytechnic)', duration: '3 Years', fees: '₹28,000 (1st Year Fees)' }
+coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹62,000 (1st Year Fees)', specializations: ['Computer Science and Engineering', 'Artificial Intelligence & Data Science', 'Mechanical Engineering', 'Civil Engineering', 'Electronics & Communication Engineering', 'Electrical & Electronics Engineering'] },
+      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: 'Varies', specializations: ['Computer Science and Engineering', 'Thermal Engineering', 'Structural Engineering'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹55,000 (1st Year Fees)', specializations: ['Marketing', 'Finance', 'Human Resources'] },
+      { name: 'Diploma in Engineering (Polytechnic)', duration: '3 Years', fees: '₹28,000 (1st Year Fees)', specializations: ['Mechanical Engineering', 'Civil Engineering', 'Computer Science and Engineering', 'Electrical Engineering'] }
     ],
     placements: {
       highest: 'INR 6.00 LPA',
@@ -1104,11 +1214,18 @@ export const INDORE_INSTITUTES: Institute[] = [
       'CDGI B.Tech admissions 2026-27 are currently open; scholarships are available for high board percentile scorers.',
       'Ranked among top engineering institutes in Central India by leading educational surveys.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹78,000 (1st Year Fees)', specializations: ['Computer Science and Engineering', 'Information Technology', 'Artificial Intelligence & Data Science', 'Mechanical Engineering', 'Civil Engineering'] },
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹72,000 (1st Year Fees)', specializations: ['Finance', 'Marketing', 'HR', 'System Management'] },
-      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹48,000 (1st Year Fees)' },
-      { name: 'Bachelor of Pharmacy [B.Pharm]', duration: '4 Years', fees: '₹82,000 (1st Year Fees)' }
+coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹78,000 (1st Year Fees)', specializations: ['Computer Science and Engineering', 'Information Technology', 'Artificial Intelligence & Data Science', 'Computer Science and Information Technology', 'Electronics & Communication Engineering', 'Mechanical Engineering', 'Civil Engineering'] },
+      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: 'Varies', specializations: ['Computer Science and Engineering'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹72,000 (1st Year Fees)', specializations: ['Full Time (FT)', 'Marketing Management (MM)', 'Financial Administration (FA)'] },
+      { name: 'Master of Computer Applications [MCA]', duration: '2 Years', fees: 'Varies' },
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹48,000 (1st Year Fees)', specializations: ['Plain', 'Foreign Trade'] },
+      { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: 'Varies' },
+      { name: 'B.Com.', duration: '3 Years', fees: 'Varies', specializations: ['Plain', 'Computer Applications', 'Taxation'] },
+      { name: 'Bachelor of Pharmacy [B.Pharm]', duration: '4 Years', fees: '₹82,000 (1st Year Fees)' },
+      { name: 'Diploma in Pharmacy [D.Pharm]', duration: '2 Years', fees: 'Varies' },
+      { name: 'Master of Pharmacy [M.Pharm]', duration: '2 Years', fees: 'Varies', specializations: ['Industrial Pharmacy', 'Pharmacology', 'Pharmaceutics'] },
+      { name: 'LL.B. (Hons.) / B.A. LL.B. (Hons.) / B.B.A. LL.B. (Hons.)', duration: '3-5 Years', fees: 'Varies' }
     ],
     placements: {
       highest: 'INR 12.50 LPA',
@@ -1157,8 +1274,13 @@ export const INDORE_INSTITUTES: Institute[] = [
       'IIST has launched specialized training programs in Cloud Computing, AI, and Salesforce integration for the 2026 session.',
       'B.Tech lateral entry admissions are currently active on the DTE MP counseling portal.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹95,000 (1st Year Fees)', specializations: ['Computer Science and Engineering', 'Information Technology', 'Artificial Intelligence & Machine Learning', 'Chemical Engineering', 'Mechanical Engineering', 'Electronics & Comm'] }
+coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹95,000 (1st Year Fees)', specializations: ['Computer Science and Engineering', 'Information Technology', 'Artificial Intelligence & Machine Learning', 'Computer Science and Engineering - Data Science', 'Robotics & Artificial Intelligence', 'Electronics and Computer Science', 'Electronics and Communication Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Civil Engineering with Computer Application'] },
+      { name: 'Master of Engineering / Master of Technology [M.E. / M.Tech]', duration: '2 Years', fees: 'Varies', specializations: ['Computer Science and Engineering', 'Artificial Intelligence and Machine Learning', 'Data Science'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: 'Varies', specializations: ['Marketing', 'Finance', 'Human Resource', 'Information Technology', 'Business Analytics', 'Production & Operations'] },
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: 'Varies', specializations: ['Plain', 'Foreign Trade'] },
+      { name: 'Bachelor of Commerce [B.Com]', duration: '3 Years', fees: 'Varies' },
+      { name: 'Bachelor of Pharmacy [B.Pharm] / M.Pharm / Pharm.D', duration: '2-6 Years', fees: 'Varies' }
     ],
     placements: {
       highest: 'INR 15.00 LPA',
@@ -1209,9 +1331,13 @@ export const INDORE_INSTITUTES: Institute[] = [
       'JEE Main 2026 Cutoff Round 1 rank for gender-neutral general category at CSE closed at 42600.',
       'DTE MP counseling windows for ME/MTech programs are scheduled to start shortly.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Engineering [B.E. / B.Tech]', duration: '4 Years', fees: '₹85,000 (1st Year Fees)', specializations: ['Computer Engineering', 'Information Technology', 'Electronics & Telecommunication', 'Electronics & Instrumentation', 'Mechanical Engineering', 'Civil Engineering'] },
-      { name: 'Master of Engineering [M.E. / M.Tech]', duration: '2 Years', fees: '₹75,000 (1st Year Fees)', specializations: ['Software Engineering', 'Information Security', 'Digital Communications', 'Industrial Engg & Management'] }
+coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹85,000 (1st Year Fees)', specializations: ['Computer Science & Engineering', 'Information Technology', 'Computer Science & Business Systems', 'Electronics & Telecommunication Engineering', 'Electronics & Instrumentation Engineering', 'Electrical & Electronics Engineering', 'Mechanical Engineering', 'Industrial & Production Engineering', 'Civil Engineering'] },
+      { name: 'B.Tech (Part-Time / PTDC)', duration: '4 Years', fees: 'Varies', specializations: ['Mechanical Engineering'] },
+      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: 'Varies', specializations: ['Computer Engineering (Software Engineering)', 'Information Technology (Information Security)', 'Electronics (Digital Communication)', 'Electronics (IoT and Automation)', 'Electronics & Instrumentation (Digital Instrumentation)', 'Microelectronics & VLSI Design', 'Mechanical Engineering (Design and Thermal)', 'Industrial Engineering & Management'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: 'Varies', specializations: ['Technology Management'] },
+      { name: 'Master of Science [M.Sc]', duration: '2 Years', fees: 'Varies', specializations: ['Applied Mathematics (Computing & Informatics)'] },
+      { name: 'Bachelor of Design [B.Des]', duration: '4 Years', fees: 'Varies', specializations: ['Product Design'] }
     ],
     placements: {
       highest: 'INR 28.00 LPA',
@@ -1262,9 +1388,9 @@ export const INDORE_INSTITUTES: Institute[] = [
       'IPS Academy B.Tech admissions 2026 are currently active for core, IT, and Fire Technology branches.',
       'Ranked among the premier private engineering institutions in Central India for industry readiness.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹1,25,000 (1st Year Fees)', specializations: ['Fire Technology and Safety', 'Computer Science and Engineering', 'Civil Engineering', 'Mechanical Engineering', 'Electronics & Comm'] },
-      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: '₹85,000 (1st Year Fees)', specializations: ['Structural Engineering', 'Industrial Safety', 'Power Electronics'] }
+coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹1,25,000 (1st Year Fees)', specializations: ['Computer Science Engineering', 'Computer Science and Information Technology', 'Computer Science & Engineering (AI & ML)', 'Computer Science and Engineering (Data Science)', 'Computer Science and Engineering (IoT)', 'Computer Science and Engineering (IoT & Cyber Sec. Incl. Block Chain)', 'Computer Science and Engineering (Regional Language)', 'Fire Technology & Safety Engineering', 'Electronics and Communication Engineering', 'Electrical and Electronics Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Chemical Engineering', 'Working Professional - Civil / Mechanical / Electrical & Electronics Engineering'] },
+      { name: 'Master of Technology / Master of Engineering [M.E. / M.Tech]', duration: '2 Years', fees: '₹85,000 (1st Year Fees)', specializations: ['Computer Science & Engineering', 'Civil Engineering', 'Fire Technology & Safety Engineering', 'Industrial Safety Engineering', 'Structural Engineering', 'Electronics & Telecommunication Engineering', 'Electrical Engineering', 'Chemical Engineering', 'Robotics', 'Working Professional - Industrial Safety / Structural Engineering'] }
     ],
     placements: {
       highest: 'INR 18.00 LPA',
@@ -1312,8 +1438,11 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Admission registrations for the 2026-27 session are now active on the central LNCT portal.',
       'Special coding bootcamps have been introduced for third-year engineering students.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹82,000 (1st Year Fees)', specializations: ['Computer Science and Engineering', 'Information Technology', 'Civil Engineering', 'Mechanical Engineering', 'Electronics & Comm'] }
+coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹82,000 (1st Year Fees)', specializations: ['Computer Science & Engineering', 'Information Technology', 'Artificial Intelligence & Data Science', 'Electronics & Communication Engineering', 'Mechanical Engineering', 'Civil Engineering'] },
+      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: 'Varies', specializations: ['Computer Science & Engineering', 'Power Systems Engineering'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: 'Varies', specializations: ['Marketing', 'Finance', 'HR', 'Operations', 'IT'] },
+      { name: 'Diploma in Engineering (Polytechnic)', duration: '3 Years', fees: 'Varies', specializations: ['Mechanical Engineering'] }
     ],
     placements: {
       highest: 'INR 11.00 LPA',
@@ -1360,9 +1489,11 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Registration forms for technical and management courses for the 2026-27 batch are open.',
       'Active placement workshops with industry leaders in IT and manufacturing sector are underway.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹80,000 (1st Year Fees)', specializations: ['Computer Science and Engineering', 'Information Technology', 'Civil Engineering', 'Mechanical Engineering'] },
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹68,000 (1st Year Fees)', specializations: ['Marketing', 'Finance', 'HR'] }
+coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹80,000 (1st Year Fees)', specializations: ['Computer Science & Engineering', 'AI & Machine Learning', 'Data Science', 'Electronics & Communication', 'Electrical Engineering', 'Mechanical Engineering'] },
+      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: 'Varies', specializations: ['Computer Science & Engineering', 'Data Science', 'Power System'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹68,000 (1st Year Fees)', specializations: ['Finance', 'Marketing', 'Human Resources', 'Operations', 'Business Analytics', 'Entrepreneurship'] },
+      { name: 'Diploma in Engineering (Polytechnic)', duration: '3 Years', fees: 'Varies', specializations: ['Mechanical Engineering', 'Electrical Engineering'] }
     ],
     placements: {
       highest: 'INR 11.20 LPA',
@@ -1411,9 +1542,13 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Registrations for PCST engineering and diploma courses are now open for the 2026 academic year.',
       'Special scholarship benefits are being extended for girl students across all technical divisions.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹68,000 (1st Year Fees)', specializations: ['Computer Science and Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Electronics & Comm'] },
-      { name: 'Diploma in Engineering (Polytechnic)', duration: '3 Years', fees: '₹28,000 (1st Year Fees)', specializations: ['Civil Engineering', 'Mechanical Engineering'] }
+coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹68,000 (1st Year Fees)', specializations: ['Computer Science Engineering', 'Computer Science Engineering (Artificial Intelligence & Machine Learning)', 'Computer Science Engineering (Internet of Things and Cyber Security)', 'Electronics and Communication Engineering', 'Fire Technology and Safety Engineering', 'Mechanical Engineering', 'Civil Engineering'] },
+      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: 'Varies', specializations: ['Computer Science Engineering', 'Information Technology', 'Industrial Safety Engineering', 'Software Systems', 'Structural Engineering', 'Thermal Engineering', 'Transportation Engineering', 'VLSI (Very Large-Scale Integration)'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: 'Varies', specializations: ['Business Analytics', 'Financial Management', 'Human Resources Management', 'Information Technology', 'Marketing Management', 'Production and Operation Management'] },
+      { name: 'Master of Computer Applications [MCA]', duration: '2 Years', fees: 'Varies' },
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: 'Varies' },
+      { name: 'Diploma in Engineering (Polytechnic)', duration: '3 Years', fees: '₹28,000 (1st Year Fees)', specializations: ['Computer Science Engineering', 'Civil Engineering', 'Mechanical Engineering', 'Electrical Engineering', 'Chemical Engineering', 'Mining and Mine Surveying Engineering'] }
     ],
     placements: {
       highest: 'INR 7.50 LPA',
@@ -1463,8 +1598,9 @@ export const INDORE_INSTITUTES: Institute[] = [
       'PIEMR B.Tech admissions 2026 are active; specializations in AI and Cyber Security are highly popular.',
       'The campus placement drive has started, with premium tech companies scheduling recruitment rounds.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹1,10,000 (1st Year Fees)', specializations: ['Computer Science and Engineering', 'Artificial Intelligence & Data Science', 'Automation & Robotics', 'Electronics & Comm'] }
+coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹1,10,000 (1st Year Fees)', specializations: ['Computer Science & Engineering', 'AI & Data Science Engineering', 'CSE (IoT - Cyber Security including Blockchain Technology)', 'Automation & Robotics', 'Electronics & Communication Engineering', 'Electrical Engineering', 'Mechanical Engineering', 'Civil Engineering'] },
+      { name: 'Master of Technology [M.Tech]', duration: '2 Years', fees: 'Varies', specializations: ['Computer Science & Engineering', 'Automation & Robotics', 'Artificial Intelligence & Data Science'] }
     ],
     placements: {
       highest: 'INR 14.50 LPA',
@@ -1511,8 +1647,9 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Admission counselling schedules for diploma programs 2026 are published on the DTE MP portal.',
       'Modern electrical vehicle (EV) repair lab is being integrated into mechanical and electrical wings.'
     ],
-    coursesList: [
-      { name: 'Diploma in Engineering (Polytechnic)', duration: '3 Years', fees: '₹25,000 (1st Year Fees)', specializations: ['Mechanical Engineering', 'Civil Engineering', 'Electrical Engineering', 'Electronics', 'Computer Science'] }
+coursesList: [
+      { name: 'Diploma in Engineering (Polytechnic)', duration: '3 Years', fees: '₹25,000 (1st Year Fees)', specializations: ['Computer Science', 'Mechanical Engineering', 'Civil Engineering', 'Electrical Engineering', 'Electronics', 'Opto Electronics', 'Automobile Engineering', 'Production Engineering', 'Textile Technology', 'Ophthalmic Technology'] },
+      { name: 'Part Time Diploma (PTDC)', duration: '4 Years', fees: 'Varies', specializations: ['Civil Engineering', 'Mechanical Engineering', 'Electrical Engineering'] }
     ],
     placements: {
       highest: 'INR 5.50 LPA',
@@ -1559,10 +1696,11 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Registrations for MBA programs 2026 are open; dual-specializations are highly sought after by corporate aspirants.',
       'The career cell has initiated corporate soft skills and analytical grooming camps for management graduates.'
     ],
-    coursesList: [
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹1,35,000 (1st Year Fees)', specializations: ['Marketing', 'Finance', 'Human Resources', 'International Business', 'Systems', 'Hospital Administration'] },
-      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹75,000 (1st Year Fees)' },
-      { name: 'Bachelor of Commerce [B.Com] (Hons.)', duration: '3 Years', fees: '₹55,000 (1st Year Fees)' }
+coursesList: [
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹1,35,000 (1st Year Fees)', specializations: ['Core (Dual Specialization: Marketing, Finance, HRM, Productions/Operations, Systems/IT, Data Analytics)', 'Marketing Management', 'Financial Administration', 'International Business'] },
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹75,000 (1st Year Fees)', specializations: ['Plain', 'Foreign Trade'] },
+      { name: 'Bachelor of Arts [B.A.]', duration: '3 Years', fees: 'Varies', specializations: ['Economics'] },
+      { name: 'Doctor of Philosophy [Ph.D]', duration: '3 Years', fees: 'Varies', specializations: ['Management', 'Economics'] }
     ],
     placements: {
       highest: 'INR 14.00 LPA',
@@ -1611,9 +1749,11 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Admissions 2026-27 for 2-year MBA and 5-year Integrated MBA are scheduled on CUET PG counseling schedule.',
       'Ranked among the premier public management institutes in the country by leading business surveys.'
     ],
-    coursesList: [
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹95,000 (1st Year Fees)', specializations: ['E-Commerce', 'Financial Administration', 'Marketing Management', 'Human Resource', 'Hospital Administration', 'Disaster Management'] },
-      { name: 'Integrated MBA (MS)', duration: '5 Years', fees: '₹85,000 (1st Year Fees)' }
+coursesList: [
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹95,000 (1st Year Fees)', specializations: ['Full Time', 'Financial Administration', 'Marketing Management', 'Human Resource', 'E-Commerce', 'Hospital Administration', 'Disaster Management', 'Public Health'] },
+      { name: 'MBA (Executive)', duration: '2 Years', fees: 'Varies' },
+      { name: 'Integrated MBA', duration: '5 Years', fees: '₹85,000 (1st Year Fees)', specializations: ['E-Commerce', 'Hospital Administration'] },
+      { name: 'Doctor of Philosophy [Ph.D]', duration: '3 Years', fees: 'Varies', specializations: ['Management'] }
     ],
     placements: {
       highest: 'INR 18.00 LPA',
@@ -1649,10 +1789,14 @@ export const INDORE_INSTITUTES: Institute[] = [
     facilities: [],
     establishedYear: 0,
     coordinates: { lat: 22.7196, lng: 75.8577 },
-    coursesList: [
+coursesList: [
       { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: 'Contact institute for current fees' },
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: 'Contact institute for current fees' }
-    ]
+      { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: 'Contact institute for current fees' },
+      { name: 'Bachelor of Science [B.Sc]', duration: '3 Years', fees: 'Contact institute for current fees', specializations: ['Computer Science', 'Information Technology'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: 'Contact institute for current fees', specializations: ['Marketing Management', 'Financial Management', 'Human Resource Management', 'Systems / IT', 'Production & Operations'] },
+      { name: 'Master of Computer Applications [MCA]', duration: '2 Years', fees: 'Contact institute for current fees' },
+      { name: 'Master of Science [M.Sc]', duration: '2 Years', fees: 'Contact institute for current fees', specializations: ['Computer Science'] }
+    ],
   },
   {
     id: 'gsimr',
@@ -1669,10 +1813,9 @@ export const INDORE_INSTITUTES: Institute[] = [
     facilities: [],
     establishedYear: 0,
     coordinates: { lat: 22.7196, lng: 75.8577 },
-    coursesList: [
-      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: 'Contact institute for current fees' },
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: 'Contact institute for current fees' }
-    ]
+coursesList: [
+      { name: 'Master of Business Administration [MBA] Core (Full Time - Dual Specialization)', duration: '2 Years', fees: 'Contact institute for current fees', specializations: ['Financial Management', 'Marketing Management', 'Human Resource Management', 'Information Technology', 'Production and Operations Management', 'Business Analytics'] }
+    ],
   },
   {
     id: 'iips-davv',
@@ -1689,10 +1832,14 @@ export const INDORE_INSTITUTES: Institute[] = [
     facilities: [],
     establishedYear: 0,
     coordinates: { lat: 22.7129, lng: 75.8729 },
-    coursesList: [
-      { name: 'Integrated Management Programme', duration: '5 Years', fees: 'Contact institute for current fees' },
-      { name: 'Management Programme', duration: 'As per programme', fees: 'Contact institute for current fees' }
-    ]
+coursesList: [
+      { name: 'Integrated MBA (Management Science)', duration: '5 Years', fees: 'Contact institute for current fees' },
+      { name: 'Integrated MCA', duration: '5 Years', fees: 'Contact institute for current fees' },
+      { name: 'Integrated M.Tech', duration: '5 Years', fees: 'Contact institute for current fees', specializations: ['Computer Science (CS)', 'Information Technology (IT)'] },
+      { name: 'Bachelor of Commerce [B.Com. / B.Com. (Hons.)]', duration: '3-4 Years', fees: 'Contact institute for current fees' },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: 'Contact institute for current fees', specializations: ['Management Science (MS)', 'Advertising & Public Relations (APR)', 'Tourism (T)', 'Entrepreneurship'] },
+      { name: 'Doctor of Philosophy [Ph.D]', duration: '3 Years', fees: 'Contact institute for current fees', specializations: ['Management', 'Computer Science'] }
+    ],
   },
   {
     id: 'jaipuria-indore',
@@ -1722,8 +1869,9 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Jaipuria PGDM 2026 admissions are open; scholarship slabs are available for high national percentile scorers.',
       'Consistently ranked among the top 100 management institutes in India by NIRF.'
     ],
-    coursesList: [
-      { name: 'Post Graduate Diploma in Management [PGDM]', duration: '2 Years', fees: '₹3,80,000 (1st Year Fees)', specializations: ['General Management', 'Financial Services', 'Marketing', 'Retail Management'] }
+coursesList: [
+      { name: 'Post Graduate Diploma in Management [PGDM] (AIU Recognised Equivalent to MBA)', duration: '2 Years', fees: '₹3,80,000 (1st Year Fees)', specializations: ['Finance', 'Marketing', 'Human Resource Management', 'Business Analytics', 'Operations Management', 'Information Technology'] },
+      { name: 'Fellow Programme in Management [FPM - Doctoral Level]', duration: '4 Years', fees: 'Varies' }
     ],
     placements: {
       highest: 'INR 19.10 LPA',
@@ -1770,9 +1918,9 @@ export const INDORE_INSTITUTES: Institute[] = [
       'NMIMS School of Law admissions for 2026 integrated BA LLB & BBA LLB programs are currently open.',
       'Active registration for national level Moot Court Competition has been declared.'
     ],
-    coursesList: [
-      { name: 'B.A. L.L.B. (Hons.)', duration: '5 Years', fees: '₹4,20,000 (1st Year Fees)' },
-      { name: 'B.B.A. L.L.B. (Hons.)', duration: '5 Years', fees: '₹4,20,000 (1st Year Fees)' }
+coursesList: [
+      { name: 'B.A., LL.B. (Hons.)', duration: '5 Years', fees: '₹4,20,000 (1st Year Fees)', specializations: ['Business Law Honours', 'Intellectual Property Law Honours', 'Crime & Criminology Honours', 'Constitutional Law Honours'] },
+      { name: 'B.B.A., LL.B. (Hons.)', duration: '5 Years', fees: '₹4,20,000 (1st Year Fees)', specializations: ['Business Law Honours', 'Intellectual Property Law Honours', 'Crime & Criminology Honours', 'Constitutional Law Honours'] }
     ],
     placements: {
       highest: 'INR 16.50 LPA',
@@ -1819,9 +1967,11 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Admissions for MBBS and PG Medical MD/MS courses for 2026-27 are open under NMC and MP State counseling guides.',
       'A new trauma center and advanced neuro-pathology lab were recently inaugurated on campus.'
     ],
-    coursesList: [
+coursesList: [
       { name: 'Bachelor of Medicine, Bachelor of Surgery [MBBS]', duration: '5.5 Years', fees: '₹13,50,000 (1st Year Fees)' },
-      { name: 'MD / MS (Post Graduation)', duration: '3 Years', fees: '₹15,00,000 (1st Year Fees)', specializations: ['Pediatrics', 'General Medicine', 'General Surgery', 'Orthopedics', 'Anesthesiology'] }
+      { name: 'Doctor of Medicine [MD]', duration: '3 Years', fees: '₹15,00,000 (1st Year Fees)', specializations: ['General Medicine', 'Paediatrics', 'Dermatology', 'Radio-Diagnosis', 'Anaesthesiology', 'Psychiatry', 'TB & Respiratory Medicine', 'Emergency Medicine', 'Pathology', 'Microbiology', 'Pharmacology', 'Biochemistry', 'Physiology', 'Anatomy', 'Community Medicine'] },
+      { name: 'Master of Surgery [MS]', duration: '3 Years', fees: '₹15,00,000 (1st Year Fees)', specializations: ['General Surgery', 'Orthopaedics', 'Obstetrics & Gynaecology', 'Ophthalmology', 'ENT (Otorhinolaryngology)'] },
+      { name: 'Super Specialty [DM / M.Ch.]', duration: '3 Years', fees: 'Varies', specializations: ['DM Cardiology', 'DM Nephrology', 'DM Endocrinology', 'M.Ch. Urology', 'M.Ch. Paediatric Surgery'] }
     ],
     placements: {
       highest: 'INR 24.00 LPA',
@@ -1868,9 +2018,11 @@ export const INDORE_INSTITUTES: Institute[] = [
       'NEET 2026 Round 1 state closing rank for MGM MBBS ended at extremely competitive merits.',
       'Research grants approved for community health projects in association with ICMR.'
     ],
-    coursesList: [
+coursesList: [
       { name: 'Bachelor of Medicine, Bachelor of Surgery [MBBS]', duration: '5.5 Years', fees: '₹1,20,000 (1st Year Fees)' },
-      { name: 'MD / MS (Post Graduation)', duration: '3 Years', fees: '₹1,05,000 (1st Year Fees)', specializations: ['Radio-diagnosis', 'General Medicine', 'General Surgery', 'Obstetrics & Gynecology', 'Pediatrics'] }
+      { name: 'Doctor of Medicine [MD]', duration: '3 Years', fees: '₹1,05,000 (1st Year Fees)', specializations: ['General Medicine', 'Paediatrics', 'Radio-Diagnosis', 'Dermatology (DVL)', 'Anaesthesiology', 'Psychiatry', 'Respiratory Medicine', 'Emergency Medicine', 'Pathology', 'Microbiology', 'Pharmacology', 'Biochemistry', 'Anatomy', 'Forensic Medicine', 'Community Medicine', 'Transfusion Medicine'] },
+      { name: 'Master of Surgery [MS]', duration: '3 Years', fees: '₹1,05,000 (1st Year Fees)', specializations: ['General Surgery', 'Orthopaedics', 'Obstetrics & Gynaecology', 'Ophthalmology', 'ENT (Otorhinolaryngology)'] },
+      { name: 'Super Specialty [DM / M.Ch.]', duration: '3 Years', fees: 'Varies', specializations: ['DM Cardiology', 'DM Neurology', 'DM Neonatology', 'DM Clinical Pharmacology', 'M.Ch. Neurosurgery', 'M.Ch. Paediatric Surgery'] }
     ],
     placements: {
       highest: 'INR 35.00 LPA',
@@ -1918,8 +2070,9 @@ export const INDORE_INSTITUTES: Institute[] = [
       'AYUSH NEET counselling dates for BAMS admissions 2026-27 are published; seats are available under State and All India quotas.',
       'Successfully organized national workshop on Panchkarma detoxification procedures.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Ayurvedic Medicine and Surgery [BAMS]', duration: '5.5 Years', fees: '₹2,20,000 (1st Year Fees)' }
+coursesList: [
+      { name: 'Bachelor of Ayurvedic Medicine and Surgery [BAMS]', duration: '5.5 Years', fees: '₹2,20,000 (1st Year Fees)' },
+      { name: 'Doctor of Medicine [M.D. (Ayurveda)]', duration: '3 Years', fees: 'Varies', specializations: ['Kayachikitsa', 'Panchakarma', 'Rasashastra & Bhaishajya Kalpana', 'Rognidan & Vikriti Vigyan', 'Samhita Siddhant'] }
     ],
     placements: {
       highest: 'INR 10.00 LPA',
@@ -1966,10 +2119,12 @@ export const INDORE_INSTITUTES: Institute[] = [
       'SAIMS super-specialty departments have introduced high-end robotic surgery simulation suites for clinical fellows.',
       'NEET PG state counseling registration window is active for medical aspirants.'
     ],
-    coursesList: [
+coursesList: [
       { name: 'Bachelor of Medicine, Bachelor of Surgery [MBBS]', duration: '5.5 Years', fees: '₹12,50,000 (1st Year Fees)' },
       { name: 'Bachelor of Dental Surgery [BDS]', duration: '5 Years', fees: '₹2,50,000 (1st Year Fees)' },
-      { name: 'MD / MS (Post Graduation)', duration: '3 Years', fees: '₹14,00,000 (1st Year Fees)', specializations: ['Pediatrics', 'Radiology', 'General Medicine', 'General Surgery', 'Orthopedics'] }
+      { name: 'Doctor of Medicine [MD]', duration: '3 Years', fees: '₹14,00,000 (1st Year Fees)', specializations: ['General Medicine', 'Pediatrics', 'Radio-Diagnosis', 'Radiation Oncology (Radio Therapy)', 'Dermatology', 'Anesthesiology', 'Emergency Medicine', 'Psychiatry', 'Respiratory Medicine', 'Palliative Medicine', 'Pathology', 'Microbiology', 'Pharmacology', 'Biochemistry', 'Physiology', 'Forensic Sciences', 'Community Medicine'] },
+      { name: 'Master of Surgery [MS]', duration: '3 Years', fees: '₹14,00,000 (1st Year Fees)', specializations: ['General Surgery', 'Orthopedics', 'Obstetrics & Gynecology', 'Ophthalmology', 'ENT', 'Anatomy'] },
+      { name: 'Super Specialty [DM / M.Ch.]', duration: '3 Years', fees: 'Varies', specializations: ['DM Gastroenterology', 'DM Cardiology', 'DM Neurology', 'DM Nephrology', 'DM Medical Oncology', 'M.Ch. Neurosurgery', 'M.Ch. Surgical Oncology', 'M.Ch. Urology', 'M.Ch. Paediatric Surgery'] }
     ],
     placements: {
       highest: 'INR 28.00 LPA',
@@ -2016,10 +2171,11 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Registrations for the winter session of PG and Diploma in Interior and Fashion design are currently active.',
       'Successfully concluded the Annual Fashion & Interior Runway Design Exhibition with leading regional architects.'
     ],
-    coursesList: [
+coursesList: [
       { name: 'B.Sc. in Interior Design', duration: '3 Years', fees: '₹1,30,000 (1st Year Fees)' },
       { name: 'B.Sc. in Fashion Design', duration: '3 Years', fees: '₹1,30,000 (1st Year Fees)' },
-      { name: 'Diploma in Interior & Space Design', duration: '1 Year', fees: '₹85,000 (1st Year Fees)' }
+      { name: 'PG / Diploma in Interior Design & Space Management', duration: '1 Year', fees: '₹85,000 (1st Year Fees)' },
+      { name: 'Diploma in Fashion Design & Boutique Management', duration: '1 Year', fees: 'Varies' }
     ],
     placements: {
       highest: 'INR 8.50 LPA',
@@ -2066,10 +2222,13 @@ export const INDORE_INSTITUTES: Institute[] = [
       'New batch registrations for Full-stack Web Development and Data Science are active.',
       'Partnered with 50+ multinational software houses for direct weekend placement hiring drives.'
     ],
-    coursesList: [
-      { name: 'Full-stack Software Engineering [MERN]', duration: '1 Year', fees: '₹95,000 (1st Year Fees)' },
-      { name: 'Data Science & Machine Learning Program', duration: '6 Months', fees: '₹65,000 (1st Year Fees)' },
-      { name: 'AWS Cloud Architecture Certification', duration: '3 Months', fees: '₹35,000 (1st Year Fees)' }
+coursesList: [
+      { name: 'Full-stack Software Engineering [MERN Stack]', duration: '1 Year', fees: '₹95,000 (1st Year Fees)' },
+      { name: 'Data Science & Machine Learning (with Generative AI)', duration: '6 Months', fees: '₹65,000 (1st Year Fees)' },
+      { name: 'Data Analytics & Business Analytics (Power BI / SQL)', duration: '6 Months', fees: 'Varies' },
+      { name: 'Artificial Intelligence & Agentic AI Program', duration: '6 Months', fees: 'Varies' },
+      { name: 'AWS Cloud Architecture & DevOps Certification', duration: '3 Months', fees: '₹35,000 (1st Year Fees)' },
+      { name: 'UI/UX & Graphic Design Course', duration: '4 Months', fees: 'Varies' }
     ],
     placements: {
       highest: 'INR 15.00 LPA',
@@ -2116,10 +2275,10 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Admissions for B.Mus and classical diploma programs for 2026 are active; application forms can be collected from Palasia office.',
       'Announced scheduling of annual classical music concert featuring eminent state music scholars.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Music [B.Mus.]', duration: '3 Years', fees: '₹12,000 (1st Year Fees)', specializations: ['Vocal', 'Sitar', 'Tabla', 'Harmonium'] },
-      { name: 'Master of Music [M.Mus.]', duration: '2 Years', fees: '₹15,000 (1st Year Fees)' },
-      { name: 'Diploma in Classical Dance (Kathak)', duration: '2 Years', fees: '₹8,000 (1st Year Fees)' }
+coursesList: [
+      { name: 'Bachelor of Music / Performing Arts [B.Mus. / B.P.A.]', duration: '3 Years', fees: '₹12,000 (1st Year Fees)', specializations: ['Vocal', 'Sitar', 'Tabla', 'Violin', 'Harmonium', 'Kathak Dance'] },
+      { name: 'Master of Music / Performing Arts [M.Mus. / M.P.A.]', duration: '2 Years', fees: '₹15,000 (1st Year Fees)', specializations: ['Vocal', 'Sitar', 'Tabla', 'Violin', 'Kathak Dance'] },
+      { name: 'Diploma in Classical Music & Dance', duration: '2 Years', fees: '₹8,000 (1st Year Fees)', specializations: ['Kathak', 'Vocal', 'Instrumental'] }
     ],
     placements: {
       highest: 'INR 6.00 LPA',
@@ -2166,9 +2325,9 @@ export const INDORE_INSTITUTES: Institute[] = [
       'B.Tech admissions for academic year 2026 are currently open.',
       'MIT has signed a new partnership with local IT firms to enhance training.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹72,000 (1st Year Fees)', specializations: ['CS', 'IT', 'EC', 'ME', 'CE'] },
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹60,000 (1st Year Fees)' }
+coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 Years', fees: '₹72,000 (1st Year Fees)', specializations: ['Computer Science and Engineering', 'Information Technology', 'Artificial Intelligence & Machine Learning', 'Electronics and Communication Engineering', 'Electrical and Electronics Engineering', 'Mechanical Engineering', 'Automobile Engineering', 'Civil Engineering'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹60,000 (1st Year Fees)', specializations: ['Marketing', 'Finance', 'Human Resources'] }
     ],
     placements: {
       highest: 'INR 12.00 LPA',
@@ -2215,10 +2374,13 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Admissions active for BA, BBA, B.Com, and B.Sc streams for the 2026 academic session.',
       'Active career incubation programs and campus placement drives underway.'
     ],
-    coursesList: [
+coursesList: [
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹65,000 (1st Year Fees)', specializations: ['Marketing', 'Finance', 'Human Resource Management'] },
+      { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: 'Varies', specializations: ['Computer Applications', 'Software & Web Development'] },
+      { name: 'Bachelor of Commerce [B.Com]', duration: '3 Years', fees: 'Varies', specializations: ['Plain', 'Computer Applications', 'Taxation', 'Foreign Trade'] },
+      { name: 'Bachelor of Science [B.Sc]', duration: '3 Years', fees: '₹55,000 (1st Year Fees)', specializations: ['Biotechnology', 'Computer Science', 'Information Technology'] },
       { name: 'Bachelor of Arts [BA]', duration: '3 Years', fees: '₹45,000 (1st Year Fees)', specializations: ['Psychology', 'Economics', 'English Literature', 'Political Science'] },
-      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹65,000 (1st Year Fees)' },
-      { name: 'Bachelor of Science [B.Sc]', duration: '3 Years', fees: '₹55,000 (1st Year Fees)', specializations: ['Biotechnology', 'Computer Science'] }
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: 'Varies' }
     ],
     placements: {
       highest: 'INR 8.50 LPA',
@@ -2265,10 +2427,11 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Admissions open for BA, B.Com, and BBA batches for 2026-27 with scholarship incentives.',
       'Affordable fee structures with installment facilities for local and regional students.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Arts [BA]', duration: '3 Years', fees: '₹35,000 (1st Year Fees)', specializations: ['Sociology', 'Political Science', 'History', 'Hindi Literature', 'English'] },
-      { name: 'Bachelor of Commerce [B.Com]', duration: '3 Years', fees: '₹38,000 (1st Year Fees)' },
-      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹48,000 (1st Year Fees)' }
+coursesList: [
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹48,000 (1st Year Fees)', specializations: ['Plain', 'Finance', 'Marketing & Sales', 'Human Resource', 'Banking & Insurance', 'Entrepreneurship Development'] },
+      { name: 'Bachelor of Commerce [B.Com]', duration: '3 Years', fees: '₹38,000 (1st Year Fees)', specializations: ['Plain', 'Tax Procedure & Practice (TP)', 'Computer Application (CA)', 'Foreign Trade (FT)'] },
+      { name: 'Master of Social Work [MSW]', duration: '2 Years', fees: 'Varies', specializations: ['Human Resources Management', 'Hospital Administration', 'Family & Child Welfare', 'Rural & Urban Community Development', 'Medical & Psychiatric Social Work'] },
+      { name: 'Post Graduate Diploma in Computer Application [PGDCA]', duration: '1 Year', fees: 'Varies' }
     ],
     placements: {
       highest: 'INR 6.00 LPA',
@@ -2315,11 +2478,14 @@ export const INDORE_INSTITUTES: Institute[] = [
       'MP e-Pravesh counseling registrations open for BA, B.Com, and MA admissions 2026.',
       'Civil Services examination preparation circles and free coaching guidance actively running.'
     ],
-    coursesList: [
+coursesList: [
+      { name: 'Bachelor of Arts [BA]', duration: '3 Years', fees: '₹12,000 (1st Year Fees)', specializations: ['General (Economics, Political Science, Sociology, History, Geography, Marathi, English Literature, Psychology, Hindi Literature, Sanskrit Literature, Philosophy)', 'Computer Application'] },
+      { name: 'Bachelor of Commerce [B.Com]', duration: '3 Years', fees: '₹14,000 (1st Year Fees)', specializations: ['General', 'Tax Procedure & Practice', 'Advertisement Management', 'Computer Application', 'Foreign Trade', 'Office Management'] },
       { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹18,000 (1st Year Fees)' },
-      { name: 'Bachelor of Arts [BA]', duration: '3 Years', fees: '₹12,000 (1st Year Fees)', specializations: ['Economics', 'History', 'Political Science', 'Sociology', 'Hindi Literature', 'English Literature', 'Geography', 'Philosophy', 'Psychology'] },
-      { name: 'Bachelor of Commerce [B.Com]', duration: '3 Years', fees: '₹14,000 (1st Year Fees)' },
-      { name: 'Master of Arts [MA]', duration: '2 Years', fees: '₹10,000 (1st Year Fees)' }
+      { name: 'Bachelor of Social Work [BSW]', duration: '3 Years', fees: 'Varies' },
+      { name: 'Bachelor of Journalism [BJ]', duration: '3 Years', fees: 'Varies' },
+      { name: 'Master of Arts [MA]', duration: '2 Years', fees: '₹10,000 (1st Year Fees)' },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: 'Varies' }
     ],
     placements: {
       highest: 'INR 6.50 LPA',
@@ -2367,10 +2533,13 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Admissions underway for BA, BBA, B.Com, and professional certification modules 2026.',
       'Active placement and internship tie-ups with leading local enterprises.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Arts [BA]', duration: '3 Years', fees: '₹40,000 (1st Year Fees)', specializations: ['Journalism', 'Psychology', 'Public Administration', 'Sociology'] },
-      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹60,000 (1st Year Fees)' },
-      { name: 'Bachelor of Commerce [B.Com]', duration: '3 Years', fees: '₹45,000 (1st Year Fees)' }
+coursesList: [
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹60,000 (1st Year Fees)', specializations: ['General / Regular', 'BBA ILP'] },
+      { name: 'Bachelor of Commerce [B.Com]', duration: '3 Years', fees: '₹45,000 (1st Year Fees)', specializations: ['General', 'Advertising, Sales Promotion and Sales Management', 'Foreign Plus'] },
+      { name: 'Bachelor of Arts [BA]', duration: '3 Years', fees: '₹40,000 (1st Year Fees)', specializations: ['Arts & Humanities'] },
+      { name: 'Master of Commerce [M.Com]', duration: '2 Years', fees: 'Varies' },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: 'Varies', specializations: ['MBA Duke'] },
+      { name: 'Master of Social Work [MSW]', duration: '2 Years', fees: 'Varies' }
     ],
     placements: {
       highest: 'INR 7.20 LPA',
@@ -2417,10 +2586,13 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Admissions open for BCA, BBA, and MBA programs for 2026-27 academic session.',
       'Active campus recruitment drives with leading national IT and financial organizations.'
     ],
-    coursesList: [
+coursesList: [
       { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: '₹55,000 (1st Year Fees)', specializations: ['Cloud Computing', 'Web Technologies', 'Software Development'] },
       { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹62,000 (1st Year Fees)' },
-      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹78,000 (1st Year Fees)' }
+      { name: 'Bachelor of Commerce [B.Com]', duration: '3 Years', fees: 'Varies' },
+      { name: 'Bachelor of Science [B.Sc]', duration: '3 Years', fees: 'Varies', specializations: ['Computer Science'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹78,000 (1st Year Fees)', specializations: ['Marketing', 'Finance', 'Human Resource', 'Systems Management', 'Production Management'] },
+      { name: 'Doctor of Philosophy [Ph.D]', duration: '3 Years', fees: 'Varies', specializations: ['Management Studies'] }
     ],
     placements: {
       highest: 'INR 10.50 LPA',
@@ -2467,10 +2639,13 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Admissions active for BCA, B.Sc Computer Science, and BBA 2026 batches.',
       'Scholarship concession available for meritorious regional students.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: '₹42,000 (1st Year Fees)', specializations: ['Full Stack Development', 'Database Management', 'Python & AI'] },
+coursesList: [
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹45,000 (1st Year Fees)' },
+      { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: '₹42,000 (1st Year Fees)', specializations: ['Software Development', 'Web Technologies', 'Cloud Computing', 'Database Management', 'Programming'] },
+      { name: 'Bachelor of Commerce [B.Com]', duration: '3 Years', fees: 'Varies', specializations: ['Accounting', 'Taxation', 'Business Law', 'Economics', 'Finance', 'Auditing'] },
       { name: 'Bachelor of Science [B.Sc Computer Science]', duration: '3 Years', fees: '₹38,000 (1st Year Fees)' },
-      { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹45,000 (1st Year Fees)' }
+      { name: 'Bachelor of Vocation [B.Voc.]', duration: '3 Years', fees: 'Varies', specializations: ['Fashion Technology', 'Interior Technology'] },
+      { name: 'Post Graduate Diploma in Computer Applications [PGDCA]', duration: '1 Year', fees: 'Varies' }
     ],
     placements: {
       highest: 'INR 7.50 LPA',
@@ -2517,10 +2692,11 @@ export const INDORE_INSTITUTES: Institute[] = [
       'MP e-Pravesh portal counseling registrations live for BCA and B.Sc Computer Science 2026.',
       'Ranked #1 Government Science & IT College in Madhya Pradesh by Higher Education Department.'
     ],
-    coursesList: [
-      { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: '₹18,000 (1st Year Fees)', specializations: ['Artificial Intelligence', 'Data Science', 'Cyber Security', 'Software Engineering'] },
-      { name: 'B.Sc Computer Science & IT', duration: '3 Years', fees: '₹14,000 (1st Year Fees)' },
-      { name: 'Master of Science [M.Sc Computer Science]', duration: '2 Years', fees: '₹16,000 (1st Year Fees)' }
+coursesList: [
+      { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: '₹18,000 (1st Year Fees)' },
+      { name: 'Bachelor of Science [B.Sc]', duration: '3 Years', fees: '₹14,000 (1st Year Fees)', specializations: ['Biochemistry', 'Bioinformatics', 'Biotechnology', 'Botany', 'Chemistry', 'Computer Science', 'Cyber Security', 'Economics', 'Electronics', 'Forensic Science', 'Geography', 'Geology', 'Horticulture', 'Industrial Fish and Fisheries', 'Mathematics', 'Microbiology', 'Pharmaceutical Chemistry', 'Physics', 'Seed Technology', 'Statistics', 'Zoology'] },
+      { name: 'Master of Science [M.Sc]', duration: '2 Years', fees: '₹16,000 (1st Year Fees)', specializations: ['Biochemistry', 'Biotechnology', 'Botany', 'Chemistry', 'Computer Science', 'Fisheries', 'Forensic Science', 'Geography', 'Geology', 'Mathematics', 'Microbiology', 'Pharmaceutical Chemistry', 'Physics', 'Seed Technology', 'Statistics', 'Zoology'] },
+      { name: 'Post Graduate Diploma', duration: '1 Year', fees: 'Varies', specializations: ['Post-Graduation Diploma in Computer Application (PGDCA)', 'PG Diploma in Yoga'] }
     ],
     placements: {
       highest: 'INR 12.00 LPA',
@@ -2568,10 +2744,12 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Admissions open for MBA, BBA, and BCA batches for 2026-27 session.',
       'Special merit concessions offered by Shri Gujarati Samaj trust.'
     ],
-    coursesList: [
+coursesList: [
       { name: 'Master of Business Administration [MBA]', duration: '2 Years', fees: '₹55,000 (1st Year Fees)', specializations: ['Marketing', 'Finance', 'Human Resources'] },
+      { name: 'Master of Computer Applications [MCA]', duration: '2 Years', fees: 'Varies' },
       { name: 'Bachelor of Business Administration [BBA]', duration: '3 Years', fees: '₹48,000 (1st Year Fees)' },
-      { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: '₹42,000 (1st Year Fees)' }
+      { name: 'Bachelor of Computer Applications [BCA]', duration: '3 Years', fees: '₹42,000 (1st Year Fees)' },
+      { name: 'Bachelor of Commerce [B.Com]', duration: '3 Years', fees: 'Varies', specializations: ['Plain', 'Computer Application'] }
     ],
     placements: {
       highest: 'INR 6.80 LPA',
@@ -2618,10 +2796,11 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Registrations live for IILET 2026 for BA LLB (Hons), BBA LLB (Hons), and LLM programs.',
       'Winners of 14th National Animal Law Moot Court Competition announced.'
     ],
-    coursesList: [
+coursesList: [
       { name: 'BA LLB (Hons)', duration: '5 Years', fees: '₹1,40,000 (1st Year Fees)' },
-      { name: 'BBA LLB (Hons)', duration: '5 Years', fees: '₹1,50,000 (1st Year Fees)' },
-      { name: 'Master of Laws [LLM]', duration: '1 Year', fees: '₹1,10,000 (1st Year Fees)' }
+      { name: 'BBA LLB (Hons)', duration: '5 Years', fees: '₹1,50,000 (1st Year Fees)', specializations: ['General', 'Global & Transnational Studies'] },
+      { name: 'Bachelor of Laws [LL.B. (Hons.)]', duration: '3 Years', fees: 'Varies' },
+      { name: 'Master of Laws [LL.M. (Hons.)]', duration: '2 Years', fees: '₹1,10,000 (1st Year Fees)' }
     ],
     placements: {
       highest: 'INR 14.00 LPA',
@@ -2657,9 +2836,9 @@ export const INDORE_INSTITUTES: Institute[] = [
     coordinates: { lat: 22.79, lng: 75.84 },
     approval: 'AICTE-approved programmes; B.E. affiliated with RGPV and MBA affiliated with DAVV (as listed by the provided source)',
     selectionCriteria: 'The provided listing states 10+2 or equivalent with Mathematics as the minimum eligibility. Confirm current criteria with the institute.',
-    coursesList: [
-      { name: 'B.E./B.Tech', duration: '4 years', fees: 'Shiksha-listed total tuition: ₹1.74–2.32 lakh' },
-      { name: 'M.E./M.Tech', duration: '2 years', fees: 'Shiksha-listed total tuition: ₹1.2 lakh' },
+coursesList: [
+      { name: 'Bachelor of Engineering / Technology [B.E. / B.Tech]', duration: '4 years', fees: 'Shiksha-listed total tuition: ₹1.74–2.32 lakh', specializations: ['Computer Science and Engineering', 'Electronics and Communication Engineering', 'Mechanical Engineering', 'Civil Engineering'] },
+      { name: 'Master of Engineering / Technology [M.E. / M.Tech]', duration: '2 years', fees: 'Shiksha-listed total tuition: ₹1.2 lakh', specializations: ['Computer Science and Engineering', 'Electronics and Communication Engineering', 'Thermal Engineering'] },
       { name: 'Master of Business Administration (MBA)', duration: '2 years', fees: 'Shiksha-listed total tuition: ₹75,000' },
       { name: 'Pharmacy programmes', duration: 'Confirm with institute', fees: 'Contact institute for current fees' }
     ],
@@ -2682,12 +2861,13 @@ export const INDORE_INSTITUTES: Institute[] = [
     establishedYear: 2010,
     coordinates: { lat: 22.75, lng: 75.89 },
     website: 'https://gsbl.in/',
-    coursesList: [
+coursesList: [
       { name: 'Master of Business Administration (MBA)', duration: 'Confirm with college', fees: 'Contact college for current fees' },
       { name: 'Bachelor of Computer Applications (BCA)', duration: 'Confirm with college', fees: 'Contact college for current fees' },
-      { name: 'Bachelor of Business Administration (BBA)', duration: 'Confirm with college', fees: 'Contact college for current fees' },
+      { name: 'Bachelor of Business Administration (BBA)', duration: 'Confirm with college', fees: 'Contact college for current fees', specializations: ['General', 'Finance'] },
       { name: 'Bachelor of Arts (BA)', duration: 'Confirm with college', fees: 'Contact college for current fees' },
-      { name: 'Bachelor of Commerce (B.Com)', duration: 'Confirm with college', fees: 'Contact college for current fees' }
+      { name: 'Bachelor of Commerce (B.Com)', duration: 'Confirm with college', fees: 'Contact college for current fees', specializations: ['Plain', 'Honours'] },
+      { name: 'Fashion Design & Law Programmes', duration: 'Confirm with college', fees: 'Contact college for current fees' }
     ],
     isDirectoryVerified: false
   },
@@ -2709,9 +2889,12 @@ export const INDORE_INSTITUTES: Institute[] = [
     establishedYear: 0,
     coordinates: { lat: 22.75, lng: 75.89 },
     website: 'https://www.skitm.in/',
-    coursesList: [
-      { name: 'B.Tech in Computer Science and Engineering', duration: '4 years', fees: 'Shiksha-listed total tuition: ₹1,20,000' },
-      { name: 'MBA/PGDM', duration: '2 years', fees: 'Shiksha lists tuition from ₹45,000; confirm course-specific fee basis' }
+   coursesList: [
+      { name: 'Bachelor of Technology [B.Tech]', duration: '4 years', fees: 'Shiksha-listed total tuition: ₹1,20,000', specializations: ['Computer Science & Engineering', 'Artificial Intelligence & Machine Learning', 'CSE - AIML (Microsoft)', 'Computer Science and Information Technology (CSIT)', 'Data Science', 'Information Technology (IT)', 'Electronics & Communication Engineering', 'Mechanical Engineering', 'Civil Engineering'] },
+      { name: 'Master of Business Administration [MBA]', duration: '2 years', fees: 'Shiksha lists tuition from ₹45,000; confirm course-specific fee basis' },
+      { name: 'Bachelor of Business Administration [BBA]', duration: '3 years', fees: 'Contact institute for current fees' },
+      { name: 'Bachelor of Pharmacy [B.Pharm] & Diploma in Pharmacy [D.Pharm]', duration: '2–4 years', fees: 'Contact institute for current fees' },
+      { name: 'Law Programmes', duration: 'Confirm with institute', fees: 'Contact institute for current fees' }
     ],
     isDirectoryVerified: false
   },
@@ -2734,9 +2917,9 @@ export const INDORE_INSTITUTES: Institute[] = [
     coordinates: { lat: 22.75, lng: 75.89 },
     contactPhone: '+91-9229-20-5555',
     website: 'https://astral.ac.in/',
-    coursesList: [
-      { name: 'Engineering programmes', duration: 'Confirm with college', fees: 'Contact college for current fees' },
-      { name: 'Management programmes', duration: 'Confirm with college', fees: 'Contact college for current fees' },
+ coursesList: [
+      { name: 'Engineering programmes (B.E. / B.Tech)', duration: 'Confirm with college', fees: 'Contact college for current fees', specializations: ['Computer Science', 'Information Technology', 'Electronics & Communication', 'Mechanical', 'Civil'] },
+      { name: 'Master of Business Administration (MBA)', duration: 'Confirm with college', fees: 'Contact college for current fees' },
       { name: 'MCA', duration: 'Confirm with college', fees: 'Contact college for current fees' }
     ],
     isDirectoryVerified: false
@@ -2759,10 +2942,10 @@ export const INDORE_INSTITUTES: Institute[] = [
     contactEmail: 'info@svceindore.ac.in',
     contactPhone: '07324-405000',
     website: 'https://svce.vivekanandgroup.com/',
-    coursesList: [
-      { name: 'Bachelor of Technology (B.Tech)', duration: 'Confirm with college', fees: 'Contact college for current fees' },
-      { name: 'Diploma', duration: 'Confirm with college', fees: 'Contact college for current fees' },
-      { name: 'M.E./M.Tech', duration: 'Confirm with college', fees: 'Contact college for current fees' },
+coursesList: [
+      { name: 'Bachelor of Technology (B.Tech)', duration: 'Confirm with college', fees: 'Contact college for current fees', specializations: ['Computer Science & Engineering', 'Information Technology', 'Electronics & Communication Engineering', 'Mechanical Engineering', 'Civil Engineering'] },
+      { name: 'Master of Engineering / Technology (M.E. / M.Tech)', duration: 'Confirm with college', fees: 'Contact college for current fees', specializations: ['Power System'] },
+      { name: 'Diploma in Engineering', duration: 'Confirm with college', fees: 'Contact college for current fees' },
       { name: 'Master of Business Administration (MBA)', duration: 'Confirm with college', fees: 'Contact college for current fees' }
     ],
     isDirectoryVerified: false
@@ -2784,8 +2967,11 @@ export const INDORE_INSTITUTES: Institute[] = [
     facilities: [],
     establishedYear: 0,
     coordinates: { lat: 22.70, lng: 75.87 },
-    coursesList: [
-      { name: 'Course catalogue (10 courses listed by Shiksha)', duration: 'Varies by programme', fees: 'Reported range: ₹30,000–₹1,45,000; confirm current fees' }
+coursesList: [
+      { name: 'Master of Business Administration (MBA) & PGDM', duration: '2 years', fees: 'Reported range: ₹30,000–₹1,45,000; confirm current fees' },
+      { name: 'Bachelor of Business Administration (BBA)', duration: '3 years', fees: 'Contact college for current fees' },
+      { name: 'Bachelor of Commerce (B.Com)', duration: '3 years', fees: 'Contact college for current fees' },
+      { name: 'LL.B. & B.A. LL.B. (Hons.)', duration: '3–5 years', fees: 'Contact college for current fees' }
     ],
     isDirectoryVerified: false
   },
@@ -2806,10 +2992,11 @@ export const INDORE_INSTITUTES: Institute[] = [
     facilities: [],
     establishedYear: 0,
     coordinates: { lat: 22.70, lng: 75.87 },
-    coursesList: [
-      { name: 'B.E./B.Tech (6 courses listed)', duration: 'Confirm with college', fees: 'Shiksha-listed total tuition: ₹96,000' },
-      { name: 'MBA/PGDM', duration: 'Confirm with college', fees: 'Shiksha-listed total tuition: ₹39,000' },
-      { name: 'M.E./M.Tech (3 courses listed)', duration: 'Confirm with college', fees: 'Shiksha-listed total tuition: ₹62,000' }
+coursesList: [
+      { name: 'B.E. / B.Tech', duration: '4 years', fees: 'Shiksha-listed total tuition: ₹96,000', specializations: ['Computer Science & Engineering', 'Electronics & Communication Engineering', 'Electrical & Electronics Engineering', 'Mechanical Engineering', 'Civil Engineering'] },
+      { name: 'M.E. / M.Tech', duration: '2 years', fees: 'Shiksha-listed total tuition: ₹62,000' },
+      { name: 'Diploma in Engineering', duration: '3 years', fees: 'Shiksha-listed total tuition: ₹36,000', specializations: ['Mechanical Engineering', 'Civil Engineering'] },
+      { name: 'MBA/PGDM', duration: '2 years', fees: 'Shiksha-listed total tuition: ₹39,000' }
     ],
     isDirectoryVerified: false
   },
@@ -2828,6 +3015,13 @@ export const INDORE_INSTITUTES: Institute[] = [
     facilities: [],
     establishedYear: 0,
     coordinates: { lat: 22.75, lng: 75.89 },
+    coursesList: [
+      { name: 'Bachelor of Commerce (B.Com. / B.Com. Hons.)', duration: '3–4 years', fees: 'Contact college for current fees', specializations: ['Plain', 'Computer Application', 'Taxation', 'Advertisement'] },
+      { name: 'Bachelor of Business Administration (BBA)', duration: '3 years', fees: 'Contact college for current fees' },
+      { name: 'Bachelor of Computer Applications (BCA)', duration: '3 years', fees: 'Contact college for current fees' },
+      { name: 'Master of Commerce (M.Com.)', duration: '2 years', fees: 'Contact college for current fees' },
+      { name: 'Master of Business Administration (MBA)', duration: '2 years', fees: 'Contact college for current fees' }
+    ],
     website: 'https://kkcolleges.in/',
     isDirectoryVerified: false
   },
@@ -2848,9 +3042,16 @@ export const INDORE_INSTITUTES: Institute[] = [
     facilities: ['Laboratories', 'Language laboratory', 'E-library', 'Classrooms'],
     establishedYear: 0,
     coordinates: { lat: 22.75, lng: 75.89 },
-    coursesList: [
-      { name: 'B.Ed (1 course listed)', duration: 'Confirm with college', fees: 'Shiksha-listed total tuition: ₹80,000' },
-      { name: 'MBA/PGDM (4 courses listed)', duration: 'Confirm with college', fees: 'Shiksha-listed fee range: ₹39,000–₹78,000' }
+coursesList: [
+      { name: 'Bachelor of Science (B.Sc.)', duration: '3 years', fees: 'Confirm with college', specializations: ['Biotechnology', 'Computer Science', 'Horticulture', 'Mathematics', 'Microbiology', 'Seed Technology'] },
+      { name: 'Master of Science (M.Sc.)', duration: '2 years', fees: 'Confirm with college', specializations: ['Computer Science', 'Mathematics', 'Seed Science & Technology'] },
+      { name: 'Bachelor of Commerce (B.Com.)', duration: '3 years', fees: 'Confirm with college', specializations: ['Plain', 'Computer Application', 'Taxation'] },
+      { name: 'Master of Commerce (M.Com.)', duration: '2 years', fees: 'Confirm with college' },
+      { name: 'Bachelor of Arts (B.A.)', duration: '3 years', fees: 'Confirm with college' },
+      { name: 'BSW & MSW (Social Work)', duration: '2–3 years', fees: 'Confirm with college' },
+      { name: 'B.Ed', duration: 'Confirm with college', fees: 'Shiksha-listed total tuition: ₹80,000' },
+      { name: 'MBA/PGDM', duration: 'Confirm with college', fees: 'Shiksha-listed fee range: ₹39,000–₹78,000' },
+      { name: 'PGDCA', duration: '1 year', fees: 'Confirm with college' }
     ],
     isDirectoryVerified: false
   },
@@ -2869,6 +3070,12 @@ export const INDORE_INSTITUTES: Institute[] = [
     facilities: [],
     establishedYear: 0,
     coordinates: { lat: 22.75, lng: 75.89 },
+    coursesList: [
+      { name: 'Bachelor of Computer Application (BCA)', duration: '3 years', fees: 'Contact college for current fees' },
+      { name: 'Bachelor of Business Administration (BBA)', duration: '3 years', fees: 'Contact college for current fees', specializations: ['Plain'] },
+      { name: 'Bachelor of Commerce (B.Com. / B.Com. Hons.)', duration: '3–4 years', fees: 'Contact college for current fees', specializations: ['Plain', 'Honours', 'Computer Application', 'Taxation'] },
+      { name: 'Bachelor of Arts (B.A. / B.A. Hons.)', duration: '3–4 years', fees: 'Contact college for current fees', specializations: ['History, Political Science, English Literature', 'History, Political Science, Computer Application', 'Journalism & Mass Communication'] }
+    ],
     contactPhone: '9669808182, 8871729595, 0731-2974255',
     website: 'https://www.sicacollegeindore.com/',
     isDirectoryVerified: false
@@ -2890,16 +3097,11 @@ export const INDORE_INSTITUTES: Institute[] = [
     coordinates: { lat: 22.7750, lng: 75.8450 },
     website: 'https://www.aurogroup.ac/technology/',
     approval: 'The official course information describes AICTE-aligned engineering curricula; confirm current programme approvals and affiliations with the institute.',
-    coursesList: [
-      { name: 'Bachelor of Technology (B.Tech) in Computer Science', duration: '4 years', fees: 'Contact institute for current fees' },
-      { name: 'Bachelor of Technology (B.Tech) in Computer Science (AI & Machine Learning)', duration: '4 years', fees: 'Contact institute for current fees' },
-      { name: 'Bachelor of Technology (B.Tech) in Electronics & Communication Engineering', duration: '4 years', fees: 'Contact institute for current fees' },
-      { name: 'Bachelor of Technology (B.Tech) in Civil Engineering', duration: '4 years', fees: 'Contact institute for current fees' },
-      { name: 'Bachelor of Technology (B.Tech) in Mechanical Engineering', duration: '4 years', fees: 'Contact institute for current fees' },
-      { name: 'Master of Technology (M.Tech)', duration: '2 years', fees: 'Contact institute for current fees' },
-      { name: 'Bachelor of Design (B.Des)', duration: '4 years', fees: 'Contact institute for current fees' },
-      { name: 'Master of Business Administration (MBA)', duration: '2 years', fees: 'Contact institute for current fees' },
-      { name: 'Master of Business Administration in Hospital Administration (MBA-HA)', duration: '2 years', fees: 'Contact institute for current fees' }
+coursesList: [
+      { name: 'Bachelor of Technology (B.Tech)', duration: '4 years', fees: 'Contact institute for current fees', specializations: ['Computer Science & Engineering', 'Computer Science (AI & Machine Learning)', 'Electronics & Communication Engineering', 'Civil Engineering', 'Mechanical Engineering'] },
+      { name: 'Master of Technology (M.Tech)', duration: '2 years', fees: 'Contact institute for current fees', specializations: ['Computer Science & Engineering', 'Structural Engineering'] },
+      { name: 'Bachelor of Design (B.Des)', duration: '4 years', fees: 'Contact institute for current fees', specializations: ['Communication Design (CD)', 'Experiential Graphic Design (EGD)', 'User Experience Design (UX)', 'Motion Arts & Gaming (MAG)'] },
+      { name: 'Master of Business Administration (MBA)', duration: '2 years', fees: 'Contact institute for current fees', specializations: ['General Management', 'Hospital Administration (MBA-HA)'] }
     ],
     isDirectoryVerified: false
   }
