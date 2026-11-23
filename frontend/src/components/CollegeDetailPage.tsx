@@ -120,6 +120,7 @@ export default function CollegeDetailPage({
 
   const getShortName = () => {
     if (institute.id === 'iet-davv') return 'IET DAVV';
+    if (institute.id === 'sgsits') return 'SGSITS';
     const words = institute.name
       .replace(/[,.-]/g, ' ')
       .split(/\s+/)
@@ -152,7 +153,7 @@ export default function CollegeDetailPage({
     .findIndex(item => item.id === institute.id) + 1;
   const getAdmissionProcess = () => {
     if (institute.id === 'iet-davv') return 'DTE via JEE Score Card';
-    if (institute.id === 'sgsits') return 'DTE via JEE Main merit';
+    if (institute.id === 'sgsits') return 'DTE Via JEE Result';
     if (institute.selectionCriteria) {
       const criteria = institute.selectionCriteria.trim();
       if (criteria.toLowerCase().includes('jee') || criteria.toLowerCase().includes('dte')) {
