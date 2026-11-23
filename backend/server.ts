@@ -1263,7 +1263,7 @@ async function startServer() {
 
   // API Route: Post a callback request
   app.post('/api/callback', attachVerifiedEmailToPublicSubmission, async (req, res) => {
-    const { name, phone, instituteId, email, query } = req.body;
+    const { name, phone, alternatePhone, instituteId, email, query } = req.body;
 
     if (!name || !phone) {
       return res.status(400).json({ error: 'Name and phone are required.' });
@@ -1273,6 +1273,7 @@ async function startServer() {
       id: `cb-${Date.now()}`,
       name,
       phone,
+      alternatePhone: alternatePhone || '',
       instituteId,
       email: res.locals.verifiedUserEmail || (email ? email.trim().toLowerCase() : ''),
       query: query || 'General Home Consultation',
@@ -1294,6 +1295,7 @@ async function startServer() {
         {
           parentOrStudentName: newCallback.name,
           phone: newCallback.phone,
+          alternatePhone: newCallback.alternatePhone || 'None Provided',
           email: newCallback.email || 'None Provided',
           targetedInstitute: newCallback.instituteId || 'General Inquiry / Home Page Consultation',
           userMessage: newCallback.query || 'Wants a callback for academic consultation.'

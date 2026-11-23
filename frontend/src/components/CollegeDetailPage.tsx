@@ -51,6 +51,7 @@ export default function CollegeDetailPage({
   const [infoName, setInfoName] = useState('');
   const [infoEmail, setInfoEmail] = useState('');
   const [infoPhone, setInfoPhone] = useState('');
+  const [infoAlternatePhone, setInfoAlternatePhone] = useState('');
   const [infoSubmitting, setInfoSubmitting] = useState(false);
   const [infoSubmitted, setInfoSubmitted] = useState(false);
   const [infoError, setInfoError] = useState('');
@@ -80,6 +81,7 @@ export default function CollegeDetailPage({
           name: infoName.trim(),
           email: infoEmail.trim(),
           phone: infoPhone.trim(),
+          alternatePhone: infoAlternatePhone.trim(),
           instituteId: institute.id,
           query: `More information requested for ${institute.name}.`
         })
@@ -93,6 +95,7 @@ export default function CollegeDetailPage({
       setInfoName('');
       setInfoEmail('');
       setInfoPhone('');
+      setInfoAlternatePhone('');
     } catch (error) {
       console.error('Error submitting information request:', error);
       setInfoError('Unable to submit your request. Please try again.');
@@ -506,9 +509,19 @@ export default function CollegeDetailPage({
 
               <div className="grid gap-5 md:grid-cols-3">
                 {[
-                  { title: 'Review by College Authority', videoUrl: collegeVideoUrl },
-                  { title: 'Review By Indore Colleges' },
-                  { title: 'Review by Actual Students' }
+                  {
+                    title: 'Review by College Authority',
+                    thumbnail: '/Review by College Authority.webp',
+                    videoUrl: collegeVideoUrl
+                  },
+                  {
+                    title: 'Review By Indore Colleges',
+                    thumbnail: '/Review-by-indore-college.webp'
+                  },
+                  {
+                    title: 'Review by Actual Students',
+                    thumbnail: '/Review-by-actual-student.webp'
+                  }
                 ].map((reviewCard) => (
                   <article
                     key={reviewCard.title}
@@ -520,7 +533,7 @@ export default function CollegeDetailPage({
                           controls
                           muted
                           preload="metadata"
-                          poster={facilityImage}
+                          poster={reviewCard.thumbnail}
                           className="h-full w-full object-cover"
                         >
                           <source src={reviewCard.videoUrl} type="video/mp4" />
@@ -528,7 +541,7 @@ export default function CollegeDetailPage({
                       ) : (
                         <>
                           <img
-                            src={facilityImage}
+                            src={reviewCard.thumbnail}
                             alt={`${institute.name} review`}
                             className="h-full w-full object-cover"
                             onError={(event) => {
@@ -557,9 +570,12 @@ export default function CollegeDetailPage({
               className="rounded-2xl border border-orange-100/80 bg-gradient-to-br from-white via-orange-50/20 to-white p-6 shadow-xs sm:p-8"
             >
               <div className="mx-auto max-w-5xl">
-              <h2 className="mb-8 text-center text-2xl font-bold text-slate-900 sm:text-3xl">
-                If you want more info connect us
+              <h2 className="text-center text-2xl font-bold text-slate-900 sm:text-3xl">
+                Want to know more about this college?
               </h2>
+              <p className="mb-8 mt-3 text-center text-base font-semibold text-slate-700 sm:text-lg">
+                Please fill the form, our counselor will call you back shortly.
+              </p>
 
               {infoSubmitted ? (
                 <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-5 text-center text-sm font-semibold text-emerald-800">
@@ -569,7 +585,7 @@ export default function CollegeDetailPage({
                 <form onSubmit={handleInfoSubmit} className="mx-auto grid max-w-4xl gap-5 sm:grid-cols-2">
                   <div>
                     <label htmlFor="info-name" className="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-600">
-                      Student / Applicant Full Name *
+                      Name *
                     </label>
                     <input
                       id="info-name"
@@ -577,31 +593,15 @@ export default function CollegeDetailPage({
                       required
                       value={infoName}
                       onChange={(e) => setInfoName(e.target.value)}
-                      placeholder="e.g. Ramesh Kumar Verma"
+                      placeholder="Enter your name"
                       className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="info-email" className="mb-2 flex items-center gap-1.5 text-sm font-bold uppercase tracking-wide text-slate-600">
-                      <Mail className="h-4 w-4 text-slate-400" />
-                      Personal Email Address *
-                    </label>
-                    <input
-                      id="info-email"
-                      type="email"
-                      required
-                      value={infoEmail}
-                      onChange={(e) => setInfoEmail(e.target.value)}
-                      placeholder="ramesh@gmail.com"
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
                     <label htmlFor="info-phone" className="mb-2 flex items-center gap-1.5 text-sm font-bold uppercase tracking-wide text-slate-600">
                       <PhoneCall className="h-4 w-4 text-slate-400" />
-                      Direct Contact / WhatsApp Number *
+                      WhatsApp Number *
                     </label>
                     <input
                       id="info-phone"
@@ -609,7 +609,38 @@ export default function CollegeDetailPage({
                       required
                       value={infoPhone}
                       onChange={(e) => setInfoPhone(e.target.value)}
-                      placeholder="e.g. +91 98260 11223"
+                      placeholder="Enter your WhatsApp number"
+                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="info-alternate-phone" className="mb-2 flex items-center gap-1.5 text-sm font-bold uppercase tracking-wide text-slate-600">
+                      <PhoneCall className="h-4 w-4 text-slate-400" />
+                      Alternate No
+                    </label>
+                    <input
+                      id="info-alternate-phone"
+                      type="tel"
+                      value={infoAlternatePhone}
+                      onChange={(e) => setInfoAlternatePhone(e.target.value)}
+                      placeholder="Enter alternate number"
+                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="info-email" className="mb-2 flex items-center gap-1.5 text-sm font-bold uppercase tracking-wide text-slate-600">
+                      <Mail className="h-4 w-4 text-slate-400" />
+                      Email Id *
+                    </label>
+                    <input
+                      id="info-email"
+                      type="email"
+                      required
+                      value={infoEmail}
+                      onChange={(e) => setInfoEmail(e.target.value)}
+                      placeholder="Enter your email address"
                       className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
                     />
                   </div>
