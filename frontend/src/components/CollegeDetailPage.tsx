@@ -152,12 +152,12 @@ export default function CollegeDetailPage({
     .sort((a, b) => (b.indoreRating ?? b.rating) - (a.indoreRating ?? a.rating))
     .findIndex(item => item.id === institute.id) + 1;
   const getAdmissionProcess = () => {
-    if (institute.id === 'iet-davv') return 'DTE via JEE Score Card';
-    if (institute.id === 'sgsits') return 'DTE Via JEE Result';
+    if (institute.id === 'iet-davv') return 'DTE via JEE Results';
+    if (institute.id === 'sgsits') return 'DTE via JEE Results';
     if (institute.selectionCriteria) {
       const criteria = institute.selectionCriteria.trim();
       if (criteria.toLowerCase().includes('jee') || criteria.toLowerCase().includes('dte')) {
-        return 'DTE via JEE Main scorecard';
+        return 'DTE via JEE Results';
       }
     }
     if (/engineering|technology/i.test(institute.category)) {
