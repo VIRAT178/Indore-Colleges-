@@ -199,7 +199,7 @@ export default function CollegeDetailPage({
                 <span>Back to Colleges Directory</span>
               </button>
 
-              <h1 className={`${institute.id === 'malwa-institute' ? 'text-3xl' : 'text-3xl sm:text-4xl xl:text-[44px]'} font-extrabold tracking-tight text-slate-950 leading-[1.08] mb-5`}>
+              <h1 className={`${institute.id === 'malwa-group-of-institutes' ? 'text-3xl' : 'text-3xl sm:text-4xl xl:text-[44px]'} font-extrabold tracking-tight text-slate-950 leading-[1.08] mb-5`}>
                 {institute.name}
               </h1>
 

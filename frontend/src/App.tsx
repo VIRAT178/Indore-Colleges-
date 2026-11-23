@@ -488,7 +488,15 @@ function CollegeDetailRoute({
 }) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const college = institutes.find(i => i.id === id) || INDORE_INSTITUTES.find(i => i.id === id);
+
+  useEffect(() => {
+    if (id === 'malwa-institute') {
+      navigate('/college/malwa-group-of-institutes', { replace: true });
+    }
+  }, [id, navigate]);
+
+  const resolvedId = id === 'malwa-institute' ? 'malwa-group-of-institutes' : id;
+  const college = institutes.find(i => i.id === resolvedId) || INDORE_INSTITUTES.find(i => i.id === resolvedId);
 
   if (!college && institutesLoaded) {
     return <NotFoundPage />;
@@ -736,7 +744,7 @@ function ExploreRoute({
                         { rank: 2, name: 'Acropolis', id: 'acropolis', displayName: 'Acropolis Institute of Technology and Research' },
                         { rank: 3, name: 'Medi-Caps University', id: 'medi-caps-university', displayName: 'Medi-Caps University' },
                         { rank: 4, name: 'SKITM', id: 'skitm-indore', displayName: 'Shivajirao Kadam Institute of Technology & Management' },
-                        { rank: 5, name: 'MIST', id: 'malwa-institute', displayName: 'Malwa Institute of Science & Technology' },
+                        { rank: 5, name: 'MGI', id: 'malwa-group-of-institutes', displayName: 'Malwa Group of Institutes' },
                         { rank: 6, name: 'LNCTS', id: 'lncts-indore', displayName: 'Lakshmi Narain College of Technology & Science' },
                         { rank: 7, name: 'SUAS', id: 'symbiosis-university', displayName: 'Symbiosis University of Applied Sciences (SUAS)' },
                         { rank: 8, name: 'CDGI', id: 'chameli-devi', displayName: 'Chameli Devi Group of Institutions' },
@@ -841,8 +849,8 @@ function ExploreRoute({
                         return false;
                       });
 
-                      const mistInst = streamFiltered.find((inst: any) => inst.id === 'malwa-institute');
-                      const otherColleges = streamFiltered.filter((inst: any) => inst.id !== 'malwa-institute');
+                      const mistInst = streamFiltered.find((inst: any) => inst.id === 'malwa-group-of-institutes');
+                      const otherColleges = streamFiltered.filter((inst: any) => inst.id !== 'malwa-group-of-institutes');
                       otherColleges.sort((a: any, b: any) => b.rating - a.rating);
 
                       const bbaMbaCollegeOrder = [
@@ -850,7 +858,7 @@ function ExploreRoute({
                         'symbiosis-university',
                         'nmims-indore',
                         'pimr',
-                        'malwa-institute',
+                        'malwa-group-of-institutes',
                         'acropolis',
                         'sage-university',
                         'ims-davv',

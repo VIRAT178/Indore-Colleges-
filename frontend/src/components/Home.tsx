@@ -679,23 +679,23 @@ export default function Home({
           {(() => {
             // Category 01: Top 10 by Google Ratings & Search Reviews
             const GOOGLE_LISTS_BY_TAB: Record<string, string[]> = {
-              'Engineering': ['sgsits', 'iet-davv', 'acropolis', 'iist-indore', 'medi-caps-university', 'ips-engineering', 'piemr-indore', 'malwa-institute', 'skitm-indore', 'chameli-devi'],
+              'Engineering': ['sgsits', 'iet-davv', 'acropolis', 'iist-indore', 'medi-caps-university', 'ips-engineering', 'piemr-indore', 'malwa-group-of-institutes', 'skitm-indore', 'chameli-devi'],
               'BBA': ['iim-indore', 'pimr', 'ims-davv', 'jaipuria-indore', 'nmims-indore', 'ips-ibmr', 'svim-indore', 'symbiosis-university', 'gsimr', 'iips-davv'],
               'BCA': ['softvision-college', 'sgsits', 'pioneer-institute', 'christian-eminent', 'holkar-science', 'renaissance-college', 'gacc-indore', 'alexia-college', 'apj-kalam-univ', 'sage-university'],
               'MBA': ['iim-indore', 'pimr', 'ims-davv', 'jaipuria-indore', 'nmims-indore', 'ips-ibmr', 'svim-indore', 'symbiosis-university', 'gsimr', 'iips-davv'],
               'LAW': ['iil-indore', 'nmims-law', 'symbiosis-university', 'pimr', 'renaissance-college', 'oriental-university', 'davv', 'iim-indore', 'sage-university', 'acropolis'],
-              'MEDICAL': ['mgm-medical', 'saims', 'index-medical', 'shubhdeep-ayurved', 'sage-university', 'malwa-institute', 'medi-caps-university', 'symbiosis-university', 'acropolis', 'davv'],
+              'MEDICAL': ['mgm-medical', 'saims', 'index-medical', 'shubhdeep-ayurved', 'sage-university', 'malwa-group-of-institutes', 'medi-caps-university', 'symbiosis-university', 'acropolis', 'davv'],
               'DESIGN': ['cindrebay-design', 'symbiosis-university', 'svvv-indore', 'renaissance-college', 'acropolis', 'sage-university', 'medi-caps-university', 'pimr', 'softvision-college', 'nmims-stme']
             };
 
             // Category 02: Top 10 evaluated by Indore Colleges Academic & Placement Merit
             const INDORE_LISTS_BY_TAB: Record<string, string[]> = {
-              'Engineering': ['iist-indore', 'acropolis', 'medi-caps-university', 'skitm-indore', 'malwa-institute', 'lncts-indore', 'symbiosis-university', 'chameli-devi', 'piemr-indore', 'sri-aurobindo-institute-of-technology'],
-              'BBA': ['iim-indore', 'symbiosis-university', 'nmims-indore', 'pimr', 'malwa-institute', 'acropolis', 'sage-university', 'ims-davv', 'jaipuria-indore', 'ips-ibmr'],
+              'Engineering': ['iist-indore', 'acropolis', 'medi-caps-university', 'skitm-indore', 'malwa-group-of-institutes', 'lncts-indore', 'symbiosis-university', 'chameli-devi', 'piemr-indore', 'sri-aurobindo-institute-of-technology'],
+              'BBA': ['iim-indore', 'symbiosis-university', 'nmims-indore', 'pimr', 'malwa-group-of-institutes', 'acropolis', 'sage-university', 'ims-davv', 'jaipuria-indore', 'ips-ibmr'],
               'BCA': ['holkar-science', 'acropolis', 'medi-caps-university', 'softvision-college', 'sage-university', 'pioneer-institute', 'christian-eminent', 'gacc-indore', 'apj-kalam-univ', 'svvv-indore'],
-              'MBA': ['iim-indore', 'symbiosis-university', 'nmims-indore', 'pimr', 'malwa-institute', 'acropolis', 'sage-university', 'ims-davv', 'jaipuria-indore', 'ips-ibmr'],
+              'MBA': ['iim-indore', 'symbiosis-university', 'nmims-indore', 'pimr', 'malwa-group-of-institutes', 'acropolis', 'sage-university', 'ims-davv', 'jaipuria-indore', 'ips-ibmr'],
               'LAW': ['iil-indore', 'davv', 'nmims-law', 'symbiosis-university', 'pimr', 'renaissance-college', 'oriental-university', 'iim-indore', 'sage-university', 'acropolis'],
-              'MEDICAL': ['mgm-medical', 'saims', 'index-medical', 'shubhdeep-ayurved', 'medi-caps-university', 'sage-university', 'symbiosis-university', 'acropolis', 'davv', 'malwa-institute'],
+              'MEDICAL': ['mgm-medical', 'saims', 'index-medical', 'shubhdeep-ayurved', 'medi-caps-university', 'sage-university', 'symbiosis-university', 'acropolis', 'davv', 'malwa-group-of-institutes'],
               'DESIGN': ['symbiosis-university', 'cindrebay-design', 'svvv-indore', 'sage-university', 'renaissance-college', 'acropolis', 'softvision-college', 'medi-caps-university', 'pimr', 'gacc-indore']
             };
 
@@ -899,7 +899,7 @@ export default function Home({
               'svvv-indore': { rating: 3.8, reviewsCount: '1.1K' },
               'ips-ibmr': { rating: 3.9, reviewsCount: '780' },
               'oriental-university': { rating: 3.8, reviewsCount: '690' },
-              'malwa-institute': { rating: 3.7, reviewsCount: '420' },
+              'malwa-group-of-institutes': { rating: 3.7, reviewsCount: '420' },
               'apj-kalam-univ': { rating: 3.7, reviewsCount: '350' }
             };
 
