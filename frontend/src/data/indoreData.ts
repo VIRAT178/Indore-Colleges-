@@ -3439,7 +3439,7 @@ export const INDORE_INSTITUTES: Institute[] = [
   },
   {
     id: 'piemr-indore',
-    name: 'Prestige Institute of Engineering Management and Research (PIEMR)',
+    name: 'Prestige Institute of Engineering Management and Research',
     type: 'college',
     category: 'Engineering',
     boardOrAffiliation: 'AICTE',

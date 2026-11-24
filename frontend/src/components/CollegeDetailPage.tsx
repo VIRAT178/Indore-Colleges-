@@ -121,6 +121,7 @@ export default function CollegeDetailPage({
   const getShortName = () => {
     if (institute.id === 'iet-davv') return 'IET DAVV';
     if (institute.id === 'sgsits') return 'SGSITS';
+    if (institute.id === 'piemr-indore') return 'PIEMR';
     const words = institute.name
       .replace(/[,.-]/g, ' ')
       .split(/\s+/)
