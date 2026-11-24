@@ -142,7 +142,9 @@ export default function CollegeDetailPage({
 
   const shortName = getShortName();
   const universityName = getUniversityName();
-  const facilityImage = institute.campusPhoto || institute.image || '/bg2.jpeg';
+  const defaultFacilityImage = institute.campusPhoto || institute.image || '/bg2.jpeg';
+  const getFacilityImage = (facility: string) =>
+    institute.facilityImages?.[facility] || defaultFacilityImage;
   const collegeVideoUrl = institute.videoUrl || institute.backgroundVideoUrl;
   const categoryInstitutes = INDORE_INSTITUTES.filter(item => item.category === institute.category);
   const googleRank = [...categoryInstitutes]
@@ -481,8 +483,8 @@ export default function CollegeDetailPage({
                       className="relative h-32 w-56 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-900 shadow-sm sm:h-36 sm:w-64"
                     >
                       <img
-                        src={facilityImage}
-                        alt=""
+                        src={getFacilityImage(fac)}
+                        alt={fac}
                         className="h-full w-full object-cover opacity-80 transition-transform duration-500 hover:scale-110"
                         onError={(event) => {
                           event.currentTarget.src = '/bg2.jpeg';

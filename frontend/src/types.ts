@@ -41,6 +41,7 @@ export interface Institute {
   visionMission?: string;
   achievements?: string;
   campusPhoto?: string;
+  facilityImages?: Record<string, string>;
   instagram?: string;
   approvals?: string[];
   affiliationType?: string;
