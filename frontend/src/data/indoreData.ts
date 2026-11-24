@@ -17,7 +17,16 @@ export const INDORE_INSTITUTES: Institute[] = [
     videoUrl: '/malwa-institute-campus.mp4',
     backgroundVideoUrl: '/malwa-institute-campus.mp4',
     description: 'Malwa Institute of Science and Technology (MIST Indore) is a premier engineering and business administration institute offering Undergraduate, Postgraduate, and Diploma courses in various specializations. Possessing world-class in-house facilities like massive auditoriums, an amphitheater, and its own fleet of free buses, the college grooms students to match modern corporate cultures.',
-    facilities: ['Library', 'Laboratory', 'Cafeteria', 'Sports Arena', 'Medical Center', 'Hostels', 'Auditorium', 'Advanced Computer Labs', 'Modern Classrooms'],
+    facilities: ['Library', 'Laboratory', 'Cafeteria', 'Sports Arena', 'Auditorium', 'Advanced Computer Labs', 'Modern Classrooms'],
+    facilityImages: {
+      'Library': '/college-images/MGI/mgi-library.webp',
+      'Laboratory': '/college-images/MGI/mgi-laboratories.webp',
+      'Cafeteria': '/college-images/MGI/mgi-Cafeteria.webp',
+      'Sports Arena': '/college-images/MGI/mgi-Sports-Arena.webp',
+      'Auditorium': '/college-images/MGI/mgi-Auditorium.webp',
+      'Advanced Computer Labs': '/college-images/MGI/mgi-Computer Labs.webp',
+      'Modern Classrooms': '/college-images/MGI/mgi-Modern Classrooms.webp'
+    },
     establishedYear: 2007,
     coordinates: { lat: 22.668, lng: 75.889 },
     address: 'P.O. Palia, Hatod Road, Limbodagari, Behind Aurobindo Hospital, Limboda, Indore - 453111, Madhya Pradesh, India',
