@@ -143,8 +143,57 @@ export default function CollegeDetailPage({
   const shortName = getShortName();
   const universityName = getUniversityName();
   const defaultFacilityImage = institute.campusPhoto || institute.image || '/bg2.jpeg';
+  const liveFacilityImageOverrides: Record<string, Record<string, string>> = {
+    'sgsits': {
+      'Central Library': '/college-images/SGSITS/SGSITS-library.jpg',
+      'Computer Center': '/college-images/SGSITS/SGSITS-Computer.png',
+      'Gymnasium': '/college-images/SGSITS/SGSITS-Gymnasium.jpg',
+      'Hostels (Separate Boys & Girls)': '/college-images/SGSITS/SGSITS-Hostels.webp',
+      'Dispensary': '/college-images/SGSITS/SGSITS-Dispensary.webp',
+      'CIDI Centre': '/college-images/SGSITS/SGSITS-Central Workshop.webp',
+      'Central Workshop': '/college-images/SGSITS/SGSITS-Central Workshop.webp',
+      'Lush Green Grounds': '/college-images/SGSITS/SGSITS-Green Grounds.avif',
+      'High-speed Wi-Fi': '/college-images/SGSITS/SGSITS-Computer.png'
+    },
+    'iist-indore': {
+      'Advanced Computing Labs': '/college-images/IIST/IIST Computing Labs.jpg',
+      'Hostel Block (Separate Boys & Girls)': '/college-images/IIST/IIST Hostel Block.jpg',
+      'Digital Libraries': '/college-images/IIST/IIST Digital Libraries.jpeg',
+      'Gymnasium': '/college-images/IIST/IIST Sports Fields.jpeg',
+      'Specialized Innovation Labs': '/college-images/IIST/IIST Innovation Labs.jpeg',
+      'Sports Fields (Football, Cricket)': '/college-images/IIST/IIST Sports Fields.jpeg',
+      'Hygienic Canteens': '/college-images/IIST/IIST Canteens.jpeg'
+    },
+    'iet-davv': {
+      'IET Central Library': '/college-images/IET-DAVV/IET-DAVV-LIB.webp',
+      'High-speed Computer Labs': '/college-images/IET-DAVV/IET-DAVV-Computer Labs.webp',
+      'Sports Ground': '/college-images/IET-DAVV/IET-DAVV-Sports Ground.webp',
+      'Boys & Girls Hostels': '/college-images/IET-DAVV/IET-DAVV-Boys & Girls Hostels.webp',
+      'Auditorium': '/college-images/IET-DAVV/IET-DAVV-Auditorium.webp',
+      'Physics & Chemistry Labs': '/college-images/IET-DAVV/IET-DAVV-Physics & Chemistry Labs.webp',
+      'Canteen': '/college-images/IET-DAVV/IET-DAVV-Canteen.webp',
+      'Wi-Fi Access Points': '/college-images/IET-DAVV/IET-DAVV-Computer Labs.webp'
+    },
+    'medi-caps-university': {
+      'High Speed Computer Labs': '/CollegeImages/Medi-Caps University/medicaps Computer-Lab.jpg',
+      'State of art Workshops': '/CollegeImages/Medi-Caps University/MEDI-CAPS-State of art Workshops.webp',
+      'Basketball Stadium': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Basketball Stadium.webp',
+      'Modern Gym': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Modern Gym.webp',
+      'Central Library (e-Resources)': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Central Library.webp',
+      'Separate Girls/Boys Hostels': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Separate Hostels.webp',
+      'Hygienic Canteens': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Canteens.webp',
+      'Research Centers': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Research Centers.webp'
+    }
+  };
+  const liveHeroImageOverrides: Record<string, string> = {
+    'sgsits': '/college-images/SGSITS/sgsits.webp',
+    'iist-indore': '/college-images/IIST/IIST.avif',
+    'iet-davv': '/college-images/IET-DAVV/IET-DAVV.webp',
+    'medi-caps-university': '/CollegeImages/Medi-Caps University/MEDI-CAPS.webp'
+  };
+  const heroImage = encodeURI(liveHeroImageOverrides[institute.id] || institute.image);
   const getFacilityImage = (facility: string) =>
-    encodeURI(institute.facilityImages?.[facility] || defaultFacilityImage);
+    encodeURI(liveFacilityImageOverrides[institute.id]?.[facility] || institute.facilityImages?.[facility] || defaultFacilityImage);
   const collegeVideoUrl = institute.videoUrl || institute.backgroundVideoUrl;
   const categoryInstitutes = INDORE_INSTITUTES.filter(item => item.category === institute.category);
   const googleRank = [...categoryInstitutes]
@@ -253,9 +302,9 @@ export default function CollegeDetailPage({
 
             <div className="lg:ml-auto">
               <div className="h-[260px] w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-sm sm:h-[275px] lg:h-[275px] lg:w-[500px] xl:h-[275px] xl:w-[500px] 2xl:h-[275px] 2xl:w-[900px]">
-                {institute.image ? (
+                {heroImage ? (
                   <img
-                    src={encodeURI(institute.image)}
+                    src={heroImage}
                     alt={institute.name}
                     referrerPolicy="no-referrer"
                     className="h-full w-full object-cover object-center"
