@@ -29,6 +29,9 @@ export interface Institute {
   address?: string;
   nearestAirport?: string;
   approval?: string;
+  affiliations?: string[];
+  regulatoryApprovals?: string[];
+  accreditations?: string[];
   selectionCriteria?: string;
   updates?: string[];
   brochureUrl?: string;
@@ -38,6 +41,7 @@ export interface Institute {
   visionMission?: string;
   achievements?: string;
   campusPhoto?: string;
+  facilityImages?: Record<string, string>;
   instagram?: string;
   approvals?: string[];
   affiliationType?: string;
@@ -48,15 +52,27 @@ export interface Institute {
   courses?: string[];
   coursesList?: {
     name: string;
-    duration: string;
-    fees: string;
+    duration?: string;
+    fees?: string;
+    academicYear?: string;
+    programmeLevel?: 'UG' | 'PG';
+    sourceUrl?: string;
+    sourceStatus?: 'verified' | 'pending-direct-source';
+    feeHistory?: {
+      fee: string;
+      description: string;
+      academicYear: string;
+      sourceUrl?: string;
+      sourceStatus?: 'verified' | 'pending-direct-source';
+    }[];
     specializations?: string[];
   }[];
   placements?: {
     highest: string;
-    average: string;
+    average?: string;
     lowest?: string;
     recruiters: string[];
+    metrics?: PlacementMetric[];
   };
   facultyList?: {
     name: string;
@@ -72,6 +88,17 @@ export interface Institute {
     course: string;
     rank: string;
   }[];
+}
+
+export interface PlacementMetric {
+  type: 'highest' | 'median' | 'average';
+  value: string;
+  academicYear?: string;
+  academicYearStatus?: 'pending-verification';
+  programme?: string;
+  sourceLabel?: string;
+  sourceUrl?: string;
+  sourceStatus?: 'verified' | 'pending-direct-source';
 }
 
 export interface SearchFilters {
@@ -101,6 +128,7 @@ export interface CallbackRequest {
   id: string;
   name: string;
   phone: string;
+  alternatePhone?: string;
   instituteId?: string; // Optional reference to a specific school/college
   email?: string; // Optional reference to verified user email
   createdAt: string;

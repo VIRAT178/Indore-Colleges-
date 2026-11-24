@@ -1127,6 +1127,15 @@ export default function App({ initialInstitutes = [] }: { initialInstitutes?: In
       console.warn('Could not restore saved colleges from this browser.');
     }
 
+    const savedProfile = localStorage.getItem('indore_user_profile');
+
+    if (!savedProfile) {
+      setHasLoadedLocalState(true);
+      return () => {
+        active = false;
+      };
+    }
+
     fetch('/api/auth/session')
       .then(async response => {
         if (response.ok) {

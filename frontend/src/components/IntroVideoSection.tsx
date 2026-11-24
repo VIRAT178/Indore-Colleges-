@@ -11,12 +11,15 @@ export default function IntroVideoSection() {
       video.muted = false;
       try {
         await video.play();
-      } catch {
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
         video.muted = true;
         try {
           await video.play();
         } catch (error) {
-          console.error('Could not autoplay the introduction video:', error);
+          if (!(error instanceof DOMException && error.name === 'AbortError')) {
+            console.error('Could not autoplay the introduction video:', error);
+          }
         }
       }
     };
