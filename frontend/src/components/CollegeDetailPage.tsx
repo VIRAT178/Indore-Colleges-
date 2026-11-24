@@ -485,7 +485,7 @@ export default function CollegeDetailPage({
                       <img
                         src={getFacilityImage(fac)}
                         alt={`${fac} at ${institute.name}`}
-                        loading="lazy"
+                        loading="eager"
                         decoding="async"
                         className="h-full w-full object-cover opacity-80 transition-transform duration-500 hover:scale-110"
                         onError={(event) => {
