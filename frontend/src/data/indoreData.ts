@@ -435,7 +435,7 @@ export const INDORE_INSTITUTES: Institute[] = [
     indoreRating: 4.8,
     ratingSource: 'IndoreColleges',
     totalReviews: 0,
-    image: '/sgsits.jpg',
+    image: '/college-images/SGSITS/sgsits.webp',
     videoUrl: '/SGSITS.mp4',
     backgroundVideoUrl: '/SGSITS.mp4',
     description: 'Shri Govindram Seksaria Institute of Technology and Science (SGSITS Indore), established in 1952, is a premier government-aided autonomous technical institute. Affiliated with RGPV (and DAVV for management/applied sciences) and approved by the UGC, AICTE, and PCI with NAAC accreditation, it is ranked among the finest engineering colleges in Central India, acclaimed for high merit-based intake and strong core/software job placements.',
@@ -450,6 +450,17 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Lush Green Grounds',
       'High-speed Wi-Fi'
     ],
+    facilityImages: {
+      'Central Library': '/college-images/SGSITS/SGSITS-library.jpg',
+      'Computer Center': '/college-images/SGSITS/SGSITS-Computer.png',
+      'Gymnasium': '/college-images/SGSITS/SGSITS-Gymnasium.jpg',
+      'Hostels (Separate Boys & Girls)': '/college-images/SGSITS/SGSITS-Hostels.webp',
+      'Dispensary': '/college-images/SGSITS/SGSITS-Dispensary.webp',
+      'CIDI Centre': '/college-images/SGSITS/SGSITS-Central Workshop.webp',
+      'Central Workshop': '/college-images/SGSITS/SGSITS-Central Workshop.webp',
+      'Lush Green Grounds': '/college-images/SGSITS/SGSITS-Green Grounds.avif',
+      'High-speed Wi-Fi': '/college-images/SGSITS/SGSITS-Computer.png'
+    },
     establishedYear: 1952,
     coordinates: { lat: 22.7248, lng: 75.871 },
     address: '23 Sir M. Visvesvaraya Marg, Park Road, Vallabh Nagar, Indore - 452003, Madhya Pradesh, India',
@@ -1918,9 +1929,19 @@ export const INDORE_INSTITUTES: Institute[] = [
     feePerAnnum: 234250,
     rating: 4.4,
     totalReviews: 484,
-    image: '/medi-caps-university.jpg',
+    image: '/CollegeImages/Medi-Caps University/MEDI-CAPS.webp',
     description: 'Medi-Caps University, established in 2000, is a highly popular state-of-the-art private university. Consistently ranked 1st in Madhya Pradesh for placements by the Times Engineering Survey, it features excellent infrastructure, a 94% placement rate, a robust career cell, and extensive sports facilities on a sprawling campus near Rau.',
     facilities: ['High Speed Computer Labs', 'State of art Workshops', 'Basketball Stadium', 'Modern Gym', 'Central Library (e-Resources)', 'Separate Girls/Boys Hostels', 'Hygienic Canteens', 'Research Centers'],
+    facilityImages: {
+      'High Speed Computer Labs': '/CollegeImages/Medi-Caps University/medicaps Computer-Lab.jpg',
+      'State of art Workshops': '/CollegeImages/Medi-Caps University/MEDI-CAPS-State of art Workshops.webp',
+      'Basketball Stadium': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Basketball Stadium.webp',
+      'Modern Gym': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Modern Gym.webp',
+      'Central Library (e-Resources)': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Central Library.webp',
+      'Separate Girls/Boys Hostels': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Separate Hostels.webp',
+      'Hygienic Canteens': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Canteens.webp',
+      'Research Centers': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Research Centers.webp'
+    },
     establishedYear: 2000,
     coordinates: { lat: 22.621, lng: 75.803 },
     address: 'A.B. Road, Pigdamber, Rau, Indore - 453331, Madhya Pradesh, India',
@@ -2759,7 +2780,7 @@ export const INDORE_INSTITUTES: Institute[] = [
     googleRating: 4.4,
     indoreRating: 4.5,
     totalReviews: 968,
-    image: '/iist-indore.jpg',
+    image: '/college-images/IIST/IIST.avif',
     description: 'Indore Institute of Science & Technology (IIST Indore), established in 2003 along Rau–Pithampur Road opposite IIM Indore, is a private engineering and technical institute affiliated with RGPV and approved by AICTE with NAAC accreditation. It offers undergraduate and postgraduate programs across engineering and technology.',
     facilities: [
       'Advanced Computing Labs',
@@ -2770,6 +2791,15 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Sports Fields (Football, Cricket)',
       'Hygienic Canteens'
     ],
+    facilityImages: {
+      'Advanced Computing Labs': '/college-images/IIST/IIST Computing Labs.jpg',
+      'Hostel Block (Separate Boys & Girls)': '/college-images/IIST/IIST Hostel Block.jpg',
+      'Digital Libraries': '/college-images/IIST/IIST Digital Libraries.jpeg',
+      'Gymnasium': '/college-images/IIST/IIST Sports Fields.jpeg',
+      'Specialized Innovation Labs': '/college-images/IIST/IIST Innovation Labs.jpeg',
+      'Sports Fields (Football, Cricket)': '/college-images/IIST/IIST Sports Fields.jpeg',
+      'Hygienic Canteens': '/college-images/IIST/IIST Canteens.jpeg'
+    },
     establishedYear: 2003,
     coordinates: { lat: 22.618, lng: 75.795 },
     address: 'Opposite IIM Indore, Rau-Pithampur Road, Rau, Indore - 453331, Madhya Pradesh, India',
@@ -2853,7 +2883,7 @@ export const INDORE_INSTITUTES: Institute[] = [
     googleRating: 4.3,
     indoreRating: 4.7,
     totalReviews: 377,
-    image: '/iet-davv.jpg',
+    image: '/college-images/IET-DAVV/IET-DAVV.webp',
     videoUrl: '/IET%20DAVV.mp4',
     backgroundVideoUrl: '/IET%20DAVV.mp4',
     description: 'The Institute of Engineering and Technology (IET DAVV), established in 1996 on the Takshashila Campus along Khandwa Road, is the engineering teaching institute of Devi Ahilya Vishwavidyalaya (DAVV), Indore. It offers undergraduate, postgraduate, and doctoral programs across engineering, technology, applied mathematics, management, and design.',
@@ -2867,6 +2897,16 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Canteen',
       'Wi-Fi Access Points'
     ],
+    facilityImages: {
+      'IET Central Library': '/college-images/IET-DAVV/IET-DAVV-LIB.webp',
+      'High-speed Computer Labs': '/college-images/IET-DAVV/IET-DAVV-Computer Labs.webp',
+      'Sports Ground': '/college-images/IET-DAVV/IET-DAVV-Sports Ground.webp',
+      'Boys & Girls Hostels': '/college-images/IET-DAVV/IET-DAVV-Boys & Girls Hostels.webp',
+      'Auditorium': '/college-images/IET-DAVV/IET-DAVV-Auditorium.webp',
+      'Physics & Chemistry Labs': '/college-images/IET-DAVV/IET-DAVV-Physics & Chemistry Labs.webp',
+      'Canteen': '/college-images/IET-DAVV/IET-DAVV-Canteen.webp',
+      'Wi-Fi Access Points': '/college-images/IET-DAVV/IET-DAVV-Computer Labs.webp'
+    },
     establishedYear: 1996,
     coordinates: { lat: 22.7125, lng: 75.873 },
     address: 'Khandwa Road, Takshashila Campus, Indore - 452017, Madhya Pradesh, India',
