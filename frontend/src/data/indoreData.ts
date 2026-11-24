@@ -3031,6 +3031,16 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Auditorium',
       'Cricket Stadium'
     ],
+    campusPhoto: '/college-images/IPS Academy/IPS-ACADEMY.webp',
+    facilityImages: {
+      'Fire Drills Ground': '/college-images/IPS Academy/IPS-Fire Drills Ground.jpg',
+      'Advanced Physics & Chemistry Labs': '/college-images/IPS Academy/IPS-Advanced Physics & Chemistry Labs.webp',
+      'Incubator Cell': '/college-images/IPS Academy/IPS-Incubator Cell.jpg',
+      'Swimming Pool (Olympic size)': "/college-images/IPS Academy/IPS-'Swimming Pool.webp",
+      'Central Library (1 Lakh+ books)': '/college-images/IPS Academy/IPS-Central Library.webp',
+      'Auditorium': '/college-images/IPS Academy/IPS-Auditorium.webp',
+      'Cricket Stadium': '/college-images/IPS Academy/IPS-Cricket Stadium.webp'
+    },
     establishedYear: 1994,
     coordinates: { lat: 22.674, lng: 75.828 },
     address: 'Knowledge Village, Rajendra Nagar, A.B. Road, Indore - 452012, Madhya Pradesh, India',
@@ -3132,6 +3142,16 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Sports Complex',
       'Canteen'
     ],
+    campusPhoto: '/college-images/LNCTS/LNCTS.jpeg',
+    facilityImages: {
+      'Advanced Computer Labs': '/college-images/LNCTS/LNCTS Computer Labs.webp',
+      'Electrical & Electronics Workshops': "/college-images/LNCTS/LNCTS-Electrical & Electronics Workshops'.webp",
+      'Central Library': '/college-images/LNCTS/LNCTS-Central Library.webp',
+      'Spacious Classrooms': "/college-images/LNCTS/LNTCS'Spacious Classrooms.webp",
+      'Bus Fleet Services': '/college-images/LNCTS/LNCTS-Bus Fleet Services.webp',
+      'Sports Complex': '/college-images/LNCTS/LNCTS-Sports Complex.webp',
+      'Canteen': '/college-images/LNCTS/LNCTS-Canteen.webp'
+    },
     establishedYear: 2004,
     coordinates: { lat: 22.784, lng: 75.929 },
     address: 'Bhawrasala, Reoti Range, Sanwer Road, Indore, Madhya Pradesh - 453555, India',
@@ -6091,7 +6111,7 @@ export const INDORE_INSTITUTES: Institute[] = [
     rating: 3.6,
     googleRating: 3.6,
     totalReviews: 111,
-    image: '/college-images/SKITM/SKITM.jpeg',
+    image: '/skitm-indore.jpg',
     description: 'Shivajirao Kadam Institute of Technology & Management (SKITM Indore), established in 2009 near Ralamandal Sanctuary at Tillore Khurd along the Indore Bypass Road, is a private autonomous technical and professional institution offering undergraduate, postgraduate, and integrated programs across engineering, management, commerce, pharmacy, and law.',
     facilities: [
       'Auditorium',
@@ -6101,6 +6121,7 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Sports Facilities',
       'Career Development Cell'
     ],
+    campusPhoto: '/college-images/SKITM/SKITM.jpeg',
     facilityImages: {
       'Auditorium': '/college-images/SKITM/SKITM-Auditorium.webp',
       'Computer Labs': "/college-images/SKITM/SKITM-Computer Labs'.webp",
