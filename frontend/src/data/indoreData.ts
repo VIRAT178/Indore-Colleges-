@@ -16,25 +16,8 @@ export const INDORE_INSTITUTES: Institute[] = [
     image: '/malwa_institute_campus.jpg',
     videoUrl: '/malwa-institute-campus.mp4',
     backgroundVideoUrl: '/malwa-institute-campus.mp4',
-    description: 'Malwa Group of Institutes (MGI Indore) brings together constituent institutions including Malwa Institute of Science & Technology (MIST), Malwa Institute of Science & Management (MISM), and Malwa Institute of Pharmaceutical Sciences (MIPS), offering 4-year B.Tech, 2-year M.Tech and MBA, 3-year Diploma/Polytechnic, 3-year UG programs (BCA, BBA, B.Com., B.Sc., BJMC), Pharmacy (B.Pharm, D.Pharm), and integrated skill/vocational training on Hatod Road, Indore.',
-    facilities: [
-      'Library',
-      'Laboratory',
-      'Cafeteria',
-      'Sports Arena',
-      'Auditorium',
-      'Advanced Computer Labs',
-      'Modern Classrooms'
-    ],
-    facilityImages: {
-      'Library': '/college-images/MGI/mgi-library.webp',
-      'Laboratory': '/college-images/MGI/mgi-laboratories.webp',
-      'Cafeteria': '/college-images/MGI/mgi-Cafeteria.webp',
-      'Sports Arena': '/college-images/MGI/mgi-Sports-Arena.webp',
-      'Auditorium': '/college-images/MGI/mgi-Auditorium.webp',
-      'Advanced Computer Labs': '/college-images/MGI/mgi-Computer Labs.webp',
-      'Modern Classrooms': '/college-images/MGI/mgi-Modern Classrooms.webp'
-    },
+    description: 'Malwa Institute of Science and Technology (MIST Indore) is a premier engineering and business administration institute offering Undergraduate, Postgraduate, and Diploma courses in various specializations. Possessing world-class in-house facilities like massive auditoriums, an amphitheater, and its own fleet of free buses, the college grooms students to match modern corporate cultures.',
+    facilities: ['Library', 'Laboratory', 'Cafeteria', 'Sports Arena', 'Medical Center', 'Hostels', 'Auditorium', 'Advanced Computer Labs', 'Modern Classrooms'],
     establishedYear: 2007,
     coordinates: { lat: 22.668, lng: 75.889 },
     address: 'P.O. Palia, Hatod Road, Limbodagari, Behind Aurobindo Hospital, Limboda, Indore - 453111, Madhya Pradesh, India',
@@ -750,7 +733,17 @@ export const INDORE_INSTITUTES: Institute[] = [
     googleRating: 4.1,
     indoreRating: 4.3,
     totalReviews: 314,
-    image: '/acropolis.jpg',
+    image: '/college-images/AITR/AITR.webp',
+    campusPhoto: '/college-images/AITR/AITR.webp',
+    facilityImages: {
+      'Smart Classrooms with Audio-Visual Aids': '/college-images/AITR/AITR-Smart Classrooms.webp',
+      'Centrally A/C Auditorium (250 capacity)': '/college-images/AITR/AITR-Auditorium.webp',
+      'Group Discussion & Seminar Halls': '/college-images/AITR/AITR-Seminar Halls.webp',
+      'Centrally Stocked Library (55,000+ books)': '/college-images/AITR/AITR-Library.webp',
+      'Sports Fields (Basketball, Badminton, Cricket)': '/college-images/AITR/AITR-Sports Fields.webp',
+      'Hygienic Canteens': '/college-images/AITR/AITR-Canteens.webp',
+      'Fleet of over 70 Bus Services': "/college-images/AITR/AITR-Bus Services'.webp"
+    },
     videoUrl: '/AITR.mp4',
     backgroundVideoUrl: '/AITR.mp4',
     description: 'Acropolis Institute of Technology and Research (AITR), established in 2005, is a prominent private engineering college in Indore. Affiliated with RGPV and approved by the AICTE with NBA accreditation for CSE, ME, and ECE departments, AITR delivers top-tier technical education. Known for its strong Career Development Cell (CDC), structured training modules, and campus placement programs, it prepares graduates for IT and core engineering roles.',
@@ -1917,28 +1910,8 @@ export const INDORE_INSTITUTES: Institute[] = [
     rating: 4.4,
     totalReviews: 484,
     image: '/medi-caps-university.jpg',
-    campusPhoto: '/CollegeImages/Medi-Caps University/MEDI-CAPS.webp',
-    facilityImages: {
-      'High Speed Computer Labs': '/CollegeImages/Medi-Caps University/medicaps Computer-Lab.jpg',
-      'State of art Workshops': '/CollegeImages/Medi-Caps University/MEDI-CAPS-State of art Workshops.webp',
-      'Basketball Stadium': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Basketball Stadium.webp',
-      'Modern Gym': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Modern Gym.webp',
-      'Central Library (e-Resources)': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Central Library.webp',
-      'Separate Girls/Boys Hostels': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Separate Hostels.webp',
-      'Hygienic Canteens': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Canteens.webp',
-      'Research Centers': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Research Centers.webp'
-    },
-    description: 'Medi-Caps University Indore, established as a state private university in Madhya Pradesh (building on the legacy of the Medi-Caps group established in 2000), is located on A.B. Road at Pigdamber, Rau. It offers undergraduate, postgraduate, and doctoral programs across Engineering, Management, Commerce, Computer Applications, Pharmacy, Sciences, Agriculture, Humanities, and Law.',
-    facilities: [
-      'High Speed Computer Labs',
-      'State of art Workshops',
-      'Basketball Stadium',
-      'Modern Gym',
-      'Central Library (e-Resources)',
-      'Separate Girls/Boys Hostels',
-      'Hygienic Canteens',
-      'Research Centers'
-    ],
+    description: 'Medi-Caps University, established in 2000, is a highly popular state-of-the-art private university. Consistently ranked 1st in Madhya Pradesh for placements by the Times Engineering Survey, it features excellent infrastructure, a 94% placement rate, a robust career cell, and extensive sports facilities on a sprawling campus near Rau.',
+    facilities: ['High Speed Computer Labs', 'State of art Workshops', 'Basketball Stadium', 'Modern Gym', 'Central Library (e-Resources)', 'Separate Girls/Boys Hostels', 'Hygienic Canteens', 'Research Centers'],
     establishedYear: 2000,
     coordinates: { lat: 22.621, lng: 75.803 },
     address: 'A.B. Road, Pigdamber, Rau, Indore - 453331, Madhya Pradesh, India',
@@ -6796,57 +6769,20 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Group portal aurogroup.ac lists 2025 placement highlights up to 12 LPA highest and 4.5 LPA average across 45+ recruiters, with admissions open for upcoming cycles; confirm exact current session fees and affiliations directly with SAIT.'
     ],
     coursesList: [
-      {
-        name: 'Bachelor of Technology (B.Tech)',
-        duration: '4 Years',
-        fees: 'Contact institute for current fees',
-        specializations: [
-          'Computer Science & Engineering',
-          'Computer Science (AI & Machine Learning)',
-          'Electronics & Communication Engineering',
-          'Civil Engineering',
-          'Mechanical Engineering'
-        ]
-      },
-      {
-        name: 'Master of Technology (M.Tech)',
-        duration: '2 Years',
-        fees: 'Contact institute for current fees',
-        specializations: ['Computer Science & Engineering', 'Structural Engineering']
-      },
-      {
-        name: 'Bachelor of Design (B.Des)',
-        duration: '4 Years',
-        fees: 'Contact institute for current fees',
-        specializations: [
-          'Communication Design (CD)',
-          'Experiential Graphic Design (EGD)',
-          'User Experience Design (UX)',
-          'Motion Arts & Gaming (MAG)'
-        ]
-      },
-      {
-        name: 'Master of Business Administration (MBA)',
-        duration: '2 Years',
-        fees: 'Contact institute for current fees',
-        specializations: ['General Management', 'Hospital Administration (MBA-HA)']
-      }
+      { name: 'Bachelor of Technology (B.Tech) in Computer Science', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Bachelor of Technology (B.Tech) in Computer Science (AI & Machine Learning)', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Bachelor of Technology (B.Tech) in Electronics & Communication Engineering', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Bachelor of Technology (B.Tech) in Civil Engineering', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Bachelor of Technology (B.Tech) in Mechanical Engineering', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Master of Technology (M.Tech)', duration: '2 years', fees: 'Contact institute for current fees' },
+      { name: 'Bachelor of Design (B.Des)', duration: '4 years', fees: 'Contact institute for current fees' },
+      { name: 'Master of Business Administration (MBA)', duration: '2 years', fees: 'Contact institute for current fees' },
+      { name: 'Master of Business Administration in Hospital Administration (MBA-HA)', duration: '2 years', fees: 'Contact institute for current fees' }
     ],
-    placements: {
-      highest: 'INR 12.00 LPA',
-      average: 'INR 4.50 LPA',
-      lowest: 'INR 3.00 LPA',
-      recruiters: ['45+ Recruiters (aurogroup.ac)', 'IT & Core Engineering Employers']
-    },
-    scholarships: [
-      {
-        name: 'Sri Aurobindo Group & Government Scholarship Schemes',
-        criteria: 'Eligible merit, domicile, or reserved category criteria',
-        benefits: 'Fee concession / support as per group and government policy'
-      }
-    ]
+    isDirectoryVerified: false
   }
 ];
+
 export const INDORE_LOCALITY_GROUPS = [
   {
     name: 'Sanwer / Ujjain Road',

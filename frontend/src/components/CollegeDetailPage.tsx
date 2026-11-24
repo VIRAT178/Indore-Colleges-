@@ -120,6 +120,7 @@ export default function CollegeDetailPage({
 
   const getShortName = () => {
     if (institute.id === 'iet-davv') return 'IET DAVV';
+    if (institute.id === 'sgsits') return 'SGSITS';
     const words = institute.name
       .replace(/[,.-]/g, ' ')
       .split(/\s+/)
@@ -141,7 +142,9 @@ export default function CollegeDetailPage({
 
   const shortName = getShortName();
   const universityName = getUniversityName();
-  const facilityImage = institute.campusPhoto || institute.image || '/bg2.jpeg';
+  const defaultFacilityImage = institute.campusPhoto || institute.image || '/bg2.jpeg';
+  const getFacilityImage = (facility: string) =>
+    institute.facilityImages?.[facility] || defaultFacilityImage;
   const collegeVideoUrl = institute.videoUrl || institute.backgroundVideoUrl;
   const categoryInstitutes = INDORE_INSTITUTES.filter(item => item.category === institute.category);
   const googleRank = [...categoryInstitutes]
@@ -198,7 +201,7 @@ export default function CollegeDetailPage({
                 <span>Back to Colleges Directory</span>
               </button>
 
-              <h1 className={`${institute.id === 'malwa-institute' ? 'text-3xl' : 'text-3xl sm:text-4xl xl:text-[44px]'} font-extrabold tracking-tight text-slate-950 leading-[1.08] mb-5`}>
+              <h1 className={`${institute.id === 'malwa-group-of-institutes' ? 'text-3xl' : 'text-3xl sm:text-4xl xl:text-[44px]'} font-extrabold tracking-tight text-slate-950 leading-[1.08] mb-5`}>
                 {institute.name}
               </h1>
 
@@ -480,7 +483,7 @@ export default function CollegeDetailPage({
                       className="relative h-60 w-72 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-900 shadow-sm sm:h-72 sm:w-80"
                     >
                       <img
-                        src={institute.facilityImages?.[fac] || facilityImage}
+                        src={getFacilityImage(fac)}
                         alt={`${fac} at ${institute.name}`}
                         className="h-full w-full object-cover opacity-80 transition-transform duration-500 hover:scale-110"
                         onError={(event) => {
