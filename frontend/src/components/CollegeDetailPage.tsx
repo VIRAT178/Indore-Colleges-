@@ -144,7 +144,7 @@ export default function CollegeDetailPage({
   const universityName = getUniversityName();
   const defaultFacilityImage = institute.campusPhoto || institute.image || '/bg2.jpeg';
   const getFacilityImage = (facility: string) =>
-    institute.facilityImages?.[facility] || defaultFacilityImage;
+    encodeURI(institute.facilityImages?.[facility] || defaultFacilityImage);
   const collegeVideoUrl = institute.videoUrl || institute.backgroundVideoUrl;
   const categoryInstitutes = INDORE_INSTITUTES.filter(item => item.category === institute.category);
   const googleRank = [...categoryInstitutes]
@@ -255,7 +255,7 @@ export default function CollegeDetailPage({
               <div className="h-[260px] w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-sm sm:h-[275px] lg:h-[275px] lg:w-[500px] xl:h-[275px] xl:w-[500px] 2xl:h-[275px] 2xl:w-[900px]">
                 {institute.image ? (
                   <img
-                    src={institute.image}
+                    src={encodeURI(institute.image)}
                     alt={institute.name}
                     referrerPolicy="no-referrer"
                     className="h-full w-full object-cover object-center"
@@ -485,9 +485,13 @@ export default function CollegeDetailPage({
                       <img
                         src={getFacilityImage(fac)}
                         alt={`${fac} at ${institute.name}`}
+                        loading="lazy"
+                        decoding="async"
                         className="h-full w-full object-cover opacity-80 transition-transform duration-500 hover:scale-110"
                         onError={(event) => {
-                          event.currentTarget.src = '/bg2.jpeg';
+                          if (!event.currentTarget.src.endsWith('/bg2.jpeg')) {
+                            event.currentTarget.src = '/bg2.jpeg';
+                          }
                         }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent" />
