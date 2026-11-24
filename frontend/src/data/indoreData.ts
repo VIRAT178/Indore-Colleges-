@@ -6091,17 +6091,24 @@ export const INDORE_INSTITUTES: Institute[] = [
     rating: 3.6,
     googleRating: 3.6,
     totalReviews: 111,
-    image: '/skitm-indore.jpg',
+    image: '/college-images/SKITM/SKITM.jpeg',
     description: 'Shivajirao Kadam Institute of Technology & Management (SKITM Indore), established in 2009 near Ralamandal Sanctuary at Tillore Khurd along the Indore Bypass Road, is a private autonomous technical and professional institution offering undergraduate, postgraduate, and integrated programs across engineering, management, commerce, pharmacy, and law.',
     facilities: [
       'Auditorium',
       'Computer Labs',
       'Engineering Labs',
       'Boys & Girls Hostels with Mess',
-      'Central Library',
       'Sports Facilities',
       'Career Development Cell'
     ],
+    facilityImages: {
+      'Auditorium': '/college-images/SKITM/SKITM-Auditorium.webp',
+      'Computer Labs': "/college-images/SKITM/SKITM-Computer Labs'.webp",
+      'Engineering Labs': "/college-images/SKITM/SKITM-Computer Labs'.webp",
+      'Boys & Girls Hostels with Mess': '/college-images/SKITM/SKITM-HOSTALS.webp',
+      'Sports Facilities': '/college-images/SKITM/SKITM-Sports Facilities.webp',
+      'Career Development Cell': '/college-images/SKITM/SKITM-Career Development Cell.webp'
+    },
     establishedYear: 2009,
     coordinates: { lat: 22.659, lng: 75.903 },
     address: 'Near Ralamandal Sanctuary, Tillore Khurd, Indore - 452020, Madhya Pradesh, India',

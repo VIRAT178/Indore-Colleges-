@@ -183,13 +183,22 @@ export default function CollegeDetailPage({
       'Separate Girls/Boys Hostels': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Separate Hostels.webp',
       'Hygienic Canteens': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Canteens.webp',
       'Research Centers': '/CollegeImages/Medi-Caps University/MEDI-CAPS-Research Centers.webp'
+    },
+    'skitm-indore': {
+      'Auditorium': '/college-images/SKITM/SKITM-Auditorium.webp',
+      'Computer Labs': "/college-images/SKITM/SKITM-Computer Labs'.webp",
+      'Engineering Labs': "/college-images/SKITM/SKITM-Computer Labs'.webp",
+      'Boys & Girls Hostels with Mess': '/college-images/SKITM/SKITM-HOSTALS.webp',
+      'Sports Facilities': '/college-images/SKITM/SKITM-Sports Facilities.webp',
+      'Career Development Cell': '/college-images/SKITM/SKITM-Career Development Cell.webp'
     }
   };
   const liveHeroImageOverrides: Record<string, string> = {
     'sgsits': '/college-images/SGSITS/sgsits.webp',
     'iist-indore': '/college-images/IIST/IIST.avif',
     'iet-davv': '/college-images/IET-DAVV/IET-DAVV.webp',
-    'medi-caps-university': '/CollegeImages/Medi-Caps University/MEDI-CAPS.webp'
+    'medi-caps-university': '/CollegeImages/Medi-Caps University/MEDI-CAPS.webp',
+    'skitm-indore': '/college-images/SKITM/SKITM.jpeg'
   };
   const heroImage = encodeURI(liveHeroImageOverrides[institute.id] || institute.image);
   const getFacilityImage = (facility: string) =>
