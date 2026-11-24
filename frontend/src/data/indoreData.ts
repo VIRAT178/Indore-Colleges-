@@ -26,6 +26,15 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Advanced Computer Labs',
       'Modern Classrooms'
     ],
+    facilityImages: {
+      'Library': '/college-images/MGI/mgi-library.webp',
+      'Laboratory': '/college-images/MGI/mgi-laboratories.webp',
+      'Cafeteria': '/college-images/MGI/mgi-Cafeteria.webp',
+      'Sports Arena': '/college-images/MGI/mgi-Sports-Arena.webp',
+      'Auditorium': '/college-images/MGI/mgi-Auditorium.webp',
+      'Advanced Computer Labs': '/college-images/MGI/mgi-Computer Labs.webp',
+      'Modern Classrooms': '/college-images/MGI/mgi-Modern Classrooms.webp'
+    },
     establishedYear: 2007,
     coordinates: { lat: 22.668, lng: 75.889 },
     address: 'P.O. Palia, Hatod Road, Limbodagari, Behind Aurobindo Hospital, Limboda, Indore - 453111, Madhya Pradesh, India',

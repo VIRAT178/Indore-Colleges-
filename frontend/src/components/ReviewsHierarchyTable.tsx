@@ -202,7 +202,9 @@ function getVideosForPerspective(category: CategoryType, perspective: ReviewPers
     ? indoreCollegeReviewOrder
       .map(collegeId => colleges.find(college => college.id === collegeId))
       .filter(college => college !== undefined)
-    : colleges;
+    : perspective === 'Review by College Authority'
+      ? colleges.filter(college => college.id !== 'sgsits')
+      : colleges;
 
   return collegesForPerspective.map((col, idx) => {
     let title = '';
@@ -210,12 +212,9 @@ function getVideosForPerspective(category: CategoryType, perspective: ReviewPers
     let tags: string[] = [];
 
     const activeCollegeVideoUrl = col.videoUrl || col.backgroundVideoUrl;
-    const isSGSITS = col.name.toLowerCase().includes('sgsits') || col.id === 'sgsits';
-
     let videoUrl = (
       perspective === 'Review by Indore Colleges'
       || perspective === 'Review by College Authority'
-      || isSGSITS
     ) ? activeCollegeVideoUrl : undefined;
     let isLiveAuthorityVideo = false;
     let authoritySpeaker = '';
@@ -230,23 +229,14 @@ function getVideosForPerspective(category: CategoryType, perspective: ReviewPers
       tags = ['Student Feedback', 'Hostel Life', 'Campus Crowd', 'Honest Review'];
     } else {
       // Review by College Authority
-      if (isSGSITS) {
-        authoritySpeaker = 'Prof. Neetesh Purohit (Director, SGSITS)';
-        title = `Executive Dialogue & Authority Review — Prof. Neetesh Purohit (Director, SGSITS)`;
-        description = `Official review and institutional address by SGSITS Director: deep dive into autonomous curriculum, NIRF benchmarks, 44 LPA placements, and 2026 admissions roadmap.`;
-        tags = ['Director Review', 'Autonomous Curriculum', 'JEE Main Cutoffs', '44 LPA Placements'];
-        isLiveAuthorityVideo = Boolean(activeCollegeVideoUrl);
+      const foundDir = col.facultyList?.find(f => f.qualification?.toLowerCase().includes('director') || f.role?.toLowerCase().includes('director'))?.name;
+      authoritySpeaker = foundDir ? `${foundDir} (Director)` : `Institutional Leadership & Academic Council`;
+      title = `Executive Dialogue with College Authority — ${col.name}`;
+      description = `Official executive dialogue with leadership of ${col.name}: discussing 2026 admissions, industry MoUs, syllabus updates, and student career roadmaps.`;
+      tags = ['Dean Interview', 'Accreditations', 'Industry MoUs', '2026 Roadmap'];
+      if (activeCollegeVideoUrl) {
+        isLiveAuthorityVideo = true;
         videoUrl = activeCollegeVideoUrl;
-      } else {
-        const foundDir = col.facultyList?.find(f => f.qualification?.toLowerCase().includes('director') || f.role?.toLowerCase().includes('director'))?.name;
-        authoritySpeaker = foundDir ? `${foundDir} (Director)` : `Institutional Leadership & Academic Council`;
-        title = `Executive Dialogue with College Authority — ${col.name}`;
-        description = `Official executive dialogue with leadership of ${col.name}: discussing 2026 admissions, industry MoUs, syllabus updates, and student career roadmaps.`;
-        tags = ['Dean Interview', 'Accreditations', 'Industry MoUs', '2026 Roadmap'];
-        if (activeCollegeVideoUrl) {
-          isLiveAuthorityVideo = true;
-          videoUrl = activeCollegeVideoUrl;
-        }
       }
     }
 
@@ -795,11 +785,6 @@ export default function ReviewsHierarchyTable() {
                       <ShieldCheck className="w-3.5 h-3.5 text-white" />
                       <span>{previewVideoModal.perspectiveType}</span>
                     </span>
-                    {previewVideoModal.isLiveAuthorityVideo && (
-                      <span className="text-[10px] font-bold text-white/90 bg-black/70 px-2.5 py-1 rounded-full backdrop-blur-xs">
-                        Directorate Verified
-                      </span>
-                    )}
                   </div>
                 </div>
               ) : (

@@ -477,7 +477,7 @@ export default function CollegeDetailPage({
                   {[...institute.facilities, ...institute.facilities].map((fac, idx) => (
                     <div
                       key={`${fac}-${idx}`}
-                      className="relative h-44 w-72 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-900 shadow-sm sm:h-52 sm:w-80"
+                      className="relative h-60 w-72 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-900 shadow-sm sm:h-72 sm:w-80"
                     >
                       <img
                         src={institute.facilityImages?.[fac] || facilityImage}

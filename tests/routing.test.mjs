@@ -7,6 +7,7 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 import path from 'node:path';
 import {getPageSeo, updateRobotsMeta} from '../frontend/src/App.tsx';
 import {INDORE_INSTITUTES, INDORE_LOCALITY_GROUPS} from '../frontend/src/data/indoreData.ts';
+import {mergePartnerInstitute} from '../backend/partnerMerge.ts';
 import {
   getStaticCollegeRoutes,
   getStaticEditorialRoutes,
@@ -494,7 +495,8 @@ test('image hints use known logo dimensions and lazy-load only below-fold media'
   const reviews = await readFile(path.join(root, 'frontend', 'src', 'components', 'ReviewsHierarchyTable.tsx'), 'utf8');
   assert.match(reviews, /src=\{video\.thumbnail\}[\s\S]{0,100}loading="lazy"/);
   const collegeDetail = await readFile(path.join(root, 'frontend', 'src', 'components', 'CollegeDetailPage.tsx'), 'utf8');
-  assert.match(collegeDetail, /src=\{institute\.image\}[\s\S]{0,100}loading="lazy"/);
+  assert.match(collegeDetail, /src=\{institute\.image\}[\s\S]{0,100}alt=\{institute\.name\}/);
+  assert.doesNotMatch(collegeDetail, /src=\{institute\.image\}[\s\S]{0,100}loading="lazy"/);
 });
 
 test('prerendered locality and editorial navigation uses valid crawlable links', async () => {
@@ -756,4 +758,51 @@ test('partner handler serves static profiles and distinguishes partner outcomes'
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+test('partner merge protects curated SGSITS fields while allowing other partner overrides', () => {
+  const sgsits = INDORE_INSTITUTES.find(institute => institute.id === 'sgsits');
+  const otherCollege = INDORE_INSTITUTES.find(institute => institute.id === 'iit-indore');
+  assert.ok(sgsits);
+  assert.ok(otherCollege);
+
+  const sgsitsPartner = {
+    ...sgsits,
+    name: 'Partner override',
+    description: 'Partner description',
+    feePerAnnum: 1,
+    rating: 1,
+    totalReviews: 1100,
+    boardOrAffiliation: 'DAVV',
+    regulatoryApprovals: ['Unsupported approval'],
+    coursesList: [],
+    placements: undefined,
+    isDirectoryVerified: true,
+    brochureUrl: '/partner-brochure.pdf',
+    isPartnerRegistered: true,
+  };
+  const mergedSgsits = mergePartnerInstitute(sgsits, sgsitsPartner);
+  assert.equal(mergedSgsits.name, sgsits.name);
+  assert.equal(mergedSgsits.description, sgsits.description);
+  assert.equal(mergedSgsits.feePerAnnum, sgsits.feePerAnnum);
+  assert.equal(mergedSgsits.rating, sgsits.rating);
+  assert.equal(mergedSgsits.totalReviews, sgsits.totalReviews);
+  assert.equal(mergedSgsits.boardOrAffiliation, sgsits.boardOrAffiliation);
+  assert.deepEqual(mergedSgsits.regulatoryApprovals, sgsits.regulatoryApprovals);
+  assert.deepEqual(mergedSgsits.coursesList, sgsits.coursesList);
+  assert.deepEqual(mergedSgsits.placements, sgsits.placements);
+  assert.equal(mergedSgsits.isDirectoryVerified, sgsits.isDirectoryVerified);
+  assert.equal(mergedSgsits.brochureUrl, sgsitsPartner.brochureUrl);
+
+  const otherPartner = {
+    ...otherCollege,
+    description: 'Partner-managed description',
+    rating: 3.2,
+    feePerAnnum: 12345,
+    isPartnerRegistered: true,
+  };
+  const mergedOther = mergePartnerInstitute(otherCollege, otherPartner);
+  assert.equal(mergedOther.description, otherPartner.description);
+  assert.equal(mergedOther.rating, otherPartner.rating);
+  assert.equal(mergedOther.feePerAnnum, otherPartner.feePerAnnum);
 });
