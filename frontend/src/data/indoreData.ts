@@ -878,7 +878,7 @@ export const INDORE_INSTITUTES: Institute[] = [
   },
   {
     id: 'symbiosis-university',
-    name: 'Symbiosis University of Applied Sciences (SUAS)',
+    name: 'Symbiosis University of Applied Sciences',
     type: 'college',
     category: 'Engineering',
     boardOrAffiliation: 'Private University',
@@ -3459,7 +3459,6 @@ export const INDORE_INSTITUTES: Institute[] = [
       'Robotics Wing',
       'Smart Classrooms',
       'Auditorium',
-      'Canteen',
       'Indoor/Outdoor Sports Area'
     ],
     establishedYear: 2008,

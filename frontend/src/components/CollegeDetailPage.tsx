@@ -122,6 +122,7 @@ export default function CollegeDetailPage({
     if (institute.id === 'iet-davv') return 'IET DAVV';
     if (institute.id === 'sgsits') return 'SGSITS';
     if (institute.id === 'piemr-indore') return 'PIEMR';
+    if (institute.id === 'symbiosis-university') return 'SUAS';
     const words = institute.name
       .replace(/[,.-]/g, ' ')
       .split(/\s+/)
